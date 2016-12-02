@@ -1,0 +1,434 @@
+
+Word: 123456789abcdef21435687a9cbedf
+Patterns: Letter removal, Repeat word, Return word; 7
+
+Word: 123456789abcde21435687a9cbed
+Patterns: Letter removal, Repeat word, Return word; 7
+Patterns: Letter removal, Repeat word; 7
+Index: Pattern Recurrence Index; 7
+
+Word: 123456789abcdef21436587a9cbedf
+Index: Pattern Recurrence Index; 8
+Index: Tangled Index; 14
+
+Word: 12132435465767
+Index: Pattern Recurrence Index; 5
+Patterns: Letter removal, Repeat word, Return word; 5
+
+Word: 121323
+Index: Pattern Recurrence Index; 2
+Patterns: Repeat word, Return word, Tangled cord; 1
+Patterns: Letter removal, Fugazi pattern, Loop pattern; 2
+Index: Tangled Pattern Recurrence Index; 1
+
+Word: 12132435465768798a9bacbdcedfef
+Index: Pattern Recurrence Index; 10
+
+Word: 12132435465768798a9bacbdcede
+Index: Pattern Recurrence Index; 9
+
+Word: 12132435465768798a9bacbdcedfegfg
+Index: Pattern Recurrence Index; 11
+
+Word: 12132435465768798a9bab
+Index: Pattern Recurrence Index; 7
+
+Word: 123143526564
+Index: Pattern Recurrence Index; 4
+
+Word: 12324145653786879aba9b
+Index: Pattern recurrence index; 7
+Patterns: Letter removal, Tangled cord; 7
+
+Word: 12342536765417
+Patterns: Letter removal, Interchanging pattern; 5
+
+Word: 123425367654178989
+Index: Pattern recurrence index; 5
+
+Word: 12132434
+Patterns: Repeat word, Return word, Tangled cord; 1
+
+Word: 1122334455
+Index: LL index; 1
+
+Word: 123243546576879891
+Index: pattern recurrence index; 6
+
+Word: 1231542763874568
+Index: pattern recurrence index; 4
+
+Word: 123542756497869183
+Index: pattern recurrence index; 6
+
+Word: 1213435264758697a8b9ab
+Index: pattern recurrence index; 7
+
+Word: 1221
+Index: Pattern Recurrence Index; 1
+
+Word: 1212
+Index: Pattern Recurrence Index; 1
+Patterns: Letter removal, Tangled cord, Fugazi pattern, Loop pattern; 1
+Patterns: Tangled cord; 1
+Index: Tangled Index; 1
+
+Word: 123456789987654321
+Index: Pattern Recurrence Index; 1
+
+Word: 1232435465768798a9bacbdcd1
+Index: Pattern Recurrence Index; 9
+
+Word: 123321
+Index: Pattern Recurrence Index; 1
+
+Word: 1232435465768798a9a1
+Index: Pattern Recurrence Index; 7
+
+Word: 121324354657687989
+Index: Pattern Recurrence Index; 6
+
+Word: 12132435465768798a9a
+Index: Pattern Recurrence Index; 7
+
+Word: 12132435465768798a9bacbc
+Index: Pattern Recurrence Index; 8
+
+Word: 1213245546376878
+Patterns: Repeat word, Return word, Tangled cord; 4
+
+Word: 12321345647567
+Patterns: Repeat word, Return word, Tangled cord; 4
+
+Word: 12324536757641
+Patterns: Repeat word, Return word, Tangled cord; 4
+
+Word: 1232435465768718
+Patterns: Repeat word, Return word, Tangled cord; 4
+
+Word: 12133424
+Index: Pattern Recurrence Index; 3
+
+Word: 121324356475869879
+Index: Pattern Recurrence Index; 6
+
+Word: 12132435647586989a7bcbac
+Index: Pattern Recurrence Index; 8
+
+Word: 12132435647586989a7bba
+Index: Pattern Recurrence Index; 7
+
+Word: 12132435647586989a7a
+Index: Pattern Recurrence Index; 7
+
+Word: 1213243564758768
+Index: Pattern Recurrence Index; 5
+
+Word: 12132435647587698a9a
+Index: Pattern Recurrence Index; 6
+
+Word: 12132435647586989abab7
+Index: Pattern Recurrence Index; 7
+
+Word: 12132435647586989aa7
+Index: Pattern Recurrence Index; 7
+
+Word: 123123
+Index: Pattern Recurrence Index; 1
+Patterns: Random pattern, Letter removal; 3
+
+Word: 122313
+Index: Pattern Recurrence Index; 2
+
+Word: 12343124
+Index: Pattern Recurrence Index; 2
+
+Word: 123245436758987691
+Index: Pattern Recurrence Index; 5
+
+Word: 1232454367588761
+Index: Pattern Recurrence Index; 4
+
+Word: 123435465768798912
+Index: Pattern Recurrence Index; 6
+
+Word: 132435465768798a9bacbc12
+Index: Pattern Recurrence Index; 8
+
+Word: 123142536475869789
+Patterns: Letter removal, Repeat word, Return word; 5
+Index: Pattern Recurrence Index; 5
+
+Word: 12324431
+Patterns: Letter removal, Repeat word, Return word; 2
+
+Word: 1213243554
+Patterns: Letter removal, Fugazi pattern, Loop pattern; 3
+
+Word: 12132435654768798a9a
+Patterns: Letter removal, Fugazi pattern, Loop pattern; 6
+Patterns: Letter removal, Tangled cord; 4
+
+Word: 1213435465768798a9bacbece2
+Index: Pattern Recurrence Index; 8
+
+Word: 112233445566778899aabbccddee
+Index: Pattern Recurrence Index; 14
+
+Word: 123456789abcdeedcba987654321
+Index: Pattern Recurrence Index; 1
+
+Word: 121323454656787989abacbceded
+Index: Pattern Recurrence Index; 9
+
+Word: 12132435465768798ab9cacdbd
+Patterns: Letter removal, Fugazi pattern, Loop pattern; 8
+Index: Pattern Recurrence Index; 9
+Patterns: Hello pattern, Letter removal; 7
+
+Word: 1232345465678789a9abcbcdedef1f
+Index: Pattern Recurrence Index; 8
+
+Word: 1232345465678789a9abcbcdede1
+Index: Pattern Recurrence Index; 8
+
+Word: 1232345465678789a9abcbcd1d
+Index: Pattern Recurrence Index; 7
+
+Word: 1232345465678789a9abcbc1
+Index: Pattern Recurrence Index; 7
+
+Word: 121332454657687989
+Index: Pattern Recurrence Index; 6
+Patterns: Letter removal, Fugazi pattern, Loop pattern; 5
+
+Word: 12133245465768798a9bacbdcd
+Patterns: Letter removal, Fugazi pattern, Loop pattern; 8
+Index: Pattern Recurrence Index; 9
+
+Word: 12132435654678987a9a
+Index: Pattern Recurrence Index; 6
+
+Word: 1213243546576878
+Index: Pattern Recurrence Index; 5
+
+Word: 1232435465768798a9bab1
+Index: Pattern Recurrence Index; 7
+
+Word: 123456789abcde21436587a9cbed
+Index: Pattern Recurrence Index; 7
+
+Word: 11
+Index: Pattern Recurrence Index; 1
+
+Word: 123456789abcdefedcba987654321f
+Index: Pattern Recurrence Index; 2
+
+Word: 123456789abcdefedc7ba98465321f
+Index: Pattern Recurrence Index; 4
+
+Word: 123456789abcdefg21436587a9cbedgf
+Index: Pattern Recurrence Index; 8
+
+Word: 1232435465768798a9bacbdcede1
+Index: Pattern Recurrence Index; 9
+Patterns: Contiguous Repeat word, Letter removal; 10
+
+Word: 1234512345
+Patterns: Contiguous Repeat word, Letter removal; 1
+Index: Pattern Recurrence Index; 1
+Patterns: Letter removal, Fugazi pattern, Loop pattern; 4
+
+Word: 123415263748596a7b8c9dacbd
+Index: Pattern Recurrence Index; 7
+
+Word: 123456789abcde123456789abcde
+Index: Pattern Recurrence Index; 1
+
+Word: 123456789abcdeffedcba987654321
+Index: Pattern Recurrence Index; 1
+
+Word: 123456789abcdefg172345689abcdefg
+Index: Pattern Recurrence Index; 2
+
+Word: 123456789abcdef123456789abcdef
+Index: Pattern Recurrence Index; 1
+
+Word: 12341234
+Index: Pattern Recurrence Index; 1
+
+Word: 123456789abcdefgh123456789abcdefgh
+Index: Pattern Recurrence Index; 1
+
+Word: 123456789abcdedb975312468ace
+Index: Pattern Recurrence Index; 7
+
+Word: 123456123456
+Index: Pattern Recurrence Index; 1
+Patterns: Repeat word; 1
+Index: Tangled Index; 5
+
+Word: 123456789a84615379a2
+Index: Pattern Recurrence Index; 5
+
+Word: 1234543251
+Index: Pattern Recurrence Index; 2
+
+Word: 123213
+Index: Pattern Recurrence Index; 2
+
+Word: 123456789abca853417c2b69
+Index: Pattern Recurrence Index; 6
+
+Word: 121324354657689798
+Index: Pattern Recurrence Index; 6
+
+Word: 123456789abcd21346578a9bcd
+Index: Pattern Recurrence Index; 4
+
+Word: 123456789192837465
+Index: Pattern Recurrence Index; 5
+Index: Tangled Index; 8
+
+Word: 123231
+Index: Pattern Recurrence Index; 2
+
+Word: 123456789ab1b2a3948576
+Index: Pattern Recurrence Index; 6
+
+Word: 12345627859a41637ba8b9
+Index: Pattern Recurrence Index; 7
+Index: Tangled Index; 7
+Index: Tangled Pattern Recurrence Index; 6
+
+Word: 123456789abcdefg123456789abcdefg
+Index: Tangled Index; 15
+
+Word: 123456178793589624
+Index: Pattern Recurrence Index; 5
+Index: Tangled Index; 6
+Index: Tangled Pattern Recurrence Index; 5
+
+Word: 123456274816399758
+Index: Pattern Recurrence Index; 6
+Index: Tangled Index; 6
+Index: Tangled Pattern Recurrence Index; 6
+
+Word: 1234566147382875
+Index: Pattern Recurrence Index; 5
+Index: Tangled Index; 6
+Index: Tangled Pattern Recurrence Index; 5
+
+Word: 12341526375674
+Index: Pattern Recurrence Index; 4
+Index: Tangled Index; 4
+Index: Tangled Pattern Recurrence Index; 4
+
+Word: 123453641625
+Index: Pattern Recurrence Index; 3
+Index: Tangled Index; 4
+Index: Tangled Pattern Recurrence Index; 3
+
+Word: 123451365264
+Index: Pattern Recurrence Index; 4
+Index: Tangled Index; 4
+Index: Tangled Pattern Recurrence Index; 4
+
+Word: 1231453524
+Index: Pattern Recurrence Index; 3
+Index: Tangled Index; 3
+Index: Tangled Pattern Recurrence Index; 3
+
+Word: 1231435425
+Index: Pattern Recurrence Index; 4
+Index: Tangled Index; 2
+Index: Tangled Pattern Recurrence Index; 2
+
+Word: 1232451435
+Index: Pattern Recurrence Index; 3
+Index: Tangled Index; 3
+Index: Tangled Pattern Recurrence Index; 3
+
+Word: 1234253154
+Index: Pattern Recurrence Index; 3
+Index: Tangled Index; 3
+Index: Tangled Pattern Recurrence Index; 3
+
+Word: 12324143
+Index: Pattern Recurrence Index; 3
+Index: Tangled Index; 3
+Index: Tangled Pattern Recurrence Index; 3
+
+Word: 12314243
+Index: Pattern Recurrence Index; 2
+Index: Tangled Index; 2
+Index: Tangled Pattern Recurrence Index; 2
+
+Word: 12324341
+Index: Pattern Recurrence Index; 3
+Index: Tangled Index; 2
+Index: Tangled Pattern Recurrence Index; 2
+
+Word: 12324314
+Index: Pattern Recurrence Index; 3
+Index: Tangled Index; 2
+Index: Tangled Pattern Recurrence Index; 2
+
+Word: 12324134
+Index: Pattern Recurrence Index; 2
+Index: Tangled Index; 2
+Index: Tangled Pattern Recurrence Index; 2
+
+Word: 12234314
+Index: Pattern Recurrence Index; 3
+Index: Tangled Index; 3
+Index: Tangled Pattern Recurrence Index; 3
+
+Word: 12313442
+Index: Pattern Recurrence Index; 3
+Index: Tangled Index; 3
+Index: Tangled Pattern Recurrence Index; 3
+
+Word: 1123456789abc5deef4c9g7hf3b2a6dhg8
+Index: Pattern Recurrence Index; 11
+Index: Tangled Index; 14
+Index: Tangled Pattern Recurrence Index; 11
+
+Word: 12132435465768798a9bacbdcd
+Index: Pattern Recurrence Index; 9
+
+Word: 123456789abcd21436587a9cbd
+Index: Pattern Recurrence Index; 7
+
+Word: 123456789abcdf213c65874a9bfd
+Index: Pattern Recurrence Index; 7
+
+Word: 1234567873652418
+Index: Pattern Recurrence Index; 4
+
+Word: 1213234545
+Index: Pattern Recurrence Index; 3
+
+Word: 142514362536
+Index: Pattern Recurrence Index; 2
+
+Word: 123456654321
+Index: Tangled Index; 6
+
+Word: 1234532415
+Index: Pattern Recurrence Index; 3
+
+Word: 123456789734821695
+Index: Pattern Recurrence Index; 5
+
+Word: 123456789a64729513a8
+Index: Pattern Recurrence Index; 6
+
+Word: 1234534251
+Index: Pattern Recurrence Index; 3
+
+Word: 12132344
+Index: Pattern Recurrence Index; 3
+
+Word: 1234554312
+Index: Pattern Recurrence Index; 2
