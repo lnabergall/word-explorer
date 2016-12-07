@@ -6,6 +6,7 @@ representing the deletion of a repeat or return word.
 from itertools import product, permutations
 
 from objects import is_equivalent, Word as Word_eq
+from word_graph_gpu import find_adjacent_vertices_gpu
 
 
 WORDS_LEQ2_FILE = "words_up_to_size_2_all.txt"
@@ -57,8 +58,8 @@ class Word(Word_eq):
         return hash(str(self))
 
 
-def load_words():
-    with open(AOWORDS_LEQ5_FILE, "r") as word_file:
+def load_words(file_name):
+    with open(file_name, "r") as word_file:
         word_list = word_file.readlines()
         word_list.sort()
         if "" not in word_list:
@@ -68,10 +69,12 @@ def load_words():
 
 class WordGraph:
 
-    def __init__(self, word_list, size_limit=None, ascending_order=False):
+    def __init__(self, word_list, size_limit=None, 
+                 ascending_order=False, use_gpu=False):
         self.vertices = word_list
         self.size_limit = size_limit
         self.word_class = Word if not ascending_order else Word_eq
+        self.use_gpu = use_gpu
         self.directed_neighborhoods = self.compute_neighborhoods()
         if ascending_order:
             self.directed_neighborhoods = convert_to_ascending_order(
@@ -84,8 +87,11 @@ class WordGraph:
     def compute_neighborhoods(self):
         neighborhoods = {}
         for word in self.vertices:
-            neighbors = WordGraph.find_adjacent_vertices(
-                word, self.size_limit, self.word_class)
+            if self.use_gpu:
+                neighbors = find_adjacent_vertices_gpu(word, self.size_limit)
+            else:
+                neighbors = WordGraph.find_adjacent_vertices(
+                    word, self.size_limit, self.word_class)
             neighborhoods[word] = neighbors
 
         return neighborhoods
@@ -106,7 +112,8 @@ class WordGraph:
     @staticmethod
     def generate_insertions(word, pattern_instance, size_limit, word_class):
         new_letters = list(range(1, size_limit + 1))
-        new_letters = [str(letter) for letter in new_letters if str(letter) not in word]
+        new_letters = [str(letter) for letter in new_letters 
+                       if str(letter) not in word]
         instance_letters = list(set(pattern_instance.replace("...", "")))
         instance_letters.sort()
         pattern_parts = pattern_instance.split("...")
@@ -174,7 +181,7 @@ def convert_to_ascending_order(word_collection):
 
 
 if __name__ == '__main__':
-    words = load_words()
+    words = load_words(AOWORDS_LEQ5_FILE)
     word_graph = WordGraph(words, size_limit=5, ascending_order=True)
     with open("aoword_graph_size5.txt", "w") as output_file:
         print("Vertex count: " + str(word_graph.vertex_count), file=output_file)
@@ -183,7 +190,8 @@ if __name__ == '__main__':
         words.sort()
         for word in words:
             if word_graph.directed_neighborhoods[word]:
-                neighborhood = word + ": " + str(word_graph.directed_neighborhoods[word])
+                neighborhood = word + ": " + str(
+                    word_graph.directed_neighborhoods[word])
                 print(neighborhood, file=output_file)
     with open("aoword_graph_size5.txt", "r") as output_file:
         text = output_file.read()
