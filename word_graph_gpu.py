@@ -29,7 +29,7 @@ def find_adjacent_vertices(word, size_limit):
     return neighbors
 
 
-#@vectorize(["int32[:](int32[:])"], target="gpu")
+@vectorize(["int32[:](int32[:])"], target="gpu")
 def compute_neighbors(word_array):
     """
     Args:
@@ -55,7 +55,8 @@ def compute_neighbors(word_array):
         instance_length = (length(pattern_instance[0]) 
                            + length(pattern_instance[1]))
         if word_length//2 + instance_length//2 <= size_limit:
-            some_neighbors = generate_insertions(word, pattern_instance)
+            some_neighbors = generate_insertions(
+                word, pattern_instance, size_limit)
             neighbor_count = nonzero_element_count(neighbors)
             new_neighbor_count = nonzero_element_count(some_neighbors)
             for i in range(new_neighbor_count):
@@ -81,6 +82,7 @@ def remove_zeros(flat_array):
             for j in range(filtered_array.size):
                 if filtered_array[j] == 0:
                     filtered_array[j] = flat_array[i]
+                    break
     return filtered_array
 
 
@@ -213,7 +215,6 @@ def permutations(flat_array, size, permutation_array):
                 num_generated += 1
 
     for i in range(flat_array.size):
-        #print(i, size, size_step, flat_array, permutation_array, new_permutation_array)
         if permutation_array.size == 0:
             new_permutation_array[i,0] = flat_array[i]
         else:
@@ -244,19 +245,17 @@ def permutations(flat_array, size, permutation_array):
             if not invalid:
                 for j in range(new_permutation_array.shape[1]):
                     permutation_array[i-offset, j] = new_permutation_array[i, j]
-        print(permutation_array)
         return permutation_array
     else:
         return permutations(flat_array, size, new_permutation_array)
 
 
-def generate_insertions(word, pattern_instance):
+def generate_insertions(word, pattern_instance, size_limit):
     # Generate new letter choices
     word_letters = letters(word)
-    new_letter_count = size(word) + length(pattern_instance[0])
-    new_letters = zeros(length(pattern_instance[0]), dtype=int32)
+    new_letters = zeros(size_limit - size(word), dtype=int32)
     offset = 0
-    for i in range(new_letter_count):
+    for i in range(size_limit):
         letter_taken = False
         for j in range(word_letters.size):
             if word_letters[j] == i+1:
@@ -287,7 +286,7 @@ def generate_insertions(word, pattern_instance):
             indices[j] = permutations_array[i, j]
         for j in range(pattern_instance.size):
             relabeled_part = word_from_letters(indices)
-            if return_word and i == 1:
+            if return_word and j == 1:
                 relabeled_part = reverse_word(relabeled_part)
             pattern_instance[j] = relabeled_part
         instances[i,0] = pattern_instance[0]
@@ -320,5 +319,4 @@ def generate_insertions(word, pattern_instance):
                     )
                 insertions[(word_length+1)*(word_length+1)*i 
                            + (word_length+1)*j + k] = new_word
-
     return insertions
