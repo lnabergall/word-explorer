@@ -4,6 +4,7 @@ representing the deletion of a repeat or return word.
 """
 
 from itertools import product, permutations
+from numpy import array
 
 from objects import is_equivalent, Word as Word_eq
 from word_graph_gpu import find_adjacent_vertices as find_adjacent_vertices_gpu
@@ -86,13 +87,16 @@ class WordGraph:
 
     def compute_neighborhoods(self):
         neighborhoods = {}
-        for word in self.vertices:
-            if self.use_gpu:
-                neighbors = find_adjacent_vertices_gpu(word, self.size_limit)
-            else:
+        if self.use_gpu:
+                vertices = [[word, self.size_limit] for word in self.vertices]
+                neighbors_list = find_adjacent_vertices_gpu(vertices)
+                for word, neighbors in zip(self.vertices, neighbors_list):
+                    neighborhoods[word] = neighbors
+        else:
+            for word in self.vertices:
                 neighbors = WordGraph.find_adjacent_vertices(
                     word, self.size_limit, self.word_class)
-            neighborhoods[word] = neighbors
+                neighborhoods[word] = neighbors
 
         return neighborhoods
 

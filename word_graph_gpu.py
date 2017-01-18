@@ -4,7 +4,7 @@ CUDA Python version of word_graph.py to support parallel computations via GPU.
 
 from math import log10, floor, fmod, ceil
 from accelerate.cuda import cuda
-from numba import vectorize
+from numba import guvectorize
 from numpy import array, zeros, int32, asscalar
 
 
@@ -19,17 +19,19 @@ RETURN_WORD_AO = array((
 NUM_NEIGHBOR_LIMIT = 10000
 
 
-def find_adjacent_vertices(word, size_limit):
+def find_adjacent_vertices(word_list):
     from word_graph import Word     # Avoid circular dependency
-    word_integer = word_from_letters_list(list(map(int, list(word))))
-    word_array = array([word_integer, size_limit], dtype=int32)
-    neighbors = compute_neighbors(word_array).tolist()
-    neighbors = set([Word("".join(list(map(str, letters(neighbor))))) 
-                     for neighbor in neighbors])
-    return neighbors
+    for i, pair in enumerate(word_list):
+        word_integer = word_from_letters_list(list(map(int, list(pair[0]))))
+        word_list[i] = [word_integer, pair[1]]
+    word_array = array(word_list, dtype=int32)
+    neighborhoods = compute_neighbors(word_array).tolist()
+    neighborhoods = [set([Word("".join(list(map(str, letters(neighbor))))) 
+                         for neighbor in neighbors]) for neighbors in neighborhoods]
+    return neighborhoods
 
 
-@vectorize(["int32[:](int32[:])"], target="gpu")
+@guvectorize(["int32[:](int32[:])"], "(1, 2) -> (n)", target="gpu")
 def compute_neighbors(word_array):
     """
     Args:
