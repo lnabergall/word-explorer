@@ -88,8 +88,8 @@ class WordGraph:
     def compute_neighborhoods(self):
         neighborhoods = {}
         if self.use_gpu:
-                vertices = [[word, self.size_limit] for word in self.vertices]
-                neighbors_list = find_adjacent_vertices_gpu(vertices)
+                neighbors_list = find_adjacent_vertices_gpu(
+                    self.vertices, self.size_limit)
                 for word, neighbors in zip(self.vertices, neighbors_list):
                     neighborhoods[word] = neighbors
         else:
