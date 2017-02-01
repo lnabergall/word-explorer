@@ -3,8 +3,9 @@ CUDA Python version of word_graph.py to support parallel computations via GPU.
 """
 
 from math import log10, floor, fmod, ceil
-from accelerate.cuda import cuda
-from numpy import array, zeros, int32, asscalar
+from numba import cuda
+from numpy import array, zeros, int32
+zeros_py = zeros
 
 
 REPEAT_WORD_AO = array((
@@ -25,7 +26,7 @@ def find_adjacent_vertices(word_list, size_limit):
         word_list[i] = word_integer
     word_array = array(word_list, dtype=int32)
     # Likely <10000 neighbors
-    neighborhoods = zeros((len(word_list), NUM_NEIGHBOR_LIMIT), dtype=int32)   
+    neighborhoods = zeros_py((len(word_list), NUM_NEIGHBOR_LIMIT), dtype=int32)   
     threads_perblock = 32
     blocks_perdim = (len(word_list) + (threads_perblock - 1)) // threads_perblock
     compute_neighbors[blocks_perdim, threads_perblock](
@@ -36,45 +37,23 @@ def find_adjacent_vertices(word_list, size_limit):
     return neighborhoods
 
 
-@cuda.jit("void(int32[:], int32[:], int32)")
-def compute_neighbors(word_array, neighborhoods, size_limit):
-    """
-    Args:
-        word_array: A numpy.ndarray with rows of the form [word, size_limit], 
-            with size_limit < 10.
-        neighborhoods: A 2D numpy.ndarray with the same number of rows 
-            as word_array.
-    Usage: Input numpy.ndarray of integers, returns numpy.ndarray 
-           of numpy.ndarrays with integer elements.
-    """
-    thread_num = cuda.grid(1)
-    for i in range(word_array.shape(0)):
-        if i == thread_num:
-            word = word_array[i, 0]
-            pattern_instance_count = (REPEAT_WORD_AO.size // REPEAT_WORD_AO.ndim 
-                                      + RETURN_WORD_AO.size // RETURN_WORD_AO.ndim)
-            word_length = length(word)
-            neighbors = zeros(neighborhoods.shape(1), dtype=int32) 
-            for j in range(pattern_instance_count):
-                if j <= pattern_instance_count//2 - 1:
-                    pattern_instance = array(
-                        (REPEAT_WORD_AO[0,j], REPEAT_WORD_AO[1,j]), dtype=int32)
-                else:
-                    j = j - pattern_instance_count//2
-                    pattern_instance = array(
-                        (RETURN_WORD_AO[0,j], RETURN_WORD_AO[1,j]), dtype=int32)
-                instance_length = (length(pattern_instance[0]) 
-                                   + length(pattern_instance[1]))
-                if word_length//2 + instance_length//2 <= size_limit:
-                    some_neighbors = generate_insertions(
-                        word, pattern_instance, size_limit)
-                    neighbor_count = nonzero_element_count(neighbors)
-                    new_neighbor_count = nonzero_element_count(some_neighbors)
-                    for k in range(new_neighbor_count):
-                        neighbors[neighbor_count+k] = some_neighbors[k]
-            neighbors = remove_zeros(neighbors)
-            for j in range(size(neighbors)):
-                neighborhoods[i, j] = neighbors[j]
+def word_from_letters_list(letters):
+    word = 0
+    for i in range(len(letters)):
+        word += get_letter(letters[i], len(letters)-i-1)
+    return word
+
+
+@cuda.jit("int32[:](int32, int32)", device=True)
+def zeros(dim1, dim2=1):
+    zeros_array = cuda.device_array((dim1, dim2), dtype=int32)
+    for i in range(dim1):
+        if dim2 > 1:
+            for j in range(dim2):
+                zeros_array[i, j] = 0
+        else:
+            zeros_array[i] = 0
+    return zeros_array
 
 
 @cuda.jit("int32(int32[:])", device=True)
@@ -89,7 +68,7 @@ def nonzero_element_count(flat_array):
 @cuda.jit("int32[:](int32[:])", device=True)
 def remove_zeros(flat_array):
     nonzero_count = nonzero_element_count(flat_array)
-    filtered_array = zeros(nonzero_count, dtype=int32)
+    filtered_array = zeros(dim1=nonzero_count)
     for i in range(flat_array.size):
         if flat_array[i] != 0:
             for j in range(filtered_array.size):
@@ -101,20 +80,16 @@ def remove_zeros(flat_array):
 
 @cuda.jit("int32(int32)", device=True)
 def digit_count(integer):
-    if type(integer) != int:
-        integer = asscalar(integer)
     if integer == 0:
         return 0
     else:
-        return floor(log10(integer)) + 1 
+        return floor(log10(integer)) + 1
 
 
 @cuda.jit("int32[:](int32)", device=True)
 def digits(integer):
-    if type(integer) != int:
-        integer = asscalar(integer)
     order = digit_count(integer)
-    digits = zeros(order, dtype=int32)
+    digits = zeros(dim1=order)
     for i in range(order):
         digits[order-i-1] = (
             int(fmod(integer, pow(10,i+1)) - fmod(integer, pow(10,i))) // pow(10,i))
@@ -149,8 +124,8 @@ def get_letter(integer, reverse_index):
 @cuda.jit("int32(int32[:], int32, int32, int32)", device=True)
 def array_slice(flat_array, start, end, step_size=1):
     if start >= end or flat_array.size == 0:
-        return zeros(0, dtype=int32)
-    slice_array = zeros(ceil((end-start)/step_size), dtype=int32)
+        return zeros(0)
+    slice_array = zeros(dim1=ceil((end-start)/step_size))
     for i in range(slice_array.size):
         slice_array[i] = flat_array[start + i*step_size]
     return slice_array
@@ -166,13 +141,6 @@ def word_from_letters(letters):
     word = 0
     for i in range(letters.size):
         word += get_letter(letters[i], letters.size-i-1)
-    return word
-
-
-def word_from_letters_list(letters):
-    word = 0
-    for i in range(len(letters)):
-        word += get_letter(letters[i], len(letters)-i-1)
     return word
 
 
@@ -193,7 +161,7 @@ def concatenate(word1, word2):
         return word1
     letters1 = letters(word1)
     letters2 = letters(word2)
-    all_letters = zeros(letters1.size + letters2.size, dtype=int32)
+    all_letters = zeros(dim1=letters1.size + letters2.size)
     for i in range(letters1.size + letters2.size):
         if i < letters1.size:
             all_letters[i] = letters1[i]
@@ -230,8 +198,7 @@ def permutations(flat_array, size, permutation_array):
         size_step = 1
     else:
         size_step = permutation_array.shape[1] + 1
-    new_permutation_array = zeros(
-        (tuple_num, size_step), dtype=int32)
+    new_permutation_array = zeros(dim1=tuple_num, dim2=size_step)
     num_generated = 0
     if permutation_array.size != 0:
         for i in range(tuple_num):
@@ -258,7 +225,7 @@ def permutations(flat_array, size, permutation_array):
     if size_step == size:
         # Remove 'permutations' with repetition
         offset = 0
-        permutation_array = zeros((permutation_num, size), dtype=int32)
+        permutation_array = zeros(dim1=permutation_num, dim2=size)
         for i in range(new_permutation_array.shape[0]):
             invalid = False
             for j in range(new_permutation_array.shape[1]):
@@ -282,7 +249,7 @@ def permutations(flat_array, size, permutation_array):
 def generate_insertions(word, pattern_instance, size_limit):
     # Generate new letter choices
     word_letters = letters(word)
-    new_letters = zeros(size_limit - size(word), dtype=int32)
+    new_letters = zeros(dim1=size_limit - size(word))
     offset = 0
     for i in range(size_limit):
         letter_taken = False
@@ -301,16 +268,16 @@ def generate_insertions(word, pattern_instance, size_limit):
         if (letter(pattern_instance[0], i) 
                 != letter(pattern_instance[1], instance_size-i-1)):
             return_word = False
-    insertions = zeros(NUM_NEIGHBOR_LIMIT, dtype=int32)
-    instances = zeros((NUM_NEIGHBOR_LIMIT, 2), dtype=int32)
+    insertions = zeros(dim1=NUM_NEIGHBOR_LIMIT)
+    instances = zeros(dim1=NUM_NEIGHBOR_LIMIT, dim2=2)
 
     permutation_num = permutation_count(new_letters.size, instance_letters.size)
-    permutations_array = permutations(new_letters, instance_letters.size, 
-                                      zeros(0, dtype=int32))
+    permutations_array = permutations(
+        new_letters, instance_letters.size, zeros(dim1=0))
 
     # Generate all pattern instance labelings
     for i in range(permutation_num):
-        indices = zeros(permutations_array.shape[1], dtype=int32)
+        indices = zeros(dim1=permutations_array.shape[1])
         for j in range(permutations_array.shape[1]):
             indices[j] = permutations_array[i, j]
         for j in range(pattern_instance.size):
@@ -349,3 +316,43 @@ def generate_insertions(word, pattern_instance, size_limit):
                 insertions[(word_length+1)*(word_length+1)*i 
                            + (word_length+1)*j + k] = new_word
     return insertions
+
+
+@cuda.jit("void(int32[:], int32[:], int32)")
+def compute_neighbors(word_array, neighborhoods, size_limit):
+    """
+    Args:
+        word_array: A 1D numpy.ndarray.
+        neighborhoods: A 2D numpy.ndarray with the same number of rows 
+            as word_array.
+    Usage: Input numpy.ndarray of integers, returns numpy.ndarray 
+           of numpy.ndarrays with integer elements.
+    """
+    thread_num = cuda.grid(1)
+    for i in range(word_array.shape(0)):
+        if i == thread_num:
+            word = word_array[i]
+            pattern_instance_count = (REPEAT_WORD_AO.size // REPEAT_WORD_AO.ndim 
+                                      + RETURN_WORD_AO.size // RETURN_WORD_AO.ndim)
+            word_length = length(word)
+            neighbors = zeros_py(neighborhoods.shape(1), dtype=int32) 
+            for j in range(pattern_instance_count):
+                if j <= pattern_instance_count//2 - 1:
+                    pattern_instance = array(
+                        (REPEAT_WORD_AO[0,j], REPEAT_WORD_AO[1,j]), dtype=int32)
+                else:
+                    j = j - pattern_instance_count//2
+                    pattern_instance = array(
+                        (RETURN_WORD_AO[0,j], RETURN_WORD_AO[1,j]), dtype=int32)
+                instance_length = (length(pattern_instance[0]) 
+                                   + length(pattern_instance[1]))
+                if word_length//2 + instance_length//2 <= size_limit:
+                    some_neighbors = generate_insertions(
+                        word, pattern_instance, size_limit)
+                    neighbor_count = nonzero_element_count(neighbors)
+                    new_neighbor_count = nonzero_element_count(some_neighbors)
+                    for k in range(new_neighbor_count):
+                        neighbors[neighbor_count+k] = some_neighbors[k]
+            neighbors = remove_zeros(neighbors)
+            for j in range(size(neighbors)):
+                neighborhoods[i, j] = neighbors[j]
