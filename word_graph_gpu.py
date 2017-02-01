@@ -5,17 +5,19 @@ CUDA Python version of word_graph.py to support parallel computations via GPU.
 from math import log10, floor, fmod, ceil
 from numba import cuda
 from numpy import array, zeros, int32
+int32_py = int32
+from numba.types import int32
 zeros_py = zeros
 
 
 REPEAT_WORD_AO = array((
     [1, 12, 123, 1234, 12345, 123456, 1234567, 12345678, 12345678, 123456789],
     [1, 12, 123, 1234, 12345, 123456, 1234567, 12345678, 12345678, 123456789],
-), dtype=int32)
+), dtype=int32_py)
 RETURN_WORD_AO = array((
     [1, 12, 123, 1234, 12345, 123456, 1234567, 12345678, 12345678, 123456789],
     [1, 21, 321, 4321, 54321, 654321, 7654321, 87654321, 87654321, 987654321],
-), dtype=int32)
+), dtype=int32_py)
 NUM_NEIGHBOR_LIMIT = 10000
 
 
@@ -26,7 +28,7 @@ def find_adjacent_vertices(word_list, size_limit):
         word_list[i] = word_integer
     word_array = array(word_list, dtype=int32)
     # Likely <10000 neighbors
-    neighborhoods = zeros_py((len(word_list), NUM_NEIGHBOR_LIMIT), dtype=int32)   
+    neighborhoods = zeros_py((len(word_list), NUM_NEIGHBOR_LIMIT), dtype=int32_py)   
     threads_perblock = 32
     blocks_perdim = (len(word_list) + (threads_perblock - 1)) // threads_perblock
     compute_neighbors[blocks_perdim, threads_perblock](
@@ -46,7 +48,7 @@ def word_from_letters_list(letters):
 
 @cuda.jit("int32[:](int32, int32)", device=True)
 def zeros(dim1, dim2=1):
-    zeros_array = cuda.device_array((dim1, dim2), dtype=int32)
+    zeros_array = cuda.shared.array((dim1, dim2), type=int32)
     for i in range(dim1):
         if dim2 > 1:
             for j in range(dim2):
