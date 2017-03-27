@@ -204,7 +204,6 @@ class StorageHandler():
 			with open(self.word_store, "r") as word_store:
 				for line in word_store:
 					if line.find(word) != -1:
-						print(line)
 						found = True
 						break
 				if not found:

@@ -48,9 +48,11 @@ Index: Pattern recurrence index; 5
 
 Word: 12132434
 Patterns: Repeat word, Return word, Tangled cord; 1
+Index: Pattern Recurrence Index; 3
 
 Word: 1122334455
 Index: LL index; 1
+Index: Pattern Recurrence Index; 5
 
 Word: 123243546576879891
 Index: pattern recurrence index; 6
@@ -161,9 +163,11 @@ Index: Pattern Recurrence Index; 5
 
 Word: 12324431
 Patterns: Letter removal, Repeat word, Return word; 2
+Index: Pattern Recurrence Index; 2
 
 Word: 1213243554
 Patterns: Letter removal, Fugazi pattern, Loop pattern; 3
+Index: Pattern Recurrence Index; 3
 
 Word: 12132435654768798a9a
 Patterns: Letter removal, Fugazi pattern, Loop pattern; 6
@@ -432,3 +436,3138 @@ Index: Pattern Recurrence Index; 3
 
 Word: 1234554312
 Index: Pattern Recurrence Index; 2
+
+Word: 1213424535
+Index: Pattern Recurrence Index; 3
+
+Word: 1122
+Index: Pattern Recurrence Index; 2
+
+Word: 123132
+Index: Pattern Recurrence Index; 2
+
+Word: 121233
+Index: Pattern Recurrence Index; 2
+
+Word: 122133
+Index: Pattern Recurrence Index; 2
+
+Word: 112233
+Index: Pattern Recurrence Index; 3
+
+Word: 123312
+Index: Pattern Recurrence Index; 2
+
+Word: 112323
+Index: Pattern Recurrence Index; 2
+
+Word: 112332
+Index: Pattern Recurrence Index; 2
+
+Word: 122331
+Index: Pattern Recurrence Index; 2
+
+Word: 12344132
+Index: Pattern Recurrence Index; 2
+
+Word: 12233144
+Index: Pattern Recurrence Index; 3
+
+Word: 12134234
+Index: Pattern Recurrence Index; 2
+
+Word: 12342431
+Index: Pattern Recurrence Index; 2
+
+Word: 11233244
+Index: Pattern Recurrence Index; 3
+
+Word: 12344231
+Index: Pattern Recurrence Index; 2
+
+Word: 12234431
+Index: Pattern Recurrence Index; 2
+
+Word: 12234413
+Index: Pattern Recurrence Index; 3
+
+Word: 12342143
+Index: Pattern Recurrence Index; 2
+
+Word: 12123344
+Index: Pattern Recurrence Index; 3
+
+Word: 12344312
+Index: Pattern Recurrence Index; 2
+
+Word: 12344321
+Index: Pattern Recurrence Index; 1
+
+Word: 12321434
+Index: Pattern Recurrence Index; 2
+
+Word: 12341432
+Index: Pattern Recurrence Index; 2
+
+Word: 12314324
+Index: Pattern Recurrence Index; 3
+
+Word: 11234324
+Index: Pattern Recurrence Index; 3
+
+Word: 12343142
+Index: Pattern Recurrence Index; 3
+
+Word: 12341243
+Index: Pattern Recurrence Index; 2
+
+Word: 12233414
+Index: Pattern Recurrence Index; 3
+
+Word: 12234143
+Index: Pattern Recurrence Index; 2
+
+Word: 12343241
+Index: Pattern Recurrence Index; 2
+
+Word: 12334214
+Index: Pattern Recurrence Index; 2
+
+Word: 12314342
+Index: Pattern Recurrence Index; 3
+
+Word: 12312434
+Index: Pattern Recurrence Index; 2
+
+Word: 12344213
+Index: Pattern Recurrence Index; 2
+
+Word: 12231434
+Index: Pattern Recurrence Index; 3
+
+Word: 12314432
+Index: Pattern Recurrence Index; 2
+
+Word: 12331244
+Index: Pattern Recurrence Index; 3
+
+Word: 12342314
+Index: Pattern Recurrence Index; 2
+
+Word: 12342134
+Index: Pattern Recurrence Index; 2
+
+Word: 12332414
+Index: Pattern Recurrence Index; 2
+
+Word: 12341324
+Index: Pattern Recurrence Index; 2
+
+Word: 12134324
+Index: Pattern Recurrence Index; 3
+
+Word: 12123434
+Index: Pattern Recurrence Index; 2
+
+Word: 12133442
+Index: Pattern Recurrence Index; 3
+
+Word: 12334421
+Index: Pattern Recurrence Index; 2
+
+Word: 12321443
+Index: Pattern Recurrence Index; 2
+
+Word: 12123443
+Index: Pattern Recurrence Index; 2
+
+Word: 12332144
+Index: Pattern Recurrence Index; 2
+
+Word: 12334142
+Index: Pattern Recurrence Index; 3
+
+Word: 12343421
+Index: Pattern Recurrence Index; 2
+
+Word: 12233441
+Index: Pattern Recurrence Index; 3
+
+Word: 12343412
+Index: Pattern Recurrence Index; 2
+
+Word: 11234432
+Index: Pattern Recurrence Index; 2
+
+Word: 12341423
+Index: Pattern Recurrence Index; 2
+
+Word: 12331442
+Index: Pattern Recurrence Index; 3
+
+Word: 12321344
+Index: Pattern Recurrence Index; 3
+
+Word: 12341342
+Index: Pattern Recurrence Index; 2
+
+Word: 12334124
+Index: Pattern Recurrence Index; 2
+
+Word: 11232434
+Index: Pattern Recurrence Index; 3
+
+Word: 12213344
+Index: Pattern Recurrence Index; 3
+
+Word: 12133244
+Index: Pattern Recurrence Index; 3
+
+Word: 12231344
+Index: Pattern Recurrence Index; 3
+
+Word: 12134243
+Index: Pattern Recurrence Index; 2
+
+Word: 12134342
+Index: Pattern Recurrence Index; 2
+
+Word: 12312344
+Index: Pattern Recurrence Index; 2
+
+Word: 11223434
+Index: Pattern Recurrence Index; 3
+
+Word: 11232344
+Index: Pattern Recurrence Index; 3
+
+Word: 11232443
+Index: Pattern Recurrence Index; 3
+
+Word: 11234423
+Index: Pattern Recurrence Index; 3
+
+Word: 11234234
+Index: Pattern Recurrence Index; 2
+
+Word: 11223443
+Index: Pattern Recurrence Index; 3
+
+Word: 11223344
+Index: Pattern Recurrence Index; 4
+
+Word: 12343214
+Index: Pattern Recurrence Index; 2
+
+Word: 12324413
+Index: Pattern Recurrence Index; 3
+
+Word: 12342341
+Index: Pattern Recurrence Index; 2
+
+Word: 12323144
+Index: Pattern Recurrence Index; 3
+
+Word: 12334241
+Index: Pattern Recurrence Index; 2
+
+Word: 12332441
+Index: Pattern Recurrence Index; 2
+
+Word: 12342413
+Index: Pattern Recurrence Index; 3
+
+Word: 11233442
+Index: Pattern Recurrence Index; 3
+
+Word: 12132443
+Index: Pattern Recurrence Index; 3
+
+Word: 11233424
+Index: Pattern Recurrence Index; 3
+
+Word: 12323414
+Index: Pattern Recurrence Index; 2
+
+Word: 11234342
+Index: Pattern Recurrence Index; 3
+
+Word: 12234134
+Index: Pattern Recurrence Index; 2
+
+Word: 12313244
+Index: Pattern Recurrence Index; 3
+
+Word: 11234243
+Index: Pattern Recurrence Index; 3
+
+Word: 12134423
+Index: Pattern Recurrence Index; 3
+
+Word: 12234341
+Index: Pattern Recurrence Index; 2
+
+Word: 12213443
+Index: Pattern Recurrence Index; 2
+
+Word: 12331424
+Index: Pattern Recurrence Index; 3
+
+Word: 12323441
+Index: Pattern Recurrence Index; 2
+
+Word: 12312443
+Index: Pattern Recurrence Index; 2
+
+Word: 12313424
+Index: Pattern Recurrence Index; 3
+
+Word: 12213434
+Index: Pattern Recurrence Index; 2
+
+Word: 12314423
+Index: Pattern Recurrence Index; 2
+
+Word: 12334412
+Index: Pattern Recurrence Index; 3
+
+Word: 12134432
+Index: Pattern Recurrence Index; 2
+
+Word: 12231443
+Index: Pattern Recurrence Index; 3
+
+Word: 12314234
+Index: Pattern Recurrence Index; 2
+
+Word: 12344123
+Index: Pattern Recurrence Index; 2
+
+Word: 1233455142
+Index: Pattern Recurrence Index; 3
+
+Word: 1232414535
+Index: Pattern Recurrence Index; 3
+
+Word: 1232144355
+Index: Pattern Recurrence Index; 3
+
+Word: 1234534152
+Index: Pattern Recurrence Index; 3
+
+Word: 1231423545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234541352
+Index: Pattern Recurrence Index; 3
+
+Word: 1213345524
+Index: Pattern Recurrence Index; 4
+
+Word: 1232145354
+Index: Pattern Recurrence Index; 3
+
+Word: 1233424515
+Index: Pattern Recurrence Index; 3
+
+Word: 1213445523
+Index: Pattern Recurrence Index; 4
+
+Word: 1213435254
+Index: Pattern Recurrence Index; 3
+
+Word: 1223144553
+Index: Pattern Recurrence Index; 4
+
+Word: 1223345451
+Index: Pattern Recurrence Index; 3
+
+Word: 1223453415
+Index: Pattern Recurrence Index; 3
+
+Word: 1234412355
+Index: Pattern Recurrence Index; 3
+
+Word: 1231345452
+Index: Pattern Recurrence Index; 3
+
+Word: 1234545321
+Index: Pattern Recurrence Index; 2
+
+Word: 1212344535
+Index: Pattern Recurrence Index; 3
+
+Word: 1213324455
+Index: Pattern Recurrence Index; 4
+
+Word: 1123432545
+Index: Pattern Recurrence Index; 3
+
+Word: 1123452453
+Index: Pattern Recurrence Index; 3
+
+Word: 1123454235
+Index: Pattern Recurrence Index; 3
+
+Word: 1231454235
+Index: Pattern Recurrence Index; 3
+
+Word: 1233414552
+Index: Pattern Recurrence Index; 4
+
+Word: 1234123545
+Index: Pattern Recurrence Index; 2
+
+Word: 1234155234
+Index: Pattern Recurrence Index; 2
+
+Word: 1234324551
+Index: Pattern Recurrence Index; 3
+
+Word: 1223454153
+Index: Pattern Recurrence Index; 3
+
+Word: 1233142545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234342551
+Index: Pattern Recurrence Index; 3
+
+Word: 1213452543
+Index: Pattern Recurrence Index; 2
+
+Word: 1234451532
+Index: Pattern Recurrence Index; 3
+
+Word: 1234251345
+Index: Pattern Recurrence Index; 2
+
+Word: 1234535142
+Index: Pattern Recurrence Index; 3
+
+Word: 1234425531
+Index: Pattern Recurrence Index; 3
+
+Word: 1233241455
+Index: Pattern Recurrence Index; 3
+
+Word: 1123345245
+Index: Pattern Recurrence Index; 3
+
+Word: 1234412553
+Index: Pattern Recurrence Index; 3
+
+Word: 1123435452
+Index: Pattern Recurrence Index; 4
+
+Word: 1234542153
+Index: Pattern Recurrence Index; 3
+
+Word: 1231434552
+Index: Pattern Recurrence Index; 3
+
+Word: 1223435145
+Index: Pattern Recurrence Index; 3
+
+Word: 1234315452
+Index: Pattern Recurrence Index; 3
+
+Word: 1213234455
+Index: Pattern Recurrence Index; 4
+
+Word: 1223341554
+Index: Pattern Recurrence Index; 4
+
+Word: 1221345435
+Index: Pattern Recurrence Index; 3
+
+Word: 1234234155
+Index: Pattern Recurrence Index; 3
+
+Word: 1234452315
+Index: Pattern Recurrence Index; 3
+
+Word: 1233425415
+Index: Pattern Recurrence Index; 3
+
+Word: 1234551234
+Index: Pattern Recurrence Index; 2
+
+Word: 1213454253
+Index: Pattern Recurrence Index; 3
+
+Word: 1232434551
+Index: Pattern Recurrence Index; 3
+
+Word: 1234352415
+Index: Pattern Recurrence Index; 3
+
+Word: 1234425315
+Index: Pattern Recurrence Index; 3
+
+Word: 1223441355
+Index: Pattern Recurrence Index; 4
+
+Word: 1231443255
+Index: Pattern Recurrence Index; 3
+
+Word: 1234125345
+Index: Pattern Recurrence Index; 2
+
+Word: 1223134545
+Index: Pattern Recurrence Index; 3
+
+Word: 1221334554
+Index: Pattern Recurrence Index; 3
+
+Word: 1233442551
+Index: Pattern Recurrence Index; 3
+
+Word: 1234512453
+Index: Pattern Recurrence Index; 2
+
+Word: 1234553412
+Index: Pattern Recurrence Index; 3
+
+Word: 1233442155
+Index: Pattern Recurrence Index; 3
+
+Word: 1213243545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234524135
+Index: Pattern Recurrence Index; 3
+
+Word: 1234153425
+Index: Pattern Recurrence Index; 3
+
+Word: 1231345524
+Index: Pattern Recurrence Index; 3
+
+Word: 1234254153
+Index: Pattern Recurrence Index; 4
+
+Word: 1233244515
+Index: Pattern Recurrence Index; 3
+
+Word: 1234525413
+Index: Pattern Recurrence Index; 3
+
+Word: 1234535241
+Index: Pattern Recurrence Index; 3
+
+Word: 1223455413
+Index: Pattern Recurrence Index; 3
+
+Word: 1123453542
+Index: Pattern Recurrence Index; 3
+
+Word: 1231245435
+Index: Pattern Recurrence Index; 3
+
+Word: 1213443525
+Index: Pattern Recurrence Index; 3
+
+Word: 1234531245
+Index: Pattern Recurrence Index; 2
+
+Word: 1234341525
+Index: Pattern Recurrence Index; 3
+
+Word: 1223435514
+Index: Pattern Recurrence Index; 4
+
+Word: 1123435542
+Index: Pattern Recurrence Index; 3
+
+Word: 1234513452
+Index: Pattern Recurrence Index; 2
+
+Word: 1234523154
+Index: Pattern Recurrence Index; 3
+
+Word: 1232445315
+Index: Pattern Recurrence Index; 3
+
+Word: 1213452354
+Index: Pattern Recurrence Index; 3
+
+Word: 1223415543
+Index: Pattern Recurrence Index; 3
+
+Word: 1234253415
+Index: Pattern Recurrence Index; 3
+
+Word: 1231423455
+Index: Pattern Recurrence Index; 3
+
+Word: 1233245541
+Index: Pattern Recurrence Index; 2
+
+Word: 1223414553
+Index: Pattern Recurrence Index; 3
+
+Word: 1234143552
+Index: Pattern Recurrence Index; 3
+
+Word: 1223443155
+Index: Pattern Recurrence Index; 3
+
+Word: 1233425145
+Index: Pattern Recurrence Index; 3
+
+Word: 1231245543
+Index: Pattern Recurrence Index; 2
+
+Word: 1231445523
+Index: Pattern Recurrence Index; 3
+
+Word: 1123452345
+Index: Pattern Recurrence Index; 2
+
+Word: 1234554132
+Index: Pattern Recurrence Index; 2
+
+Word: 1233441525
+Index: Pattern Recurrence Index; 4
+
+Word: 1234425351
+Index: Pattern Recurrence Index; 3
+
+Word: 1234455123
+Index: Pattern Recurrence Index; 3
+
+Word: 1232453415
+Index: Pattern Recurrence Index; 3
+
+Word: 1221343545
+Index: Pattern Recurrence Index; 3
+
+Word: 1232451345
+Index: Pattern Recurrence Index; 2
+
+Word: 1234553142
+Index: Pattern Recurrence Index; 3
+
+Word: 1123442535
+Index: Pattern Recurrence Index; 4
+
+Word: 1213244553
+Index: Pattern Recurrence Index; 4
+
+Word: 1234241535
+Index: Pattern Recurrence Index; 3
+
+Word: 1223453451
+Index: Pattern Recurrence Index; 2
+
+Word: 1232445531
+Index: Pattern Recurrence Index; 3
+
+Word: 1233145524
+Index: Pattern Recurrence Index; 3
+
+Word: 1233245451
+Index: Pattern Recurrence Index; 2
+
+Word: 1232341554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234355421
+Index: Pattern Recurrence Index; 2
+
+Word: 1213445253
+Index: Pattern Recurrence Index; 3
+
+Word: 1232443551
+Index: Pattern Recurrence Index; 3
+
+Word: 1234241355
+Index: Pattern Recurrence Index; 4
+
+Word: 1233454512
+Index: Pattern Recurrence Index; 3
+
+Word: 1232455134
+Index: Pattern Recurrence Index; 3
+
+Word: 1233145542
+Index: Pattern Recurrence Index; 3
+
+Word: 1234345125
+Index: Pattern Recurrence Index; 2
+
+Word: 1123445253
+Index: Pattern Recurrence Index; 4
+
+Word: 1213443255
+Index: Pattern Recurrence Index; 3
+
+Word: 1223144355
+Index: Pattern Recurrence Index; 4
+
+Word: 1234524315
+Index: Pattern Recurrence Index; 3
+
+Word: 1233424551
+Index: Pattern Recurrence Index; 3
+
+Word: 1123424535
+Index: Pattern Recurrence Index; 4
+
+Word: 1223445315
+Index: Pattern Recurrence Index; 3
+
+Word: 1213455234
+Index: Pattern Recurrence Index; 3
+
+Word: 1234354521
+Index: Pattern Recurrence Index; 3
+
+Word: 1234155342
+Index: Pattern Recurrence Index; 3
+
+Word: 1213445325
+Index: Pattern Recurrence Index; 3
+
+Word: 1234525314
+Index: Pattern Recurrence Index; 3
+
+Word: 1234535421
+Index: Pattern Recurrence Index; 2
+
+Word: 1234345152
+Index: Pattern Recurrence Index; 3
+
+Word: 1232434155
+Index: Pattern Recurrence Index; 4
+
+Word: 1234534215
+Index: Pattern Recurrence Index; 2
+
+Word: 1234314525
+Index: Pattern Recurrence Index; 3
+
+Word: 1234415352
+Index: Pattern Recurrence Index; 3
+
+Word: 1234152534
+Index: Pattern Recurrence Index; 2
+
+Word: 1234542315
+Index: Pattern Recurrence Index; 3
+
+Word: 1123425345
+Index: Pattern Recurrence Index; 3
+
+Word: 1234152435
+Index: Pattern Recurrence Index; 3
+
+Word: 1234125354
+Index: Pattern Recurrence Index; 2
+
+Word: 1234531425
+Index: Pattern Recurrence Index; 3
+
+Word: 1123344552
+Index: Pattern Recurrence Index; 4
+
+Word: 1231452435
+Index: Pattern Recurrence Index; 3
+
+Word: 1234545213
+Index: Pattern Recurrence Index; 3
+
+Word: 1233455412
+Index: Pattern Recurrence Index; 3
+
+Word: 1231244535
+Index: Pattern Recurrence Index; 3
+
+Word: 1122344553
+Index: Pattern Recurrence Index; 4
+
+Word: 1234135254
+Index: Pattern Recurrence Index; 3
+
+Word: 1233451425
+Index: Pattern Recurrence Index; 3
+
+Word: 1234523541
+Index: Pattern Recurrence Index; 2
+
+Word: 1221343455
+Index: Pattern Recurrence Index; 3
+
+Word: 1231453425
+Index: Pattern Recurrence Index; 3
+
+Word: 1223443515
+Index: Pattern Recurrence Index; 3
+
+Word: 1232451453
+Index: Pattern Recurrence Index; 3
+
+Word: 1223143455
+Index: Pattern Recurrence Index; 4
+
+Word: 1232415534
+Index: Pattern Recurrence Index; 3
+
+Word: 1221343554
+Index: Pattern Recurrence Index; 3
+
+Word: 1223454135
+Index: Pattern Recurrence Index; 3
+
+Word: 1234554321
+Index: Pattern Recurrence Index; 1
+
+Word: 1234455213
+Index: Pattern Recurrence Index; 3
+
+Word: 1234532145
+Index: Pattern Recurrence Index; 2
+
+Word: 1234213455
+Index: Pattern Recurrence Index; 3
+
+Word: 1231342455
+Index: Pattern Recurrence Index; 4
+
+Word: 1231424535
+Index: Pattern Recurrence Index; 3
+
+Word: 1233214554
+Index: Pattern Recurrence Index; 2
+
+Word: 1234421553
+Index: Pattern Recurrence Index; 3
+
+Word: 1232435451
+Index: Pattern Recurrence Index; 3
+
+Word: 1234515432
+Index: Pattern Recurrence Index; 2
+
+Word: 1234525134
+Index: Pattern Recurrence Index; 3
+
+Word: 1123345452
+Index: Pattern Recurrence Index; 3
+
+Word: 1234451325
+Index: Pattern Recurrence Index; 3
+
+Word: 1232143455
+Index: Pattern Recurrence Index; 3
+
+Word: 1213455324
+Index: Pattern Recurrence Index; 3
+
+Word: 1213455432
+Index: Pattern Recurrence Index; 2
+
+Word: 1233144525
+Index: Pattern Recurrence Index; 4
+
+Word: 1232445513
+Index: Pattern Recurrence Index; 4
+
+Word: 1123345254
+Index: Pattern Recurrence Index; 3
+
+Word: 1123425534
+Index: Pattern Recurrence Index; 3
+
+Word: 1213425543
+Index: Pattern Recurrence Index; 3
+
+Word: 1233421554
+Index: Pattern Recurrence Index; 3
+
+Word: 1213245534
+Index: Pattern Recurrence Index; 3
+
+Word: 1234315524
+Index: Pattern Recurrence Index; 3
+
+Word: 1213244535
+Index: Pattern Recurrence Index; 4
+
+Word: 1232445351
+Index: Pattern Recurrence Index; 3
+
+Word: 1223434515
+Index: Pattern Recurrence Index; 3
+
+Word: 1234452153
+Index: Pattern Recurrence Index; 3
+
+Word: 1231445325
+Index: Pattern Recurrence Index; 3
+
+Word: 1223445351
+Index: Pattern Recurrence Index; 3
+
+Word: 1123244553
+Index: Pattern Recurrence Index; 4
+
+Word: 1223451435
+Index: Pattern Recurrence Index; 3
+
+Word: 1234551324
+Index: Pattern Recurrence Index; 3
+
+Word: 1234451352
+Index: Pattern Recurrence Index; 3
+
+Word: 1234455312
+Index: Pattern Recurrence Index; 3
+
+Word: 1233245415
+Index: Pattern Recurrence Index; 3
+
+Word: 1123454352
+Index: Pattern Recurrence Index; 3
+
+Word: 1123342554
+Index: Pattern Recurrence Index; 4
+
+Word: 1233454152
+Index: Pattern Recurrence Index; 3
+
+Word: 1223415354
+Index: Pattern Recurrence Index; 3
+
+Word: 1233452145
+Index: Pattern Recurrence Index; 2
+
+Word: 1213245453
+Index: Pattern Recurrence Index; 3
+
+Word: 1234341255
+Index: Pattern Recurrence Index; 3
+
+Word: 1233451542
+Index: Pattern Recurrence Index; 3
+
+Word: 1234155423
+Index: Pattern Recurrence Index; 3
+
+Word: 1123442355
+Index: Pattern Recurrence Index; 4
+
+Word: 1232143545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234152345
+Index: Pattern Recurrence Index; 2
+
+Word: 1234154352
+Index: Pattern Recurrence Index; 3
+
+Word: 1123455423
+Index: Pattern Recurrence Index; 3
+
+Word: 1233452451
+Index: Pattern Recurrence Index; 2
+
+Word: 1123435524
+Index: Pattern Recurrence Index; 4
+
+Word: 1234354152
+Index: Pattern Recurrence Index; 3
+
+Word: 1123454253
+Index: Pattern Recurrence Index; 4
+
+Word: 1232345541
+Index: Pattern Recurrence Index; 2
+
+Word: 1234535124
+Index: Pattern Recurrence Index; 3
+
+Word: 1233451245
+Index: Pattern Recurrence Index; 2
+
+Word: 1233144255
+Index: Pattern Recurrence Index; 4
+
+Word: 1232443515
+Index: Pattern Recurrence Index; 3
+
+Word: 1231345254
+Index: Pattern Recurrence Index; 3
+
+Word: 1234255413
+Index: Pattern Recurrence Index; 3
+
+Word: 1233455214
+Index: Pattern Recurrence Index; 3
+
+Word: 1223345154
+Index: Pattern Recurrence Index; 3
+
+Word: 1234352451
+Index: Pattern Recurrence Index; 3
+
+Word: 1223344155
+Index: Pattern Recurrence Index; 4
+
+Word: 1232454135
+Index: Pattern Recurrence Index; 3
+
+Word: 1221344535
+Index: Pattern Recurrence Index; 3
+
+Word: 1123245435
+Index: Pattern Recurrence Index; 4
+
+Word: 1234415532
+Index: Pattern Recurrence Index; 3
+
+Word: 1234132455
+Index: Pattern Recurrence Index; 3
+
+Word: 1223344551
+Index: Pattern Recurrence Index; 4
+
+Word: 1223455143
+Index: Pattern Recurrence Index; 3
+
+Word: 1123345524
+Index: Pattern Recurrence Index; 4
+
+Word: 1234513425
+Index: Pattern Recurrence Index; 2
+
+Word: 1233412554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234545312
+Index: Pattern Recurrence Index; 3
+
+Word: 1232455314
+Index: Pattern Recurrence Index; 3
+
+Word: 1123453254
+Index: Pattern Recurrence Index; 3
+
+Word: 1123443255
+Index: Pattern Recurrence Index; 3
+
+Word: 1234525341
+Index: Pattern Recurrence Index; 3
+
+Word: 1234452513
+Index: Pattern Recurrence Index; 3
+
+Word: 1231443552
+Index: Pattern Recurrence Index; 3
+
+Word: 1223345145
+Index: Pattern Recurrence Index; 3
+
+Word: 1234452531
+Index: Pattern Recurrence Index; 3
+
+Word: 1233124545
+Index: Pattern Recurrence Index; 3
+
+Word: 1122345534
+Index: Pattern Recurrence Index; 4
+
+Word: 1233445521
+Index: Pattern Recurrence Index; 3
+
+Word: 1234542351
+Index: Pattern Recurrence Index; 3
+
+Word: 1223431545
+Index: Pattern Recurrence Index; 3
+
+Word: 1223443551
+Index: Pattern Recurrence Index; 3
+
+Word: 1232454153
+Index: Pattern Recurrence Index; 3
+
+Word: 1233412455
+Index: Pattern Recurrence Index; 3
+
+Word: 1234541532
+Index: Pattern Recurrence Index; 3
+
+Word: 1233415452
+Index: Pattern Recurrence Index; 3
+
+Word: 1232455143
+Index: Pattern Recurrence Index; 3
+
+Word: 1122345453
+Index: Pattern Recurrence Index; 4
+
+Word: 1122345435
+Index: Pattern Recurrence Index; 4
+
+Word: 1231245534
+Index: Pattern Recurrence Index; 3
+
+Word: 1233245145
+Index: Pattern Recurrence Index; 2
+
+Word: 1123245534
+Index: Pattern Recurrence Index; 4
+
+Word: 1213432455
+Index: Pattern Recurrence Index; 4
+
+Word: 1234351542
+Index: Pattern Recurrence Index; 3
+
+Word: 1231244355
+Index: Pattern Recurrence Index; 3
+
+Word: 1123344525
+Index: Pattern Recurrence Index; 4
+
+Word: 1123442553
+Index: Pattern Recurrence Index; 4
+
+Word: 1234132545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234145235
+Index: Pattern Recurrence Index; 3
+
+Word: 1223451534
+Index: Pattern Recurrence Index; 3
+
+Word: 1234542513
+Index: Pattern Recurrence Index; 3
+
+Word: 1234552431
+Index: Pattern Recurrence Index; 2
+
+Word: 1231342554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234453251
+Index: Pattern Recurrence Index; 2
+
+Word: 1123344255
+Index: Pattern Recurrence Index; 4
+
+Word: 1123443525
+Index: Pattern Recurrence Index; 3
+
+Word: 1232144535
+Index: Pattern Recurrence Index; 3
+
+Word: 1234455231
+Index: Pattern Recurrence Index; 3
+
+Word: 1234551243
+Index: Pattern Recurrence Index; 2
+
+Word: 1233421545
+Index: Pattern Recurrence Index; 3
+
+Word: 1232144553
+Index: Pattern Recurrence Index; 3
+
+Word: 1234523514
+Index: Pattern Recurrence Index; 3
+
+Word: 1234314255
+Index: Pattern Recurrence Index; 4
+
+Word: 1213453524
+Index: Pattern Recurrence Index; 3
+
+Word: 1223341455
+Index: Pattern Recurrence Index; 4
+
+Word: 1221345354
+Index: Pattern Recurrence Index; 3
+
+Word: 1234515234
+Index: Pattern Recurrence Index; 2
+
+Word: 1234245153
+Index: Pattern Recurrence Index; 3
+
+Word: 1223435415
+Index: Pattern Recurrence Index; 3
+
+Word: 1123434552
+Index: Pattern Recurrence Index; 3
+
+Word: 1234421535
+Index: Pattern Recurrence Index; 3
+
+Word: 1232435145
+Index: Pattern Recurrence Index; 3
+
+Word: 1231425453
+Index: Pattern Recurrence Index; 3
+
+Word: 1223314545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234153524
+Index: Pattern Recurrence Index; 3
+
+Word: 1232453145
+Index: Pattern Recurrence Index; 3
+
+Word: 1234314552
+Index: Pattern Recurrence Index; 3
+
+Word: 1234541523
+Index: Pattern Recurrence Index; 3
+
+Word: 1234352541
+Index: Pattern Recurrence Index; 3
+
+Word: 1231245354
+Index: Pattern Recurrence Index; 2
+
+Word: 1232454531
+Index: Pattern Recurrence Index; 3
+
+Word: 1213243455
+Index: Pattern Recurrence Index; 4
+
+Word: 1223415435
+Index: Pattern Recurrence Index; 3
+
+Word: 1212334455
+Index: Pattern Recurrence Index; 4
+
+Word: 1234513245
+Index: Pattern Recurrence Index; 2
+
+Word: 1123455432
+Index: Pattern Recurrence Index; 2
+
+Word: 1234345512
+Index: Pattern Recurrence Index; 3
+
+Word: 1213435542
+Index: Pattern Recurrence Index; 3
+
+Word: 1231452354
+Index: Pattern Recurrence Index; 2
+
+Word: 1223345541
+Index: Pattern Recurrence Index; 3
+
+Word: 1233425541
+Index: Pattern Recurrence Index; 3
+
+Word: 1123245354
+Index: Pattern Recurrence Index; 3
+
+Word: 1213455342
+Index: Pattern Recurrence Index; 3
+
+Word: 1223441535
+Index: Pattern Recurrence Index; 4
+
+Word: 1234354512
+Index: Pattern Recurrence Index; 3
+
+Word: 1213453452
+Index: Pattern Recurrence Index; 2
+
+Word: 1234135245
+Index: Pattern Recurrence Index; 3
+
+Word: 1232414355
+Index: Pattern Recurrence Index; 4
+
+Word: 1232435514
+Index: Pattern Recurrence Index; 3
+
+Word: 1234354125
+Index: Pattern Recurrence Index; 3
+
+Word: 1234153254
+Index: Pattern Recurrence Index; 3
+
+Word: 1213245435
+Index: Pattern Recurrence Index; 3
+
+Word: 1212344553
+Index: Pattern Recurrence Index; 3
+
+Word: 1234453125
+Index: Pattern Recurrence Index; 3
+
+Word: 1234515423
+Index: Pattern Recurrence Index; 2
+
+Word: 1234312545
+Index: Pattern Recurrence Index; 3
+
+Word: 1123454523
+Index: Pattern Recurrence Index; 3
+
+Word: 1123234545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234245513
+Index: Pattern Recurrence Index; 3
+
+Word: 1213455423
+Index: Pattern Recurrence Index; 3
+
+Word: 1223413554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234142355
+Index: Pattern Recurrence Index; 3
+
+Word: 1213445235
+Index: Pattern Recurrence Index; 3
+
+Word: 1234254315
+Index: Pattern Recurrence Index; 3
+
+Word: 1234231554
+Index: Pattern Recurrence Index; 3
+
+Word: 1221334545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234255431
+Index: Pattern Recurrence Index; 2
+
+Word: 1234324155
+Index: Pattern Recurrence Index; 3
+
+Word: 1234135542
+Index: Pattern Recurrence Index; 3
+
+Word: 1234125435
+Index: Pattern Recurrence Index; 3
+
+Word: 1223345514
+Index: Pattern Recurrence Index; 4
+
+Word: 1234135425
+Index: Pattern Recurrence Index; 3
+
+Word: 1231324554
+Index: Pattern Recurrence Index; 3
+
+Word: 1233214455
+Index: Pattern Recurrence Index; 3
+
+Word: 1223145354
+Index: Pattern Recurrence Index; 3
+
+Word: 1234154532
+Index: Pattern Recurrence Index; 3
+
+Word: 1123455243
+Index: Pattern Recurrence Index; 3
+
+Word: 1232413545
+Index: Pattern Recurrence Index; 3
+
+Word: 1122343554
+Index: Pattern Recurrence Index; 4
+
+Word: 1234124355
+Index: Pattern Recurrence Index; 3
+
+Word: 1234253451
+Index: Pattern Recurrence Index; 3
+
+Word: 1233452541
+Index: Pattern Recurrence Index; 2
+
+Word: 1213345425
+Index: Pattern Recurrence Index; 4
+
+Word: 1234215354
+Index: Pattern Recurrence Index; 3
+
+Word: 1223415345
+Index: Pattern Recurrence Index; 3
+
+Word: 1221344355
+Index: Pattern Recurrence Index; 3
+
+Word: 1234515342
+Index: Pattern Recurrence Index; 3
+
+Word: 1234512534
+Index: Pattern Recurrence Index; 2
+
+Word: 1234514325
+Index: Pattern Recurrence Index; 2
+
+Word: 1234124535
+Index: Pattern Recurrence Index; 3
+
+Word: 1223453514
+Index: Pattern Recurrence Index; 3
+
+Word: 1223134554
+Index: Pattern Recurrence Index; 3
+
+Word: 1233244551
+Index: Pattern Recurrence Index; 3
+
+Word: 1123435245
+Index: Pattern Recurrence Index; 3
+
+Word: 1123244355
+Index: Pattern Recurrence Index; 4
+
+Word: 1231435542
+Index: Pattern Recurrence Index; 3
+
+Word: 1123425543
+Index: Pattern Recurrence Index; 3
+
+Word: 1231434525
+Index: Pattern Recurrence Index; 3
+
+Word: 1233451452
+Index: Pattern Recurrence Index; 3
+
+Word: 1213443552
+Index: Pattern Recurrence Index; 3
+
+Word: 1231442355
+Index: Pattern Recurrence Index; 3
+
+Word: 1232454315
+Index: Pattern Recurrence Index; 3
+
+Word: 1234452135
+Index: Pattern Recurrence Index; 3
+
+Word: 1231344525
+Index: Pattern Recurrence Index; 4
+
+Word: 1234125543
+Index: Pattern Recurrence Index; 2
+
+Word: 1234145253
+Index: Pattern Recurrence Index; 3
+
+Word: 1234352514
+Index: Pattern Recurrence Index; 3
+
+Word: 1213454325
+Index: Pattern Recurrence Index; 3
+
+Word: 1213435245
+Index: Pattern Recurrence Index; 3
+
+Word: 1223134455
+Index: Pattern Recurrence Index; 4
+
+Word: 1123234554
+Index: Pattern Recurrence Index; 3
+
+Word: 1231455423
+Index: Pattern Recurrence Index; 2
+
+Word: 1234145352
+Index: Pattern Recurrence Index; 3
+
+Word: 1122345354
+Index: Pattern Recurrence Index; 4
+
+Word: 1231454523
+Index: Pattern Recurrence Index; 2
+
+Word: 1223435154
+Index: Pattern Recurrence Index; 3
+
+Word: 1234521534
+Index: Pattern Recurrence Index; 3
+
+Word: 1213435425
+Index: Pattern Recurrence Index; 3
+
+Word: 1221345534
+Index: Pattern Recurrence Index; 3
+
+Word: 1122345345
+Index: Pattern Recurrence Index; 3
+
+Word: 1234154253
+Index: Pattern Recurrence Index; 3
+
+Word: 1234132554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234535412
+Index: Pattern Recurrence Index; 3
+
+Word: 1123345542
+Index: Pattern Recurrence Index; 3
+
+Word: 1223445135
+Index: Pattern Recurrence Index; 3
+
+Word: 1123453245
+Index: Pattern Recurrence Index; 3
+
+Word: 1233441552
+Index: Pattern Recurrence Index; 4
+
+Word: 1234155243
+Index: Pattern Recurrence Index; 3
+
+Word: 1234235415
+Index: Pattern Recurrence Index; 3
+
+Word: 1212343554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234125534
+Index: Pattern Recurrence Index; 2
+
+Word: 1232134554
+Index: Pattern Recurrence Index; 3
+
+Word: 1123245543
+Index: Pattern Recurrence Index; 3
+
+Word: 1234551423
+Index: Pattern Recurrence Index; 3
+
+Word: 1233454125
+Index: Pattern Recurrence Index; 3
+
+Word: 1123324455
+Index: Pattern Recurrence Index; 4
+
+Word: 1213454352
+Index: Pattern Recurrence Index; 3
+
+Word: 1234325415
+Index: Pattern Recurrence Index; 3
+
+Word: 1213442553
+Index: Pattern Recurrence Index; 4
+
+Word: 1234451235
+Index: Pattern Recurrence Index; 2
+
+Word: 1234423551
+Index: Pattern Recurrence Index; 3
+
+Word: 1223455134
+Index: Pattern Recurrence Index; 3
+
+Word: 1231432455
+Index: Pattern Recurrence Index; 4
+
+Word: 1122344535
+Index: Pattern Recurrence Index; 4
+
+Word: 1234425153
+Index: Pattern Recurrence Index; 3
+
+Word: 1223445153
+Index: Pattern Recurrence Index; 3
+
+Word: 1232341455
+Index: Pattern Recurrence Index; 3
+
+Word: 1213453425
+Index: Pattern Recurrence Index; 3
+
+Word: 1234552413
+Index: Pattern Recurrence Index; 3
+
+Word: 1223314554
+Index: Pattern Recurrence Index; 3
+
+Word: 1123452534
+Index: Pattern Recurrence Index; 3
+
+Word: 1213434552
+Index: Pattern Recurrence Index; 3
+
+Word: 1234453215
+Index: Pattern Recurrence Index; 2
+
+Word: 1234153452
+Index: Pattern Recurrence Index; 3
+
+Word: 1233142455
+Index: Pattern Recurrence Index; 4
+
+Word: 1231234455
+Index: Pattern Recurrence Index; 3
+
+Word: 1231454352
+Index: Pattern Recurrence Index; 3
+
+Word: 1231344552
+Index: Pattern Recurrence Index; 4
+
+Word: 1231245453
+Index: Pattern Recurrence Index; 2
+
+Word: 1234254135
+Index: Pattern Recurrence Index; 3
+
+Word: 1123342455
+Index: Pattern Recurrence Index; 4
+
+Word: 1421324535
+Index: Pattern Recurrence Index; 3
+
+Word: 1234551432
+Index: Pattern Recurrence Index; 2
+
+Word: 1234312455
+Index: Pattern Recurrence Index; 3
+
+Word: 1234251435
+Index: Pattern Recurrence Index; 3
+
+Word: 1231434255
+Index: Pattern Recurrence Index; 4
+
+Word: 1234135524
+Index: Pattern Recurrence Index; 3
+
+Word: 1223414355
+Index: Pattern Recurrence Index; 3
+
+Word: 1231234554
+Index: Pattern Recurrence Index; 2
+
+Word: 1213425345
+Index: Pattern Recurrence Index; 3
+
+Word: 1234251543
+Index: Pattern Recurrence Index; 3
+
+Word: 1234435512
+Index: Pattern Recurrence Index; 3
+
+Word: 1234455132
+Index: Pattern Recurrence Index; 3
+
+Word: 1234545132
+Index: Pattern Recurrence Index; 3
+
+Word: 1232434515
+Index: Pattern Recurrence Index; 3
+
+Word: 1232314545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234553421
+Index: Pattern Recurrence Index; 2
+
+Word: 1213245354
+Index: Pattern Recurrence Index; 3
+
+Word: 1231455432
+Index: Pattern Recurrence Index; 2
+
+Word: 1223451354
+Index: Pattern Recurrence Index; 3
+
+Word: 1223455314
+Index: Pattern Recurrence Index; 3
+
+Word: 1232441355
+Index: Pattern Recurrence Index; 4
+
+Word: 1232453514
+Index: Pattern Recurrence Index; 3
+
+Word: 1234123554
+Index: Pattern Recurrence Index; 2
+
+Word: 1233455421
+Index: Pattern Recurrence Index; 2
+
+Word: 1223435451
+Index: Pattern Recurrence Index; 3
+
+Word: 1234231455
+Index: Pattern Recurrence Index; 3
+
+Word: 1123453425
+Index: Pattern Recurrence Index; 3
+
+Word: 1231435245
+Index: Pattern Recurrence Index; 3
+
+Word: 1231344255
+Index: Pattern Recurrence Index; 4
+
+Word: 1234431525
+Index: Pattern Recurrence Index; 3
+
+Word: 1233452514
+Index: Pattern Recurrence Index; 3
+
+Word: 1234412535
+Index: Pattern Recurrence Index; 3
+
+Word: 1234524513
+Index: Pattern Recurrence Index; 3
+
+Word: 1232413455
+Index: Pattern Recurrence Index; 3
+
+Word: 1234253541
+Index: Pattern Recurrence Index; 3
+
+Word: 1234534125
+Index: Pattern Recurrence Index; 2
+
+Word: 1232415453
+Index: Pattern Recurrence Index; 3
+
+Word: 1234514352
+Index: Pattern Recurrence Index; 3
+
+Word: 1234455321
+Index: Pattern Recurrence Index; 2
+
+Word: 1123445523
+Index: Pattern Recurrence Index; 4
+
+Word: 1234255314
+Index: Pattern Recurrence Index; 3
+
+Word: 1231452543
+Index: Pattern Recurrence Index; 2
+
+Word: 1233244155
+Index: Pattern Recurrence Index; 3
+
+Word: 1231324545
+Index: Pattern Recurrence Index; 3
+
+Word: 1123452543
+Index: Pattern Recurrence Index; 3
+
+Word: 1232451543
+Index: Pattern Recurrence Index; 3
+
+Word: 1123425453
+Index: Pattern Recurrence Index; 4
+
+Word: 1234253514
+Index: Pattern Recurrence Index; 3
+
+Word: 1234413255
+Index: Pattern Recurrence Index; 3
+
+Word: 1212345534
+Index: Pattern Recurrence Index; 3
+
+Word: 1234531524
+Index: Pattern Recurrence Index; 3
+
+Word: 1234134552
+Index: Pattern Recurrence Index; 3
+
+Word: 1233415254
+Index: Pattern Recurrence Index; 3
+
+Word: 1234152354
+Index: Pattern Recurrence Index; 2
+
+Word: 1234325145
+Index: Pattern Recurrence Index; 2
+
+Word: 1234215534
+Index: Pattern Recurrence Index; 3
+
+Word: 1234342155
+Index: Pattern Recurrence Index; 3
+
+Word: 1234423155
+Index: Pattern Recurrence Index; 3
+
+Word: 1213342455
+Index: Pattern Recurrence Index; 4
+
+Word: 1234243155
+Index: Pattern Recurrence Index; 3
+
+Word: 1123454532
+Index: Pattern Recurrence Index; 3
+
+Word: 1234134525
+Index: Pattern Recurrence Index; 3
+
+Word: 1231243455
+Index: Pattern Recurrence Index; 3
+
+Word: 1234532154
+Index: Pattern Recurrence Index; 2
+
+Word: 1233445152
+Index: Pattern Recurrence Index; 4
+
+Word: 1234514532
+Index: Pattern Recurrence Index; 2
+
+Word: 1213453542
+Index: Pattern Recurrence Index; 3
+
+Word: 1212343455
+Index: Pattern Recurrence Index; 3
+
+Word: 1213453254
+Index: Pattern Recurrence Index; 3
+
+Word: 1231243554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234554123
+Index: Pattern Recurrence Index; 2
+
+Word: 1231345425
+Index: Pattern Recurrence Index; 3
+
+Word: 1123434525
+Index: Pattern Recurrence Index; 3
+
+Word: 1234345251
+Index: Pattern Recurrence Index; 3
+
+Word: 1234453521
+Index: Pattern Recurrence Index; 2
+
+Word: 1234215453
+Index: Pattern Recurrence Index; 3
+
+Word: 1231435452
+Index: Pattern Recurrence Index; 3
+
+Word: 1234513542
+Index: Pattern Recurrence Index; 3
+
+Word: 1123445532
+Index: Pattern Recurrence Index; 3
+
+Word: 1231324455
+Index: Pattern Recurrence Index; 4
+
+Word: 1232134455
+Index: Pattern Recurrence Index; 4
+
+Word: 1123452354
+Index: Pattern Recurrence Index; 3
+
+Word: 1123434255
+Index: Pattern Recurrence Index; 4
+
+Word: 1234532451
+Index: Pattern Recurrence Index; 2
+
+Word: 1234355124
+Index: Pattern Recurrence Index; 3
+
+Word: 1213425354
+Index: Pattern Recurrence Index; 3
+
+Word: 1223455431
+Index: Pattern Recurrence Index; 2
+
+Word: 1231423554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234415235
+Index: Pattern Recurrence Index; 3
+
+Word: 1232415354
+Index: Pattern Recurrence Index; 3
+
+Word: 1234524351
+Index: Pattern Recurrence Index; 3
+
+Word: 1223455341
+Index: Pattern Recurrence Index; 3
+
+Word: 1234243551
+Index: Pattern Recurrence Index; 3
+
+Word: 1213423554
+Index: Pattern Recurrence Index; 3
+
+Word: 1123455234
+Index: Pattern Recurrence Index; 3
+
+Word: 1233145452
+Index: Pattern Recurrence Index; 3
+
+Word: 1234154235
+Index: Pattern Recurrence Index; 3
+
+Word: 1234553241
+Index: Pattern Recurrence Index; 2
+
+Word: 1234543521
+Index: Pattern Recurrence Index; 2
+
+Word: 1234355241
+Index: Pattern Recurrence Index; 3
+
+Word: 1234554213
+Index: Pattern Recurrence Index; 2
+
+Word: 1213342554
+Index: Pattern Recurrence Index; 4
+
+Word: 1234425513
+Index: Pattern Recurrence Index; 3
+
+Word: 1123454325
+Index: Pattern Recurrence Index; 3
+
+Word: 1223145453
+Index: Pattern Recurrence Index; 3
+
+Word: 1213442535
+Index: Pattern Recurrence Index; 4
+
+Word: 1234341552
+Index: Pattern Recurrence Index; 3
+
+Word: 1213324545
+Index: Pattern Recurrence Index; 3
+
+Word: 1233455241
+Index: Pattern Recurrence Index; 3
+
+Word: 1234413552
+Index: Pattern Recurrence Index; 3
+
+Word: 1231454253
+Index: Pattern Recurrence Index; 3
+
+Word: 1234531452
+Index: Pattern Recurrence Index; 3
+
+Word: 1231455243
+Index: Pattern Recurrence Index; 3
+
+Word: 1234235154
+Index: Pattern Recurrence Index; 3
+
+Word: 1234523145
+Index: Pattern Recurrence Index; 2
+
+Word: 1234254513
+Index: Pattern Recurrence Index; 3
+
+Word: 1213425453
+Index: Pattern Recurrence Index; 3
+
+Word: 1231445352
+Index: Pattern Recurrence Index; 3
+
+Word: 1234525431
+Index: Pattern Recurrence Index; 2
+
+Word: 1122345543
+Index: Pattern Recurrence Index; 3
+
+Word: 1231452345
+Index: Pattern Recurrence Index; 2
+
+Word: 1234355142
+Index: Pattern Recurrence Index; 3
+
+Word: 1234423515
+Index: Pattern Recurrence Index; 3
+
+Word: 1234541235
+Index: Pattern Recurrence Index; 2
+
+Word: 1233415524
+Index: Pattern Recurrence Index; 3
+
+Word: 1213344255
+Index: Pattern Recurrence Index; 4
+
+Word: 1223435541
+Index: Pattern Recurrence Index; 3
+
+Word: 1234312554
+Index: Pattern Recurrence Index; 3
+
+Word: 1233142554
+Index: Pattern Recurrence Index; 3
+
+Word: 1231234545
+Index: Pattern Recurrence Index; 2
+
+Word: 1223451453
+Index: Pattern Recurrence Index; 3
+
+Word: 1234245531
+Index: Pattern Recurrence Index; 3
+
+Word: 1231345245
+Index: Pattern Recurrence Index; 3
+
+Word: 1232431455
+Index: Pattern Recurrence Index; 4
+
+Word: 1234543512
+Index: Pattern Recurrence Index; 3
+
+Word: 1234245351
+Index: Pattern Recurrence Index; 3
+
+Word: 1234432551
+Index: Pattern Recurrence Index; 2
+
+Word: 1232145543
+Index: Pattern Recurrence Index; 2
+
+Word: 1231425354
+Index: Pattern Recurrence Index; 3
+
+Word: 1234143525
+Index: Pattern Recurrence Index; 3
+
+Word: 1223434551
+Index: Pattern Recurrence Index; 3
+
+Word: 1213445352
+Index: Pattern Recurrence Index; 3
+
+Word: 1123453524
+Index: Pattern Recurrence Index; 4
+
+Word: 1234525143
+Index: Pattern Recurrence Index; 3
+
+Word: 1223414535
+Index: Pattern Recurrence Index; 3
+
+Word: 1234214355
+Index: Pattern Recurrence Index; 3
+
+Word: 1123452435
+Index: Pattern Recurrence Index; 3
+
+Word: 1232441553
+Index: Pattern Recurrence Index; 3
+
+Word: 1232314455
+Index: Pattern Recurrence Index; 4
+
+Word: 1233415245
+Index: Pattern Recurrence Index; 3
+
+Word: 1231454532
+Index: Pattern Recurrence Index; 3
+
+Word: 1123243455
+Index: Pattern Recurrence Index; 4
+
+Word: 1234321545
+Index: Pattern Recurrence Index; 2
+
+Word: 1213345542
+Index: Pattern Recurrence Index; 3
+
+Word: 1223451543
+Index: Pattern Recurrence Index; 2
+
+Word: 1234142553
+Index: Pattern Recurrence Index; 3
+
+Word: 1212345435
+Index: Pattern Recurrence Index; 3
+
+Word: 1123445352
+Index: Pattern Recurrence Index; 3
+
+Word: 1232454513
+Index: Pattern Recurrence Index; 3
+
+Word: 1122334554
+Index: Pattern Recurrence Index; 4
+
+Word: 1232455341
+Index: Pattern Recurrence Index; 3
+
+Word: 1234513254
+Index: Pattern Recurrence Index; 3
+
+Word: 1234152543
+Index: Pattern Recurrence Index; 3
+
+Word: 1231452453
+Index: Pattern Recurrence Index; 2
+
+Word: 1233445125
+Index: Pattern Recurrence Index; 3
+
+Word: 1234453152
+Index: Pattern Recurrence Index; 3
+
+Word: 1232435154
+Index: Pattern Recurrence Index; 3
+
+Word: 1231345542
+Index: Pattern Recurrence Index; 3
+
+Word: 1234523415
+Index: Pattern Recurrence Index; 2
+
+Word: 1123445235
+Index: Pattern Recurrence Index; 3
+
+Word: 1234154523
+Index: Pattern Recurrence Index; 3
+
+Word: 1231424553
+Index: Pattern Recurrence Index; 3
+
+Word: 1234431255
+Index: Pattern Recurrence Index; 3
+
+Word: 1234135452
+Index: Pattern Recurrence Index; 3
+
+Word: 1213234554
+Index: Pattern Recurrence Index; 3
+
+Word: 1232435415
+Index: Pattern Recurrence Index; 3
+
+Word: 1123455342
+Index: Pattern Recurrence Index; 3
+
+Word: 1231432545
+Index: Pattern Recurrence Index; 3
+
+Word: 1232344515
+Index: Pattern Recurrence Index; 3
+
+Word: 1234214553
+Index: Pattern Recurrence Index; 3
+
+Word: 1234545231
+Index: Pattern Recurrence Index; 3
+
+Word: 1212345543
+Index: Pattern Recurrence Index; 2
+
+Word: 1213423455
+Index: Pattern Recurrence Index; 3
+
+Word: 1234231545
+Index: Pattern Recurrence Index; 3
+
+Word: 1233441255
+Index: Pattern Recurrence Index; 4
+
+Word: 1232453541
+Index: Pattern Recurrence Index; 3
+
+Word: 1234351245
+Index: Pattern Recurrence Index; 2
+
+Word: 1213435524
+Index: Pattern Recurrence Index; 4
+
+Word: 1223445531
+Index: Pattern Recurrence Index; 3
+
+Word: 1234534512
+Index: Pattern Recurrence Index; 2
+
+Word: 1223314455
+Index: Pattern Recurrence Index; 4
+
+Word: 1234251453
+Index: Pattern Recurrence Index; 3
+
+Word: 1234425135
+Index: Pattern Recurrence Index; 3
+
+Word: 1234254351
+Index: Pattern Recurrence Index; 3
+
+Word: 1234352145
+Index: Pattern Recurrence Index; 3
+
+Word: 1232415543
+Index: Pattern Recurrence Index; 3
+
+Word: 1234351524
+Index: Pattern Recurrence Index; 3
+
+Word: 1234325514
+Index: Pattern Recurrence Index; 3
+
+Word: 1213344552
+Index: Pattern Recurrence Index; 4
+
+Word: 1234451253
+Index: Pattern Recurrence Index; 3
+
+Word: 1234435125
+Index: Pattern Recurrence Index; 2
+
+Word: 1234453512
+Index: Pattern Recurrence Index; 3
+
+Word: 1221345345
+Index: Pattern Recurrence Index; 2
+
+Word: 1123435254
+Index: Pattern Recurrence Index; 4
+
+Word: 1234542135
+Index: Pattern Recurrence Index; 3
+
+Word: 1232453154
+Index: Pattern Recurrence Index; 3
+
+Word: 1233124455
+Index: Pattern Recurrence Index; 4
+
+Word: 1223445513
+Index: Pattern Recurrence Index; 4
+
+Word: 1234552314
+Index: Pattern Recurrence Index; 3
+
+Word: 1212343545
+Index: Pattern Recurrence Index; 3
+
+Word: 1221344553
+Index: Pattern Recurrence Index; 3
+
+Word: 1234315254
+Index: Pattern Recurrence Index; 3
+
+Word: 1223454513
+Index: Pattern Recurrence Index; 3
+
+Word: 1233214545
+Index: Pattern Recurrence Index; 2
+
+Word: 1122343545
+Index: Pattern Recurrence Index; 4
+
+Word: 1213454523
+Index: Pattern Recurrence Index; 3
+
+Word: 1232145453
+Index: Pattern Recurrence Index; 3
+
+Word: 1421325435
+Index: Pattern Recurrence Index; 3
+
+Word: 1234213545
+Index: Pattern Recurrence Index; 3
+
+Word: 1123425354
+Index: Pattern Recurrence Index; 3
+
+Word: 1223451345
+Index: Pattern Recurrence Index; 2
+
+Word: 1232414553
+Index: Pattern Recurrence Index; 3
+
+Word: 1234432515
+Index: Pattern Recurrence Index; 2
+
+Word: 1232455431
+Index: Pattern Recurrence Index; 2
+
+Word: 1232453451
+Index: Pattern Recurrence Index; 3
+
+Word: 1423125435
+Index: Pattern Recurrence Index; 3
+
+Word: 1231442553
+Index: Pattern Recurrence Index; 3
+
+Word: 1213454532
+Index: Pattern Recurrence Index; 3
+
+Word: 1233414525
+Index: Pattern Recurrence Index; 4
+
+Word: 1213435452
+Index: Pattern Recurrence Index; 3
+
+Word: 1231425543
+Index: Pattern Recurrence Index; 3
+
+Word: 1234155324
+Index: Pattern Recurrence Index; 3
+
+Word: 1223413455
+Index: Pattern Recurrence Index; 3
+
+Word: 1234321554
+Index: Pattern Recurrence Index; 2
+
+Word: 1221345453
+Index: Pattern Recurrence Index; 3
+
+Word: 1232341545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234421355
+Index: Pattern Recurrence Index; 3
+
+Word: 1123243545
+Index: Pattern Recurrence Index; 4
+
+Word: 1212345354
+Index: Pattern Recurrence Index; 3
+
+Word: 1234145532
+Index: Pattern Recurrence Index; 3
+
+Word: 1234251354
+Index: Pattern Recurrence Index; 3
+
+Word: 1213442355
+Index: Pattern Recurrence Index; 4
+
+Word: 1213445532
+Index: Pattern Recurrence Index; 3
+
+Word: 1231432554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234452351
+Index: Pattern Recurrence Index; 3
+
+Word: 1234245135
+Index: Pattern Recurrence Index; 3
+
+Word: 1213452345
+Index: Pattern Recurrence Index; 2
+
+Word: 1123245453
+Index: Pattern Recurrence Index; 3
+
+Word: 1223145543
+Index: Pattern Recurrence Index; 3
+
+Word: 1234512354
+Index: Pattern Recurrence Index; 2
+
+Word: 1123243554
+Index: Pattern Recurrence Index; 4
+
+Word: 1232134545
+Index: Pattern Recurrence Index; 3
+
+Word: 1223441553
+Index: Pattern Recurrence Index; 4
+
+Word: 1123342545
+Index: Pattern Recurrence Index; 4
+
+Word: 1234355412
+Index: Pattern Recurrence Index; 3
+
+Word: 1233424155
+Index: Pattern Recurrence Index; 3
+
+Word: 1212344355
+Index: Pattern Recurrence Index; 3
+
+Word: 1234255143
+Index: Pattern Recurrence Index; 3
+
+Word: 1234352154
+Index: Pattern Recurrence Index; 3
+
+Word: 1234315542
+Index: Pattern Recurrence Index; 3
+
+Word: 1232344551
+Index: Pattern Recurrence Index; 3
+
+Word: 1123423545
+Index: Pattern Recurrence Index; 3
+
+Word: 1123424355
+Index: Pattern Recurrence Index; 4
+
+Word: 1233445215
+Index: Pattern Recurrence Index; 3
+
+Word: 1232413554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234521543
+Index: Pattern Recurrence Index; 2
+
+Word: 1232145435
+Index: Pattern Recurrence Index; 3
+
+Word: 1234125453
+Index: Pattern Recurrence Index; 3
+
+Word: 1234552341
+Index: Pattern Recurrence Index; 2
+
+Word: 1234324515
+Index: Pattern Recurrence Index; 3
+
+Word: 1223143554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234413525
+Index: Pattern Recurrence Index; 3
+
+Word: 1234234515
+Index: Pattern Recurrence Index; 2
+
+Word: 1223454531
+Index: Pattern Recurrence Index; 3
+
+Word: 1231443525
+Index: Pattern Recurrence Index; 3
+
+Word: 1234541253
+Index: Pattern Recurrence Index; 3
+
+Word: 1231425345
+Index: Pattern Recurrence Index; 3
+
+Word: 1123432455
+Index: Pattern Recurrence Index; 4
+
+Word: 1232451534
+Index: Pattern Recurrence Index; 3
+
+Word: 1234241553
+Index: Pattern Recurrence Index; 3
+
+Word: 1122344355
+Index: Pattern Recurrence Index; 4
+
+Word: 1234245315
+Index: Pattern Recurrence Index; 3
+
+Word: 1234543125
+Index: Pattern Recurrence Index; 2
+
+Word: 1233452415
+Index: Pattern Recurrence Index; 3
+
+Word: 1234521354
+Index: Pattern Recurrence Index; 3
+
+Word: 1234543152
+Index: Pattern Recurrence Index; 3
+
+Word: 1213452435
+Index: Pattern Recurrence Index; 3
+
+Word: 1223413545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234431552
+Index: Pattern Recurrence Index; 3
+
+Word: 1213423545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234553214
+Index: Pattern Recurrence Index; 2
+
+Word: 1233145254
+Index: Pattern Recurrence Index; 3
+
+Word: 1231455342
+Index: Pattern Recurrence Index; 3
+
+Word: 1231445532
+Index: Pattern Recurrence Index; 3
+
+Word: 1232445153
+Index: Pattern Recurrence Index; 4
+
+Word: 1123324554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234552143
+Index: Pattern Recurrence Index; 2
+
+Word: 1231245345
+Index: Pattern Recurrence Index; 2
+
+Word: 1232344155
+Index: Pattern Recurrence Index; 3
+
+Word: 1234523451
+Index: Pattern Recurrence Index; 2
+
+Word: 1234214535
+Index: Pattern Recurrence Index; 3
+
+Word: 1234325541
+Index: Pattern Recurrence Index; 2
+
+Word: 1234152453
+Index: Pattern Recurrence Index; 3
+
+Word: 1234521345
+Index: Pattern Recurrence Index; 2
+
+Word: 1213425534
+Index: Pattern Recurrence Index; 3
+
+Word: 1234142535
+Index: Pattern Recurrence Index; 3
+
+Word: 1233415542
+Index: Pattern Recurrence Index; 3
+
+Word: 1233414255
+Index: Pattern Recurrence Index; 4
+
+Word: 1234524153
+Index: Pattern Recurrence Index; 3
+
+Word: 1231453245
+Index: Pattern Recurrence Index; 3
+
+Word: 1234215435
+Index: Pattern Recurrence Index; 3
+
+Word: 1213453245
+Index: Pattern Recurrence Index; 3
+
+Word: 1231342545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234513524
+Index: Pattern Recurrence Index; 3
+
+Word: 1123425435
+Index: Pattern Recurrence Index; 4
+
+Word: 1232431554
+Index: Pattern Recurrence Index; 3
+
+Word: 1223453145
+Index: Pattern Recurrence Index; 3
+
+Word: 1234325451
+Index: Pattern Recurrence Index; 3
+
+Word: 1233241545
+Index: Pattern Recurrence Index; 3
+
+Word: 1223143545
+Index: Pattern Recurrence Index; 3
+
+Word: 1232443155
+Index: Pattern Recurrence Index; 3
+
+Word: 1232345451
+Index: Pattern Recurrence Index; 3
+
+Word: 1234325154
+Index: Pattern Recurrence Index; 3
+
+Word: 1231435524
+Index: Pattern Recurrence Index; 4
+
+Word: 1223344515
+Index: Pattern Recurrence Index; 4
+
+Word: 1232435541
+Index: Pattern Recurrence Index; 3
+
+Word: 1233425154
+Index: Pattern Recurrence Index; 3
+
+Word: 1234512435
+Index: Pattern Recurrence Index; 2
+
+Word: 1213345254
+Index: Pattern Recurrence Index; 3
+
+Word: 1123453452
+Index: Pattern Recurrence Index; 3
+
+Word: 1234351425
+Index: Pattern Recurrence Index; 3
+
+Word: 1213432545
+Index: Pattern Recurrence Index; 3
+
+Word: 1233451524
+Index: Pattern Recurrence Index; 3
+
+Word: 1213452453
+Index: Pattern Recurrence Index; 3
+
+Word: 1234124553
+Index: Pattern Recurrence Index; 3
+
+Word: 1234235514
+Index: Pattern Recurrence Index; 3
+
+Word: 1234435251
+Index: Pattern Recurrence Index; 2
+
+Word: 1233442515
+Index: Pattern Recurrence Index; 3
+
+Word: 1213345245
+Index: Pattern Recurrence Index; 3
+
+Word: 1233145425
+Index: Pattern Recurrence Index; 3
+
+Word: 1123424553
+Index: Pattern Recurrence Index; 4
+
+Word: 1231453452
+Index: Pattern Recurrence Index; 3
+
+Word: 1232345154
+Index: Pattern Recurrence Index; 3
+
+Word: 1234554231
+Index: Pattern Recurrence Index; 2
+
+Word: 1234354215
+Index: Pattern Recurrence Index; 3
+
+Word: 1234254531
+Index: Pattern Recurrence Index; 3
+
+Word: 1223341545
+Index: Pattern Recurrence Index; 4
+
+Word: 1234514253
+Index: Pattern Recurrence Index; 3
+
+Word: 1234351254
+Index: Pattern Recurrence Index; 3
+
+Word: 1234315245
+Index: Pattern Recurrence Index; 3
+
+Word: 1234531254
+Index: Pattern Recurrence Index; 3
+
+Word: 1234354251
+Index: Pattern Recurrence Index; 3
+
+Word: 1122334545
+Index: Pattern Recurrence Index; 4
+
+Word: 1123455324
+Index: Pattern Recurrence Index; 3
+
+Word: 1123432554
+Index: Pattern Recurrence Index; 3
+
+Word: 1212334545
+Index: Pattern Recurrence Index; 3
+
+Word: 1123245345
+Index: Pattern Recurrence Index; 3
+
+Word: 1232345514
+Index: Pattern Recurrence Index; 3
+
+Word: 1213344525
+Index: Pattern Recurrence Index; 4
+
+Word: 1123423554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234315425
+Index: Pattern Recurrence Index; 3
+
+Word: 1233145245
+Index: Pattern Recurrence Index; 3
+
+Word: 1234235451
+Index: Pattern Recurrence Index; 3
+
+Word: 1234514235
+Index: Pattern Recurrence Index; 2
+
+Word: 1234415325
+Index: Pattern Recurrence Index; 3
+
+Word: 1233144552
+Index: Pattern Recurrence Index; 4
+
+Word: 1233415425
+Index: Pattern Recurrence Index; 4
+
+Word: 1234541325
+Index: Pattern Recurrence Index; 3
+
+Word: 1213244355
+Index: Pattern Recurrence Index; 4
+
+Word: 1213324554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234213554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234535214
+Index: Pattern Recurrence Index; 3
+
+Word: 1234155432
+Index: Pattern Recurrence Index; 2
+
+Word: 1212345345
+Index: Pattern Recurrence Index; 2
+
+Word: 1123445325
+Index: Pattern Recurrence Index; 3
+
+Word: 1223454351
+Index: Pattern Recurrence Index; 3
+
+Word: 1234355214
+Index: Pattern Recurrence Index; 3
+
+Word: 1234515243
+Index: Pattern Recurrence Index; 3
+
+Word: 1232455413
+Index: Pattern Recurrence Index; 3
+
+Word: 1231435254
+Index: Pattern Recurrence Index; 3
+
+Word: 1234552134
+Index: Pattern Recurrence Index; 2
+
+Word: 1231455324
+Index: Pattern Recurrence Index; 3
+
+Word: 1234143255
+Index: Pattern Recurrence Index; 3
+
+Word: 1223453154
+Index: Pattern Recurrence Index; 3
+
+Word: 1233454215
+Index: Pattern Recurrence Index; 3
+
+Word: 1234451523
+Index: Pattern Recurrence Index; 3
+
+Word: 1234531542
+Index: Pattern Recurrence Index; 3
+
+Word: 1232451354
+Index: Pattern Recurrence Index; 3
+
+Word: 1233425514
+Index: Pattern Recurrence Index; 3
+
+Word: 1234534521
+Index: Pattern Recurrence Index; 2
+
+Word: 1234435521
+Index: Pattern Recurrence Index; 2
+
+Word: 1233454521
+Index: Pattern Recurrence Index; 2
+
+Word: 1223434155
+Index: Pattern Recurrence Index; 3
+
+Word: 1234235145
+Index: Pattern Recurrence Index; 2
+
+Word: 1223345415
+Index: Pattern Recurrence Index; 4
+
+Word: 1234415253
+Index: Pattern Recurrence Index; 3
+
+Word: 1234512543
+Index: Pattern Recurrence Index; 2
+
+Word: 1223145345
+Index: Pattern Recurrence Index; 3
+
+Word: 1234532541
+Index: Pattern Recurrence Index; 2
+
+Word: 1213434525
+Index: Pattern Recurrence Index; 3
+
+Word: 1234134255
+Index: Pattern Recurrence Index; 3
+
+Word: 1232345415
+Index: Pattern Recurrence Index; 3
+
+Word: 1232454351
+Index: Pattern Recurrence Index; 3
+
+Word: 1234251534
+Index: Pattern Recurrence Index; 3
+
+Word: 1231453254
+Index: Pattern Recurrence Index; 3
+
+Word: 1233454251
+Index: Pattern Recurrence Index; 3
+
+Word: 1234515324
+Index: Pattern Recurrence Index; 3
+
+Word: 1213245543
+Index: Pattern Recurrence Index; 3
+
+Word: 1223431455
+Index: Pattern Recurrence Index; 4
+
+Word: 1234545123
+Index: Pattern Recurrence Index; 2
+
+Word: 1223415534
+Index: Pattern Recurrence Index; 3
+
+Word: 1223453541
+Index: Pattern Recurrence Index; 3
+
+Word: 1234521453
+Index: Pattern Recurrence Index; 3
+
+Word: 1234551342
+Index: Pattern Recurrence Index; 3
+
+Word: 1232415435
+Index: Pattern Recurrence Index; 3
+
+Word: 1123443552
+Index: Pattern Recurrence Index; 3
+
+Word: 1232145345
+Index: Pattern Recurrence Index; 2
+
+Word: 1232431545
+Index: Pattern Recurrence Index; 3
+
+Word: 1213424355
+Index: Pattern Recurrence Index; 3
+
+Word: 1213245345
+Index: Pattern Recurrence Index; 3
+
+Word: 1221334455
+Index: Pattern Recurrence Index; 4
+
+Word: 1123423455
+Index: Pattern Recurrence Index; 3
+
+Word: 1234145523
+Index: Pattern Recurrence Index; 3
+
+Word: 1232441535
+Index: Pattern Recurrence Index; 3
+
+Word: 1233452154
+Index: Pattern Recurrence Index; 2
+
+Word: 1234524531
+Index: Pattern Recurrence Index; 3
+
+Word: 1232145534
+Index: Pattern Recurrence Index; 3
+
+Word: 1213432554
+Index: Pattern Recurrence Index; 3
+
+Word: 1221345543
+Index: Pattern Recurrence Index; 2
+
+Word: 1231442535
+Index: Pattern Recurrence Index; 3
+
+Word: 1231455234
+Index: Pattern Recurrence Index; 3
+
+Word: 1233445251
+Index: Pattern Recurrence Index; 3
+
+Word: 1223145534
+Index: Pattern Recurrence Index; 3
+
+Word: 1231425435
+Index: Pattern Recurrence Index; 3
+
+Word: 1231445235
+Index: Pattern Recurrence Index; 3
+
+Word: 1233455124
+Index: Pattern Recurrence Index; 3
+
+Word: 1231453542
+Index: Pattern Recurrence Index; 3
+
+Word: 1234123455
+Index: Pattern Recurrence Index; 2
+
+Word: 1234255341
+Index: Pattern Recurrence Index; 3
+
+Word: 1234345215
+Index: Pattern Recurrence Index; 3
+
+Word: 1213454235
+Index: Pattern Recurrence Index; 3
+
+Word: 1234345521
+Index: Pattern Recurrence Index; 2
+
+Word: 1234543215
+Index: Pattern Recurrence Index; 2
+
+Word: 1212334554
+Index: Pattern Recurrence Index; 3
+
+Word: 1223454315
+Index: Pattern Recurrence Index; 3
+
+Word: 1234435215
+Index: Pattern Recurrence Index; 2
+
+Word: 1234253145
+Index: Pattern Recurrence Index; 3
+
+Word: 1212345453
+Index: Pattern Recurrence Index; 3
+
+Word: 1231454325
+Index: Pattern Recurrence Index; 3
+
+Word: 1232415345
+Index: Pattern Recurrence Index; 3
+
+Word: 1233245154
+Index: Pattern Recurrence Index; 2
+
+Word: 1234435152
+Index: Pattern Recurrence Index; 3
+
+Word: 1213424553
+Index: Pattern Recurrence Index; 3
+
+Word: 1123234455
+Index: Pattern Recurrence Index; 4
+
+Word: 1234255134
+Index: Pattern Recurrence Index; 3
+
+Word: 1213342545
+Index: Pattern Recurrence Index; 4
+
+Word: 1234415523
+Index: Pattern Recurrence Index; 3
+
+Word: 1233241554
+Index: Pattern Recurrence Index; 3
+
+Word: 1233445512
+Index: Pattern Recurrence Index; 4
+
+Word: 1234542531
+Index: Pattern Recurrence Index; 3
+
+Word: 1213455243
+Index: Pattern Recurrence Index; 3
+
+Word: 1123435425
+Index: Pattern Recurrence Index; 4
+
+Word: 1232345145
+Index: Pattern Recurrence Index; 2
+
+Word: 1122343455
+Index: Pattern Recurrence Index; 4
+
+Word: 1231424355
+Index: Pattern Recurrence Index; 3
+
+Word: 1223431554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234521435
+Index: Pattern Recurrence Index; 3
+
+Word: 1231425534
+Index: Pattern Recurrence Index; 3
+
+Word: 1234153542
+Index: Pattern Recurrence Index; 3
+
+Word: 1233245514
+Index: Pattern Recurrence Index; 3
+
+Word: 1234145325
+Index: Pattern Recurrence Index; 3
+
+Word: 1213452534
+Index: Pattern Recurrence Index; 3
+
+Word: 1234215345
+Index: Pattern Recurrence Index; 2
+
+Word: 1234154325
+Index: Pattern Recurrence Index; 3
+
+Word: 1234514523
+Index: Pattern Recurrence Index; 2
+
+Word: 1233412545
+Index: Pattern Recurrence Index; 3
+
+Word: 1231452534
+Index: Pattern Recurrence Index; 3
+
+Word: 1234321455
+Index: Pattern Recurrence Index; 3
+
+Word: 1213345452
+Index: Pattern Recurrence Index; 3
+
+Word: 1234351452
+Index: Pattern Recurrence Index; 3
+
+Word: 1234215543
+Index: Pattern Recurrence Index; 2
+
+Word: 1231445253
+Index: Pattern Recurrence Index; 3
+
+Word: 1213425435
+Index: Pattern Recurrence Index; 3
+
+Word: 1234432155
+Index: Pattern Recurrence Index; 2
+
+Word: 1232445135
+Index: Pattern Recurrence Index; 3
+
+Word: 1223144535
+Index: Pattern Recurrence Index; 4
+
+Word: 1233124554
+Index: Pattern Recurrence Index; 3
+
+Word: 1233425451
+Index: Pattern Recurrence Index; 3
+
+Word: 1234342515
+Index: Pattern Recurrence Index; 3
+
+Word: 1232314554
+Index: Pattern Recurrence Index; 3
+
+Word: 1234553124
+Index: Pattern Recurrence Index; 3
+
+Word: 1234153245
+Index: Pattern Recurrence Index; 3
+
+Word: 1233421455
+Index: Pattern Recurrence Index; 3
+
+Word: 1123345425
+Index: Pattern Recurrence Index; 4
+
+Word: 1233451254
+Index: Pattern Recurrence Index; 3
+
+Word: 1234234551
+Index: Pattern Recurrence Index; 2
+
+Word: 1223415453
+Index: Pattern Recurrence Index; 3
+
+Word: 1123324545
+Index: Pattern Recurrence Index; 3
+
+Word: 1234532514
+Index: Pattern Recurrence Index; 3
+
+Word: 1234235541
+Index: Pattern Recurrence Index; 2
+
+Word: 1231243545
+Index: Pattern Recurrence Index; 3
+
+Word: 1223145435
+Index: Pattern Recurrence Index; 3
+
+Word: 1231244553
+Index: Pattern Recurrence Index; 3
+
+Word: 1234243515
+Index: Pattern Recurrence Index; 3
+
+Word: 1213434255
+Index: Pattern Recurrence Index; 3
+
+Word: 1232143554
+Index: Pattern Recurrence Index; 3
+
+Word: 1123244535
+Index: Pattern Recurrence Index; 4
+
+Word: 126324354156
+Index: Pattern Recurrence Index; 4
+
+Word: 121324354656
+Index: Pattern Recurrence Index; 4
+
+Word: 1283243546576178
+Index: Pattern Recurrence Index; 6
+
+Word: 129324354657687189
+Index: Pattern Recurrence Index; 6
+
+Word: 12a3243546576879819a
+Index: Pattern Recurrence Index; 7
+
+Word: 12b32435465768798a91ab
+Index: Pattern Recurrence Index; 8
+
+Word: 1253243145
+Index: Pattern Recurrence Index; 4
+
+Word: 12e32435465768798a9bacbdc1de
+Index: Pattern Recurrence Index; 10
