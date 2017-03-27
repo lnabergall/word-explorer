@@ -187,7 +187,7 @@ def convert_to_ascending_order(word_collection):
 if __name__ == '__main__':
     words = load_words(WORDS_LEQ4_FILE)
     word_graph = WordGraph(words, size_limit=4, ascending_order=False, use_gpu=True)
-    with open("word_graph_size4_gpucodetest.txt", "w") as output_file:
+    with open("word_graph_size4_gputest.txt", "w") as output_file:
         print("Vertex count: " + str(word_graph.vertex_count), file=output_file)
         print("Edge count: " + str(word_graph.edge_count) + "\n\n", file=output_file)
         words = list(word_graph.directed_neighborhoods.keys())
@@ -197,8 +197,8 @@ if __name__ == '__main__':
                 neighborhood = word + ": " + str(
                     word_graph.directed_neighborhoods[word])
                 print(neighborhood, file=output_file)
-    with open("word_graph_size4_gpucodetest.txt", "r") as output_file:
+    with open("word_graph_size4_gputest.txt", "r") as output_file:
         text = output_file.read()
         text = text.replace("\'", "")
-    with open("word_graph_size4_gpucodetest.txt", "w") as output_file:
+    with open("word_graph_size4_gputest.txt", "w") as output_file:
         output_file.write(text)

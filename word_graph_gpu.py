@@ -18,26 +18,35 @@ RETURN_WORD_AO = array((
     [1, 12, 123, 1234, 12345, 123456, 1234567, 12345678, 12345678, 123456789],
     [1, 21, 321, 4321, 54321, 654321, 7654321, 87654321, 87654321, 987654321],
 ), dtype=int32_py)
-NUM_NEIGHBOR_LIMIT = 10000
-SMALL_ARRAY_LENGTH = 100
-LARGE_ARRAY_LENGTH = 1000
-MAX_ARRAY_LENGTH = 10000
+NUM_NEIGHBOR_LIMIT = 1000
+SMALL_ARRAY_LENGTH = 30
+MAX_ARRAY_LENGTH = 1000
 
 
 def find_adjacent_vertices(word_list, size_limit):
     from word_graph import Word     # Avoid circular dependency
     for i, pair in enumerate(word_list):
-        word_integer = word_from_letters_list(list(map(int, list(pair[0]))))
+        word_integer = word_from_letters_list(list(map(int, list(pair))))
         word_list[i] = int32(word_integer)
     word_array = array(word_list, dtype=int32_py)
     # Likely <10000 neighbors
     neighborhoods = zeros_py((len(word_list), NUM_NEIGHBOR_LIMIT), dtype=int32_py)   
     threads_perblock = 32
     blocks_perdim = (len(word_list) + (threads_perblock - 1)) // threads_perblock
+    device_word_array = cuda.to_device(word_array)
+    device_neighborhoods = cuda.to_device(neighborhoods)
+    device_repeats = cuda.to_device(REPEAT_WORD_AO)
+    device_returns = cuda.to_device(RETURN_WORD_AO)
     compute_neighbors[blocks_perdim, threads_perblock](
-        word_array, neighborhoods, size_limit)
-    neighborhoods = neighborhoods.tolist()
-    neighborhoods = [set([Word("".join(list(map(str, letters(neighbor))))) 
+        device_word_array, device_neighborhoods, 
+        size_limit, device_repeats, device_returns)
+    neighborhoods_found = device_neighborhoods.copy_to_host()
+    neighborhoods = neighborhoods_found.tolist()
+    for neighborhood in neighborhoods:
+        for neighbor in neighborhood:
+            if neighbor != 0:
+                print(neighbor)
+    neighborhoods = [set([Word("".join(list(map(str, letters_from_int(neighbor))))) 
                          for neighbor in neighbors if neighbor != 0]) 
                      for neighbors in neighborhoods]
     return neighborhoods
@@ -46,8 +55,27 @@ def find_adjacent_vertices(word_list, size_limit):
 def word_from_letters_list(letters):
     word = 0
     for i in range(len(letters)):
-        word += letters[i] * int32(pow(10, len(letters)-i-1))
+        word += letters[i] * int(pow(10, len(letters)-i-1))
     return word
+
+
+def digit_count_int(integer):
+    if integer == 0:
+        return 0
+    else:
+        return int(floor(log10(float(integer)) + 1))
+
+
+def ith_digit(integer, i):
+    return int(fmod(integer, pow(10,i+1)) - fmod(integer, pow(10,i))) // pow(10,i)
+
+
+def letters_from_int(integer):
+    word_length = digit_count_int(integer)
+    letters = list(range(word_length))
+    for i in range(word_length):
+        letters[word_length-i-1] = ith_digit(integer, i)
+    return letters
 
 
 @cuda.jit("int32[:](int32[:])", device=True)
@@ -254,9 +282,10 @@ def permutations(flat_array, size, tuple_array, permutation_array):
     return permutation_array
 
 
-@cuda.jit("void(int32[:], int32[:,:], int32)")
-def compute_neighbors(word_array, neighborhoods, size_limit):
-    """
+@cuda.jit("void(int32[:], int32[:,:], int32, int32[:,:], int32[:,:])")
+def compute_neighbors(word_array, neighborhoods, size_limit, 
+                      repeat_words, return_words):
+    """s
     Args:
         word_array: A 1D numpy.ndarray.
         neighborhoods: A 2D numpy.ndarray with the same number of rows 
@@ -269,28 +298,26 @@ def compute_neighbors(word_array, neighborhoods, size_limit):
     for i in range(word_array.size):
         if i == thread_num:
             word = word_array[i]
-            pattern_instance_count = (REPEAT_WORD_AO.size // REPEAT_WORD_AO.ndim 
-                                      + RETURN_WORD_AO.size // RETURN_WORD_AO.ndim)
+            pattern_instance_count = (repeat_words.size // repeat_words.ndim 
+                                      + return_words.size // return_words.ndim)
             word_length = length(word)
-            neighbors_array = zeros1D(cuda.local.array(NUM_NEIGHBOR_LIMIT, int32)) 
+            neighbors_array = zeros1D(cuda.local.array(NUM_NEIGHBOR_LIMIT, int32))
             for j in range(pattern_instance_count):
                 pattern_instance = zeros1D(cuda.local.array(2, int32))
                 if j <= pattern_instance_count//2 - 1:
-                    pattern_instance[0] = REPEAT_WORD_AO[0, j]
-                    pattern_instance[1] = REPEAT_WORD_AO[1, j]
+                    pattern_instance[0] = repeat_words[0, j]
+                    pattern_instance[1] = repeat_words[1, j]
                 else:
                     j = j - pattern_instance_count//2
-                    pattern_instance[0] = RETURN_WORD_AO[0, j]
-                    pattern_instance[1] = RETURN_WORD_AO[1, j]
+                    pattern_instance[0] = return_words[0, j]
+                    pattern_instance[1] = return_words[1, j]
                 instance_length = (length(pattern_instance[0]) 
                                    + length(pattern_instance[1]))
                 if word_length//2 + instance_length//2 <= size_limit:
-                    ### Generate Insertions
-                    # Generate new letter choices
                     word_letters = letters(word, 
-                        zeros1D(cuda.local.array(LARGE_ARRAY_LENGTH, int32)))
+                        zeros1D(cuda.local.array(SMALL_ARRAY_LENGTH, int32)))
                     new_letters = zeros1D(
-                        cuda.local.array(LARGE_ARRAY_LENGTH, int32))
+                        cuda.local.array(SMALL_ARRAY_LENGTH, int32))
                     offset = 0
                     for k in range(size_limit):
                         letter_taken = False
@@ -303,7 +330,7 @@ def compute_neighbors(word_array, neighborhoods, size_limit):
                             new_letters[k-offset] = k+1
 
                     instance1_array = zeros1D(
-                        cuda.local.array(LARGE_ARRAY_LENGTH, int32))
+                        cuda.local.array(SMALL_ARRAY_LENGTH, int32))
                     instance_letters = letters(pattern_instance[0], instance1_array)
                     return_word = True
                     instance_size = length(pattern_instance[0])
