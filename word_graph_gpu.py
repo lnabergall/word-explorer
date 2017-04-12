@@ -25,14 +25,15 @@ MAX_ARRAY_LENGTH = 1000
 
 def find_adjacent_vertices(word_list, size_limit):
     from word_graph import Word     # Avoid circular dependency
-    for i, pair in enumerate(word_list):
+    words = word_list.copy()
+    for i, pair in enumerate(words):
         word_integer = word_from_letters_list(list(map(int, list(pair))))
-        word_list[i] = int32(word_integer)
-    word_array = array(word_list, dtype=int32_py)
+        words[i] = int32(word_integer)
+    word_array = array(words, dtype=int32_py)
     # Likely <10000 neighbors
-    neighborhoods = zeros_py((len(word_list), NUM_NEIGHBOR_LIMIT), dtype=int32_py)   
+    neighborhoods = zeros_py((len(words), NUM_NEIGHBOR_LIMIT), dtype=int32_py)   
     threads_perblock = 32
-    blocks_perdim = (len(word_list) + (threads_perblock - 1)) // threads_perblock
+    blocks_perdim = (len(words) + (threads_perblock - 1)) // threads_perblock
     device_word_array = cuda.to_device(word_array)
     device_neighborhoods = cuda.to_device(neighborhoods)
     device_repeats = cuda.to_device(REPEAT_WORD_AO)
@@ -42,10 +43,15 @@ def find_adjacent_vertices(word_list, size_limit):
         size_limit, device_repeats, device_returns)
     neighborhoods_found = device_neighborhoods.copy_to_host()
     neighborhoods = neighborhoods_found.tolist()
-    for neighborhood in neighborhoods:
-        for neighbor in neighborhood:
-            if neighbor != 0:
-                print(neighbor)
+    # zero_count = 0
+    # nonzero_count = 0
+    # for i, neighborhood in enumerate(neighborhoods):
+    #     print(word_list[i])
+    #     nonzero_neighbors = [neighbor for neighbor in neighborhood if neighbor != 0]
+    #     print(nonzero_neighbors, "\n")
+    #     nonzero_count += len(nonzero_neighbors)
+    #     zero_count += len(neighborhood) - len(nonzero_neighbors)
+    # print(nonzero_count, zero_count)
     neighborhoods = [set([Word("".join(list(map(str, letters_from_int(neighbor))))) 
                          for neighbor in neighbors if neighbor != 0]) 
                      for neighbors in neighborhoods]
@@ -155,6 +161,11 @@ def letter(word, index):
     return ith_letter(word, index)
 
 
+@cuda.jit("int32(int32[:])", device=True)
+def length_word_array(letters_array):
+    return nonzeros_count(letters_array)
+
+
 @cuda.jit("int32[:](int32, int32[:])", device=True)
 def letters(word, letters_array):
     word_length = length(word)
@@ -179,7 +190,7 @@ def array_slice(flat_array, slice_array, start, end):
     if flat_array.size == 0:
         return flat_array
     for i in range(slice_array.size):
-        if start + i*step_size > end:
+        if start + i*step_size >= end:
             break
         else:
             slice_array[i] = flat_array[start + i*step_size]
@@ -189,9 +200,10 @@ def array_slice(flat_array, slice_array, start, end):
 @cuda.jit("int32(int32[:])", device=True)
 def word_from_letters(letters):
     word = 0
+    size = length_word_array(letters)
     for i in range(letters.size):
         if letters[i] != 0:
-            word += get_letter(letters[i], letters.size-i-1)
+            word += get_letter(letters[i], size-i-1)
     return word
 
 
@@ -205,7 +217,8 @@ def word_slice(word_letters, slice_array, start, end):
 def reverse_word(word_letters):
     word_reversed = 0
     for i in range(word_letters.size):
-        word_reversed += word_letters[i]*int32(pow(10, i))
+        if word_letters[i] != 0:
+            word_reversed += word_letters[i]*int32(pow(10, i))
     return word_reversed
 
 
@@ -240,7 +253,7 @@ def tuple_count(n, k):
 
 @cuda.jit("int32[:,:](int32[:], int32, int32[:,:], int32[:,:])", device=True)
 def permutations(flat_array, size, tuple_array, permutation_array):
-    for h in range(size-1):
+    for h in range(size):
         size_step = h+1
         num_generated = 0
         if nonzero2D(tuple_array):
@@ -251,10 +264,11 @@ def permutations(flat_array, size, tuple_array, permutation_array):
                         all_zeros = False
                 if not all_zeros:
                     num_generated += 1
-        for i in range(nonzeros_count(flat_array)):
-            if not nonzero2D(tuple_array):
+        if not nonzero2D(tuple_array):
+            for i in range(nonzeros_count(flat_array)):
                 tuple_array[i,0] = flat_array[i]
-            else:
+        else:
+            for i in range(nonzeros_count(flat_array)):
                 for j in range(num_generated):
                     for k in range(size_step):
                         if k != size_step-1:
