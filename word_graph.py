@@ -7,12 +7,14 @@ from itertools import product, permutations
 from numpy import array
 
 from objects import is_equivalent, Word as Word_eq
-from word_graph_gpu import find_adjacent_vertices as find_adjacent_vertices_gpu
+#from word_graph_gpu import find_adjacent_vertices as find_adjacent_vertices_gpu
+from word_graph_gpu_cputest import find_adjacent_vertices as find_adjacent_vertices_gpu
 
 
 WORDS_LEQ2_FILE = "words_up_to_size_2_all.txt"
 WORDS_LEQ3_FILE = "words_up_to_size_3_all.txt"
 WORDS_LEQ4_FILE = "words_up_to_size_4_all.txt"
+WORDS_LEQ5_FILE = "words_up_to_size_5_all.txt"
 
 AOWORDS_LEQ2_FILE = "words_up_to_size_2.txt"
 AOWORDS_LEQ3_FILE = "words_up_to_size_3.txt"
@@ -185,9 +187,9 @@ def convert_to_ascending_order(word_collection):
 
 
 if __name__ == '__main__':
-    words = load_words(WORDS_LEQ4_FILE)
-    word_graph = WordGraph(words, size_limit=4, ascending_order=False, use_gpu=True)
-    with open("word_graph_size4_gputest.txt", "w") as output_file:
+    words = load_words(WORDS_LEQ3_FILE)
+    word_graph = WordGraph(words, size_limit=3, ascending_order=False, use_gpu=True)
+    with open("word_graph_size3_gputest.txt", "w") as output_file:
         print("Vertex count: " + str(word_graph.vertex_count), file=output_file)
         print("Edge count: " + str(word_graph.edge_count) + "\n\n", file=output_file)
         words = list(word_graph.directed_neighborhoods.keys())
@@ -197,8 +199,8 @@ if __name__ == '__main__':
                 neighborhood = word + ": " + str(
                     word_graph.directed_neighborhoods[word])
                 print(neighborhood, file=output_file)
-    with open("word_graph_size4_gputest.txt", "r") as output_file:
+    with open("word_graph_size3_gputest.txt", "r") as output_file:
         text = output_file.read()
         text = text.replace("\'", "")
-    with open("word_graph_size4_gputest.txt", "w") as output_file:
+    with open("word_graph_size3_gputest.txt", "w") as output_file:
         output_file.write(text)
