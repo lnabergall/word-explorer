@@ -13,8 +13,8 @@ def main():
     size = int(input("\nUp to what size words do you wish to retrieve? "))
     file_name = input("Enter a text file name for the output list: ")
     word_list = get_word_list(size)
-    time_diff = (time_end - time_start).total_seconds()
-    print(time_diff)
+    # time_diff = (time_end - time_start).total_seconds()
+    # print(time_diff)
     with open(file_name, "w") as output_file:
         for word in word_list:
             print(word, file=output_file)
