@@ -85,9 +85,9 @@ class Pattern(list):
 			raise ValueError("Name argument not provided!")
 		list.__init__(self, *args)
 		if base is not None and (len(inductive_step) != 2 or 
-		len(inductive_step[0]) != 2 or len(inductive_step[1]) != 2 
-		or (len(base) != 2 and len(base) != 5) or 
-		inductive_step[0][0] > inductive_step[0][1]):
+				len(inductive_step[0]) != 2 or len(inductive_step[1]) != 2 
+				or (len(base) != 2 and len(base) != 5) or 
+				inductive_step[0][0] > inductive_step[0][1]):
 			raise ValueError("Invalid inductive arguments!")
 		if base is not None and list(self) == []:
 			# Define inductively (note that user indices start at 1):
