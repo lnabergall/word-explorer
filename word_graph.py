@@ -3,12 +3,15 @@ Produces a graph with vertices representing words and directed edges
 representing the deletion of a repeat or return word.
 """
 
+from time import time
+
 from itertools import product, permutations
 from numpy import array
 
 from objects import is_equivalent, Word as Word_eq
 #from word_graph_gpu import find_adjacent_vertices as find_adjacent_vertices_gpu
-from word_graph_gpu_cputest import find_adjacent_vertices as find_adjacent_vertices_gpu
+from word_graph_gpu2 import find_adjacent_vertices as find_adjacent_vertices_gpu
+#from word_graph_gpu_cputest import find_adjacent_vertices as find_adjacent_vertices_gpu
 
 
 WORDS_LEQ2_FILE = "words_up_to_size_2_all.txt"
@@ -21,6 +24,7 @@ AOWORDS_LEQ3_FILE = "words_up_to_size_3.txt"
 AOWORDS_LEQ4_FILE = "words_up_to_size_4.txt"
 AOWORDS_LEQ5_FILE = "words_up_to_size_5.txt"
 AOWORDS_LEQ6_FILE = "words_up_to_size_6.txt"
+AOWORDS_LEQ7_FILE = "words_up_to_size_7.txt"
 
 REPEAT_WORD = (
     "1...1", "12...12", "21...21", "123...123", "213...213", 
@@ -78,8 +82,9 @@ class WordGraph:
         self.size_limit = size_limit
         self.word_class = Word if not ascending_order else Word_eq
         self.use_gpu = use_gpu
+        self.ascending_order = ascending_order
         self.directed_neighborhoods = self.compute_neighborhoods()
-        if ascending_order:
+        if self.ascending_order:
             self.directed_neighborhoods = convert_to_ascending_order(
                 self.directed_neighborhoods)
         self.vertex_count = len(self.vertices)
@@ -91,7 +96,7 @@ class WordGraph:
         neighborhoods = {}
         if self.use_gpu:
                 neighbors_list = find_adjacent_vertices_gpu(
-                    self.vertices, self.size_limit)
+                    self.vertices, self.size_limit, self.ascending_order)
                 for word, neighbors in zip(self.vertices, neighbors_list):
                     neighborhoods[word] = neighbors
         else:
@@ -187,9 +192,12 @@ def convert_to_ascending_order(word_collection):
 
 
 if __name__ == '__main__':
-    words = load_words(WORDS_LEQ3_FILE)
-    word_graph = WordGraph(words, size_limit=3, ascending_order=False, use_gpu=True)
-    with open("word_graph_size3_gputest.txt", "w") as output_file:
+    words = load_words(AOWORDS_LEQ7_FILE)
+    start_time = time()
+    word_graph = WordGraph(words, size_limit=7, ascending_order=True, use_gpu=True)
+    end_time = time()
+    print("Total time:", end_time - start_time)
+    with open("aoword_graph_size7_gputest.txt", "w") as output_file:
         print("Vertex count: " + str(word_graph.vertex_count), file=output_file)
         print("Edge count: " + str(word_graph.edge_count) + "\n\n", file=output_file)
         words = list(word_graph.directed_neighborhoods.keys())
@@ -199,8 +207,8 @@ if __name__ == '__main__':
                 neighborhood = word + ": " + str(
                     word_graph.directed_neighborhoods[word])
                 print(neighborhood, file=output_file)
-    with open("word_graph_size3_gputest.txt", "r") as output_file:
+    with open("aoword_graph_size7_gputest.txt", "r") as output_file:
         text = output_file.read()
         text = text.replace("\'", "")
-    with open("word_graph_size3_gputest.txt", "w") as output_file:
+    with open("aoword_graph_size7_gputest.txt", "w") as output_file:
         output_file.write(text)

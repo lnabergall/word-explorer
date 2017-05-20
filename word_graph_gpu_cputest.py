@@ -5,34 +5,37 @@ CUDA Python version of word_graph.py to support parallel computations via GPU.
 from math import log10, floor, fmod, ceil
 #from numba import cuda
 from numpy import array, zeros, int32, int64
-int32_py = int32
-#from numba.types import int32, float64
-from numpy import int32, float64
+int64_py = int64
+#from numba.types import int32, int64, float64
+from numpy import int32, int64, float64
 zeros_py = zeros
 
 
 REPEAT_WORD_AO = array((
     [1, 12, 123, 1234, 12345, 123456, 1234567, 12345678, 12345678, 123456789],
     [1, 12, 123, 1234, 12345, 123456, 1234567, 12345678, 12345678, 123456789],
-), dtype=int32_py)
+), dtype=int64_py)
 RETURN_WORD_AO = array((
     [1, 12, 123, 1234, 12345, 123456, 1234567, 12345678, 12345678, 123456789],
     [1, 21, 321, 4321, 54321, 654321, 7654321, 87654321, 87654321, 987654321],
-), dtype=int32_py)
-NUM_NEIGHBOR_LIMIT = 1000
+), dtype=int64_py)
+NUM_NEIGHBOR_LIMIT = 3000
 SMALL_ARRAY_LENGTH = 30
-MAX_ARRAY_LENGTH = 1000
+MAX_ARRAY_LENGTH = 5000
 
 
-def find_adjacent_vertices(word_list, size_limit):
-    from word_graph import Word     # Avoid circular dependency
+def find_adjacent_vertices(word_list, size_limit, ascending_order=False):
+    if ascending_order:
+        from word_graph import Word_eq as Word
+    else:
+        from word_graph import Word     # Avoid circular dependency
     words = word_list.copy()
     for i, pair in enumerate(words):
         word_integer = word_from_letters_list(list(map(int, list(pair))))
-        words[i] = int32(word_integer)
-    word_array = array(words, dtype=int32_py)
+        words[i] = int64(word_integer)
+    word_array = array(words, dtype=int64_py)
     # Likely <10000 neighbors
-    neighborhoods = zeros_py((len(words), NUM_NEIGHBOR_LIMIT), dtype=int32_py)   
+    neighborhoods = zeros_py((len(words), NUM_NEIGHBOR_LIMIT), dtype=int64_py)   
     threads_perblock = 32
     blocks_perdim = (len(words) + (threads_perblock - 1)) // threads_perblock
     # device_word_array = cuda.to_device(word_array)
@@ -87,14 +90,14 @@ def letters_from_int(integer):
     return letters
 
 
-#@cuda.jit("int32[:](int32[:])", device=True)
+#@cuda.jit("int64[:](int64[:])", device=True)
 def zeros1D(zeros_array):
     for i in range(zeros_array.size):
         zeros_array[i] = 0
     return zeros_array
 
 
-#@cuda.jit("int32[:,:](int32[:,:])", device=True)
+#@cuda.jit("int64[:,:](int64[:,:])", device=True)
 def zeros2D(zeros_array):
     for i in range(zeros_array.shape[0]):
         for j in range(zeros_array.shape[1]):
@@ -102,7 +105,7 @@ def zeros2D(zeros_array):
     return zeros_array
 
 
-#@cuda.jit("boolean(int32[:,:])", device=True)
+#@cuda.jit("boolean(int64[:,:])", device=True)
 def nonzero2D(array):
     for i in range(array.shape[0]):
         for j in range(array.shape[1]):
@@ -111,7 +114,7 @@ def nonzero2D(array):
     return False
 
 
-#@cuda.jit("int32(int32[:])", device=True)
+#@cuda.jit("int64(int64[:])", device=True)
 def nonzeros_count(flat_array):
     nonzero_elements = 0
     for i in range(flat_array.size):
@@ -129,7 +132,7 @@ def nonzeros_count2D(array_2D):
     return nonzero_elements
 
 
-#@cuda.jit("int32[:](int32[:], int32[:])", device=True)
+#@cuda.jit("int64[:](int64[:], int64[:])", device=True)
 def remove_zeros(flat_array, filtered_array):
     for i in range(flat_array.size):
         if flat_array[i] != 0:
@@ -140,35 +143,35 @@ def remove_zeros(flat_array, filtered_array):
     return filtered_array
 
 
-#@cuda.jit("int32(int32)", device=True)
+#@cuda.jit("int64(int64)", device=True)
 def digit_count(integer):
     if integer == 0:
         return 0
     else:
-        return int32(floor(log10(float64(integer))) + 1)
+        return int64(floor(log10(float64(integer))) + 1)
 
 
-#@cuda.jit("int32[:](int32, int32[:])", device=True)
+#@cuda.jit("int64[:](int64, int64[:])", device=True)
 def digits(integer, digits_array):
     order = digits_array.size
     for i in range(order):
-        digits_array[order-i-1] = int32(
-            int32(fmod(integer, pow(10,i+1)) - fmod(integer, pow(10,i))) // pow(10,i))
+        digits_array[order-i-1] = int64(
+            int64(fmod(integer, pow(10,i+1)) - fmod(integer, pow(10,i))) // pow(10,i))
     return digits_array
 
 
-#@cuda.jit("int32(int32)", device=True)
+#@cuda.jit("int64(int64)", device=True)
 def length(word):
     return digit_count(word)
 
 
-#@cuda.jit("int32(int32, int32)", device=True)
+#@cuda.jit("int64(int64, int64)", device=True)
 def ith_letter(word, i):
-    return int32(
-        int32(fmod(word, pow(10,i+1)) - fmod(word, pow(10,i))) // pow(10,i))
+    return int64(
+        int64(fmod(word, pow(10,i+1)) - fmod(word, pow(10,i))) // pow(10,i))
 
 
-#@cuda.jit("int32(int32, int32)", device=True)
+#@cuda.jit("int64(int64, int64)", device=True)
 def letter(word, index):
     return ith_letter(word, index)
 
@@ -177,7 +180,7 @@ def length_word_array(letters_array):
     return nonzeros_count(letters_array)
 
 
-#@cuda.jit("int32[:](int32, int32[:])", device=True)
+#@cuda.jit("int64[:](int64, int64[:])", device=True)
 def letters(word, letters_array):
     word_length = length(word)
     for i in range(word_length):
@@ -185,17 +188,17 @@ def letters(word, letters_array):
     return letters_array
 
 
-#@cuda.jit("int32(int32)", device=True)
+#@cuda.jit("int64(int64)", device=True)
 def size(word):
     return length(word) // 2
 
 
-#@cuda.jit("int32(int32, int32)", device=True)
+#@cuda.jit("int64(int64, int64)", device=True)
 def get_letter(integer, reverse_index):
     return int64(integer * pow(10, reverse_index))
 
 
-#@cuda.jit("int32[:](int32[:], int32[:], int32, int32)", device=True)
+#@cuda.jit("int64[:](int64[:], int64[:], int64, int64)", device=True)
 def array_slice(flat_array, slice_array, start, end):
     step_size = 1   # assumed
     if flat_array.size == 0:
@@ -208,7 +211,7 @@ def array_slice(flat_array, slice_array, start, end):
     return slice_array
 
 
-#@cuda.jit("int32(int32[:])", device=True)
+#@cuda.jit("int64(int64[:])", device=True)
 def word_from_letters(letters):
     word = 0
     size = length_word_array(letters)
@@ -218,32 +221,32 @@ def word_from_letters(letters):
     return word
 
 
-#@cuda.jit("int32(int32[:], int32[:], int32, int32)", device=True)
+#@cuda.jit("int64(int64[:], int64[:], int64, int64)", device=True)
 def word_slice(word_letters, slice_array, start, end):
     return word_from_letters(array_slice(
         word_letters, slice_array, start, end))
 
 
-#@cuda.jit("int32(int32[:])", device=True)
+#@cuda.jit("int64(int64[:])", device=True)
 def reverse_word(word_letters):
     word_reversed = 0
     for i in range(word_letters.size):
         if word_letters[i] != 0:
-            word_reversed += int32(word_letters[i]*pow(10, i))  
+            word_reversed += int64(word_letters[i]*pow(10, i))  
     return word_reversed
 
 
-#@cuda.jit("int32(int32, int32)", device=True)
+#@cuda.jit("int64(int64, int64)", device=True)
 def concatenate(word1, word2):
     if word1 == 0:
         return word2
     elif word2 == 0:
         return word1
     else:
-        return word1*int32(pow(10, length(word2))) + word2
+        return word1*int64(pow(10, length(word2))) + word2
 
 
-#@cuda.jit("int32(int32, int32)", device=True)
+#@cuda.jit("int64(int64, int64)", device=True)
 def permutation_count(n, k):
     if n < k or k < 0:
         return 0
@@ -254,15 +257,15 @@ def permutation_count(n, k):
         return permutation_count
 
 
-#@cuda.jit("int32(int32, int32)", device=True)
+#@cuda.jit("int64(int64, int64)", device=True)
 def tuple_count(n, k):
     if n < k or k < 0:
         return 0
     else:
-        return int32(pow(n, k))
+        return int64(pow(n, k))
 
 
-#@cuda.jit("int32[:,:](int32[:], int32, int32[:,:], int32[:,:])", device=True)
+#@cuda.jit("int64[:,:](int64[:], int64, int64[:,:], int64[:,:])", device=True)
 def permutations(flat_array, size, tuple_array, permutation_array, a):
     for h in range(size):
         size_step = h+1
@@ -307,7 +310,7 @@ def permutations(flat_array, size, tuple_array, permutation_array, a):
     return permutation_array
 
 
-#@cuda.jit("void(int32[:], int32[:,:], int32, int32[:,:], int32[:,:])")
+#@cuda.jit("void(int64[:], int64[:,:], int64, int64[:,:], int64[:,:])")
 def compute_neighbors(word_array, neighborhoods, size_limit, 
                       repeat_words, return_words):
     """s
@@ -327,11 +330,11 @@ def compute_neighbors(word_array, neighborhoods, size_limit,
             pattern_instance_count = (repeat_words.size // repeat_words.ndim 
                                       + return_words.size // return_words.ndim)
             word_length = length(word)
-            # neighbors_array = zeros1D(cuda.local.array(NUM_NEIGHBOR_LIMIT, int32))
-            neighbors_array = zeros(NUM_NEIGHBOR_LIMIT, int32)
+            # neighbors_array = zeros1D(cuda.local.array(NUM_NEIGHBOR_LIMIT, int64))
+            neighbors_array = zeros(NUM_NEIGHBOR_LIMIT, int64)
             for j in range(pattern_instance_count):
-                # pattern_instance = zeros1D(cuda.local.array(2, int32))
-                pattern_instance = zeros(2, int32)
+                # pattern_instance = zeros1D(cuda.local.array(2, int64))
+                pattern_instance = zeros(2, int64)
                 if j <= pattern_instance_count//2 - 1:
                     pattern_instance[0] = repeat_words[0, j]
                     pattern_instance[1] = repeat_words[1, j]
@@ -343,11 +346,11 @@ def compute_neighbors(word_array, neighborhoods, size_limit,
                                    + length(pattern_instance[1]))
                 if word_length//2 + instance_length//2 <= size_limit:
                     # word_letters = letters(word, 
-                    #     zeros1D(cuda.local.array(SMALL_ARRAY_LENGTH, int32)))
-                    word_letters = letters(word, zeros(SMALL_ARRAY_LENGTH, int32))
+                    #     zeros1D(cuda.local.array(SMALL_ARRAY_LENGTH, int64)))
+                    word_letters = letters(word, zeros(SMALL_ARRAY_LENGTH, int64))
                     # new_letters = zeros1D(
-                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int32))
-                    new_letters = zeros(SMALL_ARRAY_LENGTH, int32)
+                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int64))
+                    new_letters = zeros(SMALL_ARRAY_LENGTH, int64)
                     offset = 0
                     for k in range(size_limit):
                         letter_taken = False
@@ -360,8 +363,8 @@ def compute_neighbors(word_array, neighborhoods, size_limit,
                             new_letters[k-offset] = k+1
 
                     # instance1_array = zeros1D(
-                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int32))
-                    instance1_array = zeros(SMALL_ARRAY_LENGTH, int32)
+                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int64))
+                    instance1_array = zeros(SMALL_ARRAY_LENGTH, int64)
                     instance_letters = letters(pattern_instance[0], instance1_array)
                     return_word = True
                     instance_size = length(pattern_instance[0])
@@ -369,22 +372,24 @@ def compute_neighbors(word_array, neighborhoods, size_limit,
                         if (letter(pattern_instance[0], k) 
                                 != letter(pattern_instance[1], instance_size-k-1)):
                             return_word = False
-                    # insertions = zeros1D(cuda.local.array(NUM_NEIGHBOR_LIMIT, int32))
-                    insertions = zeros(NUM_NEIGHBOR_LIMIT, int32)
-                    # instances = zeros2D(cuda.local.array((MAX_ARRAY_LENGTH, 2), int32))
-                    instances = zeros((MAX_ARRAY_LENGTH, 2), int32)
+                    # insertions = zeros1D(cuda.local.array(NUM_NEIGHBOR_LIMIT, int64))
+                    insertions = zeros(NUM_NEIGHBOR_LIMIT, int64)
+                    # instances = zeros2D(cuda.local.array((MAX_ARRAY_LENGTH, 2), int64))
+                    instances = zeros((MAX_ARRAY_LENGTH, 2), int64)
 
                     permutation_num = permutation_count(
                         nonzeros_count(new_letters), nonzeros_count(instance_letters))
                     tuple_num = tuple_count(nonzeros_count(new_letters), 
                         nonzeros_count(instance_letters))
+                    if tuple_num >= 1000:
+                        print(tuple_num)
                     # tuple_array = zeros2D(cuda.local.array(
-                    #     (MAX_ARRAY_LENGTH, SMALL_ARRAY_LENGTH), int32))
-                    tuple_array = zeros((MAX_ARRAY_LENGTH, SMALL_ARRAY_LENGTH), int32)
+                    #     (MAX_ARRAY_LENGTH, SMALL_ARRAY_LENGTH), int64))
+                    tuple_array = zeros((MAX_ARRAY_LENGTH, SMALL_ARRAY_LENGTH), int64)
                     # permutation_array = zeros2D(cuda.local.array(
-                    #     (MAX_ARRAY_LENGTH, SMALL_ARRAY_LENGTH), int32))
+                    #     (MAX_ARRAY_LENGTH, SMALL_ARRAY_LENGTH), int64))
                     permutation_array = zeros(
-                        (MAX_ARRAY_LENGTH, SMALL_ARRAY_LENGTH), int32)
+                        (MAX_ARRAY_LENGTH, SMALL_ARRAY_LENGTH), int64)
                     permutations_array = permutations(
                         new_letters, nonzeros_count(instance_letters), 
                         tuple_array, permutation_array, i)
@@ -392,8 +397,8 @@ def compute_neighbors(word_array, neighborhoods, size_limit,
                     # Generate all pattern instance labelings
                     for k in range(permutation_num):
                         # indices = zeros1D(
-                        #     cuda.local.array(SMALL_ARRAY_LENGTH, int32))
-                        indices = zeros(SMALL_ARRAY_LENGTH, int32)
+                        #     cuda.local.array(SMALL_ARRAY_LENGTH, int64))
+                        indices = zeros(SMALL_ARRAY_LENGTH, int64)
                         for l in range(permutations_array.shape[1]):
                             indices[l] = permutations_array[k, l]
                         for l in range(pattern_instance.size):
@@ -421,14 +426,14 @@ def compute_neighbors(word_array, neighborhoods, size_limit,
                             for m in range(word_length+1):
                                 if l < m:
                                     # slice1_array = zeros1D(
-                                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int32))
-                                    slice1_array = zeros(SMALL_ARRAY_LENGTH, int32)
+                                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int64))
+                                    slice1_array = zeros(SMALL_ARRAY_LENGTH, int64)
                                     # slice2_array = zeros1D(
-                                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int32))
-                                    slice2_array = zeros(SMALL_ARRAY_LENGTH, int32)
+                                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int64))
+                                    slice2_array = zeros(SMALL_ARRAY_LENGTH, int64)
                                     # slice3_array = zeros1D(
-                                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int32))
-                                    slice3_array = zeros(SMALL_ARRAY_LENGTH, int32)
+                                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int64))
+                                    slice3_array = zeros(SMALL_ARRAY_LENGTH, int64)
                                     new_word = concatenate(
                                         concatenate(
                                             concatenate(
@@ -441,14 +446,14 @@ def compute_neighbors(word_array, neighborhoods, size_limit,
                                     )
                                 else:
                                     # slice1_array = zeros1D(
-                                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int32))
-                                    slice1_array = zeros(SMALL_ARRAY_LENGTH, int32)
+                                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int64))
+                                    slice1_array = zeros(SMALL_ARRAY_LENGTH, int64)
                                     # slice2_array = zeros1D(
-                                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int32))
-                                    slice2_array = zeros(SMALL_ARRAY_LENGTH, int32)
+                                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int64))
+                                    slice2_array = zeros(SMALL_ARRAY_LENGTH, int64)
                                     # slice3_array = zeros1D(
-                                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int32))
-                                    slice3_array = zeros(SMALL_ARRAY_LENGTH, int32)
+                                    #     cuda.local.array(SMALL_ARRAY_LENGTH, int64))
+                                    slice3_array = zeros(SMALL_ARRAY_LENGTH, int64)
                                     new_word = concatenate(
                                         concatenate(
                                             concatenate(
@@ -474,6 +479,8 @@ def compute_neighbors(word_array, neighborhoods, size_limit,
                     new_neighbor_count = nonzeros_count(some_neighbors)
                     for k in range(new_neighbor_count):
                         neighbors_array[neighbor_count+k] = some_neighbors[k]
+            if word == 0:
+                print(neighbors_array.tolist())
             for j in range(neighbors_array.size):
                 neighborhoods[i, j] = neighbors_array[j]
 
