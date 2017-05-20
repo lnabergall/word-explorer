@@ -2,6 +2,7 @@
 from itertools import combinations, permutations
 
 from word_graph import Word, Word_eq
+from subgraph_finder_gpu import find_subgraphs as find_subgraphs_gpu
 
 
 def expand_word_graph(word_graph):
@@ -53,29 +54,17 @@ def find_triangles(word_graph):
             elif neighbor1 in word_graph.get(neighbor2, []):
                 triangles.add((word, neighbor2, neighbor1))
 
-    triangles = list(triangles)
-    triangles_list = []
-    for triangle1 in triangles:
-        redundant = False
-        for triangle2 in triangles_list:
-            if set(triangle1) == set(triangle2):
-                redundant = True
-                break
-        if not redundant:
-            smallest_size = min([len(word) for word in triangle1])
-            second_smallest_size = min([len(word) for word in triangle1 
-                                        if len(word) != smallest_size])
-            reordered_triangle = [None, None, None]
-            for word in triangle1:
-                if len(word) == smallest_size:
-                    reordered_triangle[0] = word
-                elif len(word) == second_smallest_size:
-                    reordered_triangle[1] = word
-                else:
-                    reordered_triangle[2] = word
-            triangles_list.append(reordered_triangle)
+    return triangles
 
-    return triangles_list
+
+def filter_subgraphs(subgraphs):
+    subgraphs = list(subgraphs)
+    subgraphs = [list(subgraph) for subgraph in subgraphs]
+    for subgraph in subgraphs:
+        subgraph.sort()
+    subgraphs = [tuple(subgraph) for subgraph in subgraphs]
+
+    return list(set(subgraphs))
 
 
 def find_squares(word_graph):
@@ -109,19 +98,7 @@ def find_squares(word_graph):
                         word1 not in word_graph.get(word2, [])):
                     squares.add((word1, pair[0], word2, pair[1]))
 
-    # Remove redundant copies
-    squares = list(squares)
-    squares_list = []
-    for square1 in squares:
-        redundant = False
-        for square2 in squares_list:
-            if set(square1) == set(square2):
-                redundant = True
-                break
-        if not redundant:
-            squares_list.append(square1)
-
-    return squares_list
+    return list(squares)
 
 
 def extract_directed_structure(square):
@@ -242,6 +219,17 @@ def extract_word_graph(graph_file, word_class=Word):
     return word_graph
 
 
+def get_3paths(file_prefix, graph_size):
+    with open(file_prefix + graph_size + "_3paths.txt", "r") as paths_file:
+        paths = []
+        for line in paths_file:
+            if line.startswith("("):
+                path = tuple(word_class(word) 
+                    for word in line[2:len(line)-3].split("', '"))
+                paths.append(path)
+    return paths
+
+
 if __name__ == "__main__":
     ascending_order = input("Ascending order words? ('Y' or 'N') ")
     request = input("\nFind squares in a graph, sort directed squares, " 
@@ -249,10 +237,14 @@ if __name__ == "__main__":
                     "triangles, find 3-paths, or find 4-paths? " 
                     "('1', '2', '3', '4', '5', or '6'): ")
     graph_size = input("\nWord graph size? ")
+    gpu = input("\nUse GPU? ")
+    gpu = False if gpu.strip().lower().startswith("n") else True
     if ascending_order.strip().lower().startswith("n"):
+        ascending_order = False
         file_prefix = "word_graph_size"
         word_class = Word
     else:
+        ascending_order = True
         file_prefix = "aoword_graph_size"
         word_class = Word_eq
 
@@ -262,7 +254,12 @@ if __name__ == "__main__":
 
     if request == "1":
         word_graph = expand_word_graph(word_graph)
-        squares = list(find_squares(word_graph))
+        if gpu:
+            paths = get_3paths(file_prefix, graph_size)
+            squares = filter_subgraphs(find_subgraphs_gpu(
+                "square", word_graph, ascending_order, word_class, data=paths))
+        else:
+            squares = filter_subgraphs(find_squares(word_graph))
         squares.sort(key=lambda square: len(square[0]))
         with open(file_prefix + graph_size + "_squares.txt", "w") as squares_file:
             print("Square subgraph count: " + str(len(squares)) + "\n\n", 
@@ -334,7 +331,13 @@ if __name__ == "__main__":
                 print("\n\n", file=cubes_file)
 
     if request == "4":
-        triangles = find_triangles(expand_word_graph(word_graph))
+        if gpu:
+            triangles = filter_subgraphs(find_subgraphs_gpu(
+                "triangle", expand_word_graph(word_graph), 
+                ascending_order, word_class))
+        else:
+            triangles = filter_subgraphs(
+                find_triangles(expand_word_graph(word_graph)))
         with open(file_prefix + graph_size + "_triangles.txt", "w") \
                 as triangles_file:
             print("Triangle subgraph count: " + str(len(triangles)) + "\n\n",
@@ -343,7 +346,12 @@ if __name__ == "__main__":
                 print(triangle, file=triangles_file)
 
     if request == "5":
-        paths = find_3paths(expand_word_graph(word_graph))
+        if gpu:
+            paths = find_subgraphs_gpu(
+                "3-path", expand_word_graph(word_graph), 
+                ascending_order, word_class)
+        else:
+            paths = find_3paths(expand_word_graph(word_graph))
         paths.sort(key=lambda path: len(path[0]))
         with open(file_prefix + graph_size + "_3paths.txt", "w") as paths_file:
             print("3-path subgraph count: " + str(len(paths)) + "\n\n",
@@ -352,15 +360,12 @@ if __name__ == "__main__":
                 print(path, file=paths_file)
 
     if request == "6":
-        with open(file_prefix + graph_size + "_3paths.txt", "r") as paths_file:
-            paths = []
-            for line in paths_file:
-                if line.startswith("("):
-                    path = tuple(word_class(word) 
-                        for word in line[2:len(line)-3].split("', '"))
-                    paths.append(path)
-
-        paths = find_4paths(expand_word_graph(word_graph), paths)
+        paths = get_3paths(file_prefix, graph_size)
+        if gpu:
+            paths = find_subgraphs_gpu("4-path", expand_word_graph(word_graph),
+                                       ascending_order, word_class, data=paths)
+        else:
+            paths = find_4paths(expand_word_graph(word_graph), paths)
         paths.sort(key=lambda path: len(path[0]))
         with open(file_prefix + graph_size + "_4paths.txt", "w") as paths_file:
             print("4-path subgraph count: " + str(len(paths)) + "\n\n",
