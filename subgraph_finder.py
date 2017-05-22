@@ -152,11 +152,15 @@ SPECIAL_STRUCTURES = [
 ]
 
 
-def find_cubes(word_graph, sorted_squares):
-    cubes = set()
+def extract_squares(sorted_squares):
     squares = []
     for directed_structure in sorted_squares:
         squares.extend(sorted_squares[directed_structure])
+    return squares
+
+
+def find_cubes(word_graph, squares):
+    cubes = set()
     for square1 in squares:
         for square2 in squares:
             square2_words = set(square2)
@@ -176,17 +180,11 @@ def find_cubes(word_graph, sorted_squares):
                 if len(set(cube)) == 8:
                     cubes.add(cube)
 
-    cubes = list(cubes)
-    cubes_list = []
-    for cube1 in cubes:
-        redundant = False
-        for cube2 in cubes_list:
-            if set(cube1) == set(cube2):
-                redundant = True
-                break
-        if not redundant:
-            cubes_list.append(cube1)
+    return list(cubes)
 
+
+def filter_cubes(cubes):
+    cubes_list = filter_subgraphs(cubes)
     sorted_cubes = {"Linearly Ordered": [], "Not Linearly Ordered": []}
     for cube in cubes_list:
         directed_structure1 = extract_directed_structure(
@@ -313,7 +311,14 @@ if __name__ == "__main__":
                         for word in line[2:len(line)-2].split("', '"))
                     sorted_squares[directed_structure].append(square)
 
-        sorted_cubes = find_cubes(expand_word_graph(word_graph), sorted_squares)
+        squares = extract_squares(sorted_squares)
+        if gpu:
+            sorted_cubes = filter_cubes(find_subgraphs_gpu(
+                "cube", expand_word_graph(word_graph), 
+                ascending_order, word_class, data=squares))
+        else:
+            sorted_cubes = filter_cubes(find_cubes(
+                expand_word_graph(word_graph), squares))
         with open(file_prefix + graph_size + "_cubes.txt", "w") as cubes_file:
             cube_count = 0
             for directed_labeling in sorted_cubes:

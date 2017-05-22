@@ -19,16 +19,16 @@ NEIGHBOR_MAX = 250
 PATH3_MAX = 20000
 
 
-def create_paths_array(paths, length):
-    paths_array = zeros_py((len(paths), length), dtype=int64_py)
-    for i, path in enumerate(paths):
-        for j, word in enumerate(path):
+def create_subgraphs_array(subgraphs, size):
+    subgraphs_array = zeros_py((len(subgraphs), size), dtype=int64_py)
+    for i, subgraph in enumerate(subgraphs):
+        for j, word in enumerate(subgraph):
             word_integer = word_from_letters_list(list(map(int, list(word))))
             if word_integer == 0:
                 word_integer = -1
-            paths_array[i, j] = word_integer
+            subgraphs_array[i, j] = word_integer
     
-    return paths_array
+    return subgraphs_array
 
 
 def find_subgraphs(subgraph_type, word_graph, 
@@ -81,9 +81,9 @@ def find_subgraphs(subgraph_type, word_graph,
         print("Starting GPU computations...")
         find_3paths[blocks_perdim, threads_perblock](
             device_word_graph_array, device_paths, device_path_num_array)
-        print("Finished GPU computations.")
         paths_found = device_paths.copy_to_host()
         path_num_array = device_path_num_array.copy_to_host()
+        print("Finished GPU computations.")
         paths_list = paths_found.tolist()
         end_time = time()
         paths = []
@@ -124,7 +124,7 @@ def find_subgraphs(subgraph_type, word_graph,
                                                 (k+1)*len(length3_paths) // batches]
             paths = zeros_py((len(length3_paths_batch), 275, 4), dtype=int64_py)
             device_paths = cuda.to_device(paths)
-            length3_paths_array = create_paths_array(length3_paths_batch, 3)
+            length3_paths_array = create_subgraphs_array(length3_paths_batch, 3)
             device_3paths = cuda.to_device(length3_paths_array)
             blocks_perdim = ((len(length3_paths_batch) 
                              + (threads_perblock - 1)) // threads_perblock)
@@ -134,9 +134,9 @@ def find_subgraphs(subgraph_type, word_graph,
             find_4paths[blocks_perdim, threads_perblock](
                 device_word_graph_array, device_3paths, 
                 device_paths, device_paths_per)
-            print("Finished GPU computations.")
             paths_found = device_paths.copy_to_host()
             paths_per = device_paths_per.copy_to_host().tolist()
+            print("Finished GPU computations.")
             print(max(paths_per))
             end_time = time()
             paths = []
@@ -157,7 +157,7 @@ def find_subgraphs(subgraph_type, word_graph,
         return all_paths
     elif subgraph_type == "triangle":
         all_triangles = []
-        batches = 40
+        batches = 1
         for k in range(batches):
             print("Batch", k)
             word_batch_indices = list(range(k*word_graph_array.shape[0] // batches, 
@@ -176,9 +176,9 @@ def find_subgraphs(subgraph_type, word_graph,
             find_triangles[blocks_perdim, threads_perblock](
                 device_word_graph_array, batch_indices_array, 
                 device_triangles, device_triangles_per)
-            print("Finished GPU computations.")
             triangles_found = device_triangles.copy_to_host()
             triangles_per = device_triangles_per.copy_to_host().tolist()
+            print("Finished GPU computations.")
             print(max(triangles_per))
             end_time = time()
             triangles = []
@@ -197,7 +197,7 @@ def find_subgraphs(subgraph_type, word_graph,
         return all_triangles
     elif subgraph_type == "square":
         length3_paths = data
-        length3_paths_array = create_paths_array(length3_paths, 3)
+        length3_paths_array = create_subgraphs_array(length3_paths, 3)
         device_all_3paths = cuda.to_device(length3_paths_array)
         all_squares = []
         batches = 1
@@ -208,7 +208,7 @@ def find_subgraphs(subgraph_type, word_graph,
             squares = zeros_py(
                 (len(length3_paths)*len(length3_paths_batch), 4), dtype=int64_py)
             device_squares = cuda.to_device(squares)
-            batch_array = create_paths_array(length3_paths_batch, 3)
+            batch_array = create_subgraphs_array(length3_paths_batch, 3)
             device_3paths_batch = cuda.to_device(batch_array)
             blocks_perdim = ((len(length3_paths)*len(length3_paths_batch)
                              + (threads_perblock - 1)) // threads_perblock)
@@ -216,8 +216,8 @@ def find_subgraphs(subgraph_type, word_graph,
             find_squares[blocks_perdim, threads_perblock](
                 device_word_graph_array, device_all_3paths, 
                 device_3paths_batch, device_squares)
-            print("Finished GPU computations.")
             squares_found = device_squares.copy_to_host()
+            print("Finished GPU computations.")
             end_time = time()
             squares = []
             for i in range(squares_found.shape[0]):
@@ -235,7 +235,30 @@ def find_subgraphs(subgraph_type, word_graph,
         print(end_time - start_time)
         return all_squares
     elif subgraph_type == "cube":
-        pass
+        squares = data
+        squares = create_subgraphs_array(squares, 4)
+        device_squares = cuda.to_device(squares)
+        cubes = zeros_py((len(squares)**2, 8), dtype=int64_py)
+        device_cubes = cuda.to_device(cubes)
+        blocks_perdim = (
+            (len(squares)**2 + (threads_perblock - 1)) // threads_perblock)
+        print("Starting GPU computations...")
+        find_cubes[blocks_perdim, threads_perblock](
+            device_word_graph_array, device_squares, device_cubes)
+        cubes_found = device_cubes.copy_to_host()
+        print("Finished GPU computations.")
+        end_time = time()
+        cubes = []
+        for i in range(cubes_found.shape[0]):
+            if cubes_found[i, 0] != 0 and cubes_found[i, 1] != 0:
+                cube = []
+                for j in range(cubes_found.shape[1]):
+                    word = (Word(str(cubes_found[i, j])) 
+                            if cubes_found[i, j] != -1 else Word(""))
+                    cube.append(word)
+                squares.append(tuple(cube))
+        print(end_time - start_time)
+        return cubes
 
 
 @cuda.jit("int64[:](int64[:,:], int64, int64, int64[:])", device=True)
@@ -275,126 +298,165 @@ def get_value(dict_array, key, flat_array):
 @cuda.jit("void(int64[:,:], int64[:,:,:], int64[:])")
 def find_3paths(word_graph, paths, path_num_array):
     thread_num = cuda.grid(1)
-    for i in range(paths.shape[0]):
-        if i == thread_num:
-            paths_index = 0
-            word = word_graph[i, 0]
-            neighbors1_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
-            neighbors1 = get_row(word_graph, i, 1, neighbors1_array)
-            for j in range(neighbors1.size):
-                neighbor1 = neighbors1[j]
-                if neighbor1 != 0:
-                    neighbors2_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
-                    neighbors2 = get_value(word_graph, neighbor1, neighbors2_array)
-                    for k in range(neighbors2.size):
-                        neighbor2 = neighbors2[k]
-                        if neighbor2 != 0:
-                            neighbors3_array = zeros1D(
-                                cuda.local.array(NEIGHBOR_MAX, int64))
-                            neighbors3 = get_value(
-                                word_graph, neighbor2, neighbors3_array)
-                            if (not contains(neighbors1, neighbor2) 
-                                    and not contains(neighbors3, word)
-                                    and length(word) < length(neighbor1) 
-                                    and length(neighbor1) < length(neighbor2)):
-                                paths[i, paths_index, 0] = word
-                                paths[i, paths_index, 1] = neighbor1
-                                paths[i, paths_index, 2] = neighbor2
-                                paths_index += 1
-            path_num_array[i] = paths_index
+    paths_index = 0
+    word = word_graph[thread_num, 0]
+    neighbors1_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+    neighbors1 = get_row(word_graph, thread_num, 1, neighbors1_array)
+    for j in range(neighbors1.size):
+        neighbor1 = neighbors1[j]
+        if neighbor1 != 0:
+            neighbors2_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+            neighbors2 = get_value(word_graph, neighbor1, neighbors2_array)
+            for k in range(neighbors2.size):
+                neighbor2 = neighbors2[k]
+                if neighbor2 != 0:
+                    neighbors3_array = zeros1D(
+                        cuda.local.array(NEIGHBOR_MAX, int64))
+                    neighbors3 = get_value(
+                        word_graph, neighbor2, neighbors3_array)
+                    if (not contains(neighbors1, neighbor2) 
+                            and not contains(neighbors3, word)
+                            and length(word) < length(neighbor1) 
+                            and length(neighbor1) < length(neighbor2)):
+                        paths[thread_num, paths_index, 0] = word
+                        paths[thread_num, paths_index, 1] = neighbor1
+                        paths[thread_num, paths_index, 2] = neighbor2
+                        paths_index += 1
+    path_num_array[thread_num] = paths_index
 
 
 @cuda.jit("void(int64[:,:], int64[:,:], int64[:,:,:], int64[:])")
 def find_4paths(word_graph, length3_paths, paths, paths_per):
     thread_num = cuda.grid(1)
-    for i in range(length3_paths.shape[0]):
-        if i == thread_num:
-            path_count = 0
-            neighbors2_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
-            neighbors2 = get_value(word_graph, length3_paths[i, 2], neighbors2_array)
-            for j in range(neighbors2.size):
-                word = neighbors2[j]
-                if word != 0:
-                    neighbors_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
-                    neighbors = get_value(word_graph, word, neighbors_array)
-                    neighbors0_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
-                    neighbors0 = get_value(
-                        word_graph, length3_paths[i, 0], neighbors0_array)
-                    neighbors1_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
-                    neighbors1 = get_value(
-                        word_graph, length3_paths[i, 1], neighbors1_array)
-                    if (length(word) >= length(length3_paths[i, 2])
-                            and not contains(neighbors0, word)
-                            and not contains(neighbors, length3_paths[i, 0])
-                            and not contains(neighbors1, word)
-                            and not contains(neighbors, length3_paths[i, 1])):
-                        for k in range(3):
-                            paths[i, path_count, k] = length3_paths[i, k]
-                        paths[i, path_count, 3] = word
-                        path_count += 1
-            paths_per[i] = path_count
+    path_count = 0
+    neighbors2_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+    neighbors2 = get_value(
+        word_graph, length3_paths[thread_num, 2], neighbors2_array)
+    for j in range(neighbors2.size):
+        word = neighbors2[j]
+        if word != 0:
+            neighbors_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+            neighbors = get_value(word_graph, word, neighbors_array)
+            neighbors0_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+            neighbors0 = get_value(
+                word_graph, length3_paths[thread_num, 0], neighbors0_array)
+            neighbors1_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+            neighbors1 = get_value(
+                word_graph, length3_paths[thread_num, 1], neighbors1_array)
+            if (length(word) >= length(length3_paths[thread_num, 2])
+                    and not contains(neighbors0, word)
+                    and not contains(neighbors, length3_paths[thread_num, 0])
+                    and not contains(neighbors1, word)
+                    and not contains(neighbors, length3_paths[thread_num, 1])):
+                for k in range(3):
+                    paths[thread_num, path_count, k] = length3_paths[thread_num, k]
+                paths[thread_num, path_count, 3] = word
+                path_count += 1
+    paths_per[thread_num] = path_count
 
 
 @cuda.jit("void(int64[:,:], int64[:], int64[:,:,:], int64[:])")
 def find_triangles(word_graph, word_indices, triangles, triangles_per):
     thread_num = cuda.grid(1)
-    for i in range(word_indices.size):
-        if i == thread_num:
-            triangle_count = 0
-            i = word_indices[i]
-            word = word_graph[i, 0]
-            neighbors_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
-            neighbors = get_row(word_graph, i, 1, neighbors_array)
-            for j in range(neighbors.size):
-                neighbor1 = neighbors[j]
-                if neighbor1 != 0:
-                    neighbors1_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
-                    neighbors1 = get_value(word_graph, neighbor1, neighbors1_array)
-                    for k in range(neighbors.size):
-                        neighbor2 = neighbors[k]
-                        if neighbor2 != 0:
-                            neighbors2_array = zeros1D(
-                                cuda.local.array(NEIGHBOR_MAX, int64))
-                            neighbors2 = get_value(
-                                word_graph, neighbor2, neighbors2_array)
-                            if contains(neighbors1, neighbor2):
-                                triangles[i, triangle_count, 0] = word
-                                triangles[i, triangle_count, 1] = neighbor1
-                                triangles[i, triangle_count, 2] = neighbor2
-                                triangle_count += 1
-                            elif contains(neighbors2, neighbor1):
-                                triangles[i, triangle_count, 0] = word
-                                triangles[i, triangle_count, 1] = neighbor2
-                                triangles[i, triangle_count, 2] = neighbor1
-                                triangle_count += 1
-            triangles_per[i] = triangle_count
+    triangle_count = 0
+    thread_num = word_indices[thread_num]
+    word = word_graph[thread_num, 0]
+    neighbors_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+    neighbors = get_row(word_graph, thread_num, 1, neighbors_array)
+    for j in range(neighbors.size):
+        neighbor1 = neighbors[j]
+        if neighbor1 != 0:
+            neighbors1_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+            neighbors1 = get_value(word_graph, neighbor1, neighbors1_array)
+            for k in range(neighbors.size):
+                neighbor2 = neighbors[k]
+                if neighbor2 != 0:
+                    neighbors2_array = zeros1D(
+                        cuda.local.array(NEIGHBOR_MAX, int64))
+                    neighbors2 = get_value(
+                        word_graph, neighbor2, neighbors2_array)
+                    if contains(neighbors1, neighbor2):
+                        triangles[thread_num, triangle_count, 0] = word
+                        triangles[thread_num, triangle_count, 1] = neighbor1
+                        triangles[thread_num, triangle_count, 2] = neighbor2
+                        triangle_count += 1
+                    elif contains(neighbors2, neighbor1):
+                        triangles[thread_num, triangle_count, 0] = word
+                        triangles[thread_num, triangle_count, 1] = neighbor2
+                        triangles[thread_num, triangle_count, 2] = neighbor1
+                        triangle_count += 1
+    triangles_per[thread_num] = triangle_count
 
 
 @cuda.jit("void(int64[:,:], int64[:,:], int64[:,:], int64[:,:])")
 def find_squares(word_graph, length3_paths, length3_path_batch, squares):
     thread_num = cuda.grid(1)
-    for i in range(length3_paths.shape[0]):
-        for j in range(length3_path_batch.shape[0]):
-            if i*length3_paths.shape[0] + j == thread_num:
-                path1_array = zeros1D(cuda.local.array(3, int64))
-                path1 = get_row(length3_paths, i, 0, path1_array)
-                path2_array = zeros1D(cuda.local.array(3, int64))
-                path2 = get_row(length3_path_batch, j, 0, path2_array)
-                if path1[1] != path2[1] and ((path1[0] == path2[0] 
-                        and path1[2] == path2[2]) or (path1[0] == path2[2] 
-                        and path1[2] == path2[0])):
-                    neighbors1_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
-                    neighbors1 = get_value(word_graph, path1[1], neighbors1_array)
-                    neighbors2_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
-                    neighbors2 = get_value(word_graph, path2[1], neighbors2_array)
-                    if (not contains(neighbors1, path2[1]) 
-                            and not contains(neighbors2, path1[1])):
-                        squares[thread_num, 0] = path1[0]
-                        squares[thread_num, 1] = path1[1]
-                        squares[thread_num, 2] = path1[2]
-                        squares[thread_num, 3] = path2[1]
+    i = thread_num // length3_paths.shape[0]
+    j = thread_num % length3_paths.shape[0]
+    path1_array = zeros1D(cuda.local.array(3, int64))
+    path1 = get_row(length3_paths, i, 0, path1_array)
+    path2_array = zeros1D(cuda.local.array(3, int64))
+    path2 = get_row(length3_path_batch, j, 0, path2_array)
+    if path1[1] != path2[1] and ((path1[0] == path2[0] 
+            and path1[2] == path2[2]) or (path1[0] == path2[2] 
+            and path1[2] == path2[0])):
+        neighbors1_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+        neighbors1 = get_value(word_graph, path1[1], neighbors1_array)
+        neighbors2_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+        neighbors2 = get_value(word_graph, path2[1], neighbors2_array)
+        if (not contains(neighbors1, path2[1]) 
+                and not contains(neighbors2, path1[1])):
+            squares[thread_num, 0] = path1[0]
+            squares[thread_num, 1] = path1[1]
+            squares[thread_num, 2] = path1[2]
+            squares[thread_num, 3] = path2[1]
 
 
 @cuda.jit("void(int64[:,:], int64[:,:], int64[:,:])")
-def find_cubes(word_graph, sorted_squares, cubes):
-    pass
+def find_cubes(word_graph, squares, cubes):
+    thread_num = cuda.grid(1)
+    i = thread_num // squares.shape[0]
+    j = thread_num % squares.shape[0]
+    square1_array = zeros1D(cuda.local.array(4, int64))
+    square1 = get_row(squares, i, 0, square1_array)
+    square2_array = zeros1D(cuda.local.array(4, int64))
+    square2 = get_row(squares, j, 0, square2_array)
+    cube = zeros1D(cuda.local.array(8, int64))
+    invalid = False
+    for k in range(square1.size):
+        word = square1[k]
+        neighbors_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+        neighbors = get_value(word_graph, word, neighbors_array)
+        contained_in = 0
+        neighbor = 0
+        if contains(neighbors, square2[0]):
+            neighbor = square2[0]
+            contained_in += 1
+        elif contains(neighbors, square2[1]):
+            neighbor = square2[1]
+            contained_in += 1
+        elif contains(neighbors, square2[2]):
+            neighbor = square2[2]
+            contained_in += 1
+        elif contains(neighbors, square2[3]):
+            neighbor = square2[3]
+            contained_in += 1
+        if contained_in != 1:
+            invalid = True
+        else:
+            cube[2*k] = word
+            cube[2*k + 1] = neighbor
+    if not invalid and not contains(cube, 0):
+        invalid = False
+        for k in range(cube.size):
+            for l in range(cube.size):
+                if cube[k] == cube[l]:
+                    invalid = True
+        if not invalid:
+            for k in range(7):
+                if k % 2:
+                    index = k // 2
+                    cubes[thread_num, index] = cube[k]
+                else:
+                    index = 7 - ((7-k) // 2)
+                    cubes[thread_num, index] = cube[k]
