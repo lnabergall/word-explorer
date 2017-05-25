@@ -163,19 +163,29 @@ def find_cubes(word_graph, squares):
     cubes = set()
     for square1 in squares:
         for square2 in squares:
+            square1_words = set(square1)
             square2_words = set(square2)
             cube_edges = []
+            unassigned = set()
             invalid = False
             for word in square1:
-                if len(word_graph[word] & square2_words) != 1:
+                neighbors = word_graph[word] & square2_words
+                if len(neighbors) > 1:
                     invalid = True
                     break
+                elif len(neighbors) == 0:
+                    unassigned.add(word)
                 else:
-                    cube_edges.append((word, 
-                        (word_graph[word] & square2_words).pop()))
-            if invalid:
-                continue
-            if len(cube_edges) == 4:
+                    cube_edges.append((word, neighbors.pop()))
+            if not invalid and len(cube_edges) != 4:
+                for word in square2:
+                    neighbors = word_graph[word] & square1_words
+                    if len(neighbors) > 1:
+                        invalid = True
+                        break
+                    elif len(neighbors) == len(unassigned & neighbors) == 1:
+                        cube_edges.append((word, neighbors.pop()))
+            if not invalid and len(cube_edges) == 4:
                 cube = square1 + tuple(edge[1] for edge in cube_edges)
                 if len(set(cube)) == 8:
                     cubes.add(cube)

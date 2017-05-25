@@ -236,8 +236,8 @@ def find_subgraphs(subgraph_type, word_graph,
         return all_squares
     elif subgraph_type == "cube":
         squares = data
-        squares = create_subgraphs_array(squares, 4)
-        device_squares = cuda.to_device(squares)
+        squares_array = create_subgraphs_array(squares, 4)
+        device_squares = cuda.to_device(squares_array)
         cubes = zeros_py((len(squares)**2, 8), dtype=int64_py)
         device_cubes = cuda.to_device(cubes)
         blocks_perdim = (
@@ -256,7 +256,7 @@ def find_subgraphs(subgraph_type, word_graph,
                     word = (Word(str(cubes_found[i, j])) 
                             if cubes_found[i, j] != -1 else Word(""))
                     cube.append(word)
-                squares.append(tuple(cube))
+                cubes.append(tuple(cube))
         print(end_time - start_time)
         return cubes
 
@@ -427,34 +427,55 @@ def find_cubes(word_graph, squares, cubes):
         word = square1[k]
         neighbors_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
         neighbors = get_value(word_graph, word, neighbors_array)
+        unassigned = zeros1D(cuda.local.array(4, int64))
         contained_in = 0
         neighbor = 0
-        if contains(neighbors, square2[0]):
-            neighbor = square2[0]
-            contained_in += 1
-        elif contains(neighbors, square2[1]):
-            neighbor = square2[1]
-            contained_in += 1
-        elif contains(neighbors, square2[2]):
-            neighbor = square2[2]
-            contained_in += 1
-        elif contains(neighbors, square2[3]):
-            neighbor = square2[3]
-            contained_in += 1
-        if contained_in != 1:
+        for l in range(square2.size):
+            if contains(neighbors, square2[l]):
+                neighbor = square2[l]
+                contained_in += 1
+        if contained_in > 1:
             invalid = True
+            break
+        elif contained_in == 0:
+            unassigned[k] = word
         else:
             cube[2*k] = word
             cube[2*k + 1] = neighbor
+    if not invalid and contains(cube, 0):
+        invalid = False
+        for k in range(square2.size):
+            word = square2[k]
+            neighbors_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+            neighbors = get_value(word_graph, word, neighbors_array)
+            contained_in = 0
+            neighbor = 0
+            for l in range(square1.size):
+                if contains(neighbors, square1[l]):
+                    neighbor = square1[l]
+                    contained_in += 1
+            if contained_in > 1:
+                invalid = True
+                break
+            unassigned_contained = 0
+            for l in range(unassigned.size):
+                if unassigned[l] != 0 and contains(neighbors, unassigned[l]):
+                    unassigned_contained += 1
+            if contained_in == unassigned_contained == 1:
+                cube[2*k] = word
+                cube[2*k + 1] = neighbor 
     if not invalid and not contains(cube, 0):
         invalid = False
         for k in range(cube.size):
             for l in range(cube.size):
-                if cube[k] == cube[l]:
+                if k != l and cube[k] == cube[l]:
                     invalid = True
+                    break
+            if invalid:
+                break
         if not invalid:
-            for k in range(7):
-                if k % 2:
+            for k in range(8):
+                if not k % 2:
                     index = k // 2
                     cubes[thread_num, index] = cube[k]
                 else:
