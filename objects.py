@@ -216,7 +216,7 @@ class Word(str):
 			return str.__new__(cls, content)
 
 	def __eq__(self, other):
-		return is_equivalent_ascending(self, other)
+		return is_equivalent(self, other)
 
 	def __ne__(self, other):
 		return not self.__eq__(other)
