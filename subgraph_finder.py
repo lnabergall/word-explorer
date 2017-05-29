@@ -238,6 +238,17 @@ def get_3paths(file_prefix, graph_size):
     return paths
 
 
+def get_squares(file_name):
+    with open(file_name, "r") as squares_file:
+            squares = []
+            for line in squares_file:
+                if line.startswith("("):
+                    square = tuple(word_class(word) 
+                        for word in line[2:len(line)-3].split("', '"))
+                    squares.append(square)
+    return squares
+
+
 if __name__ == "__main__":
     ascending_order = input("Ascending order words? ('Y' or 'N') ")
     request = input("\nFind squares in a graph, sort directed squares, " 
@@ -278,14 +289,7 @@ if __name__ == "__main__":
     if request == "2":
         file_name = input("\nEnter name of file containing directed "  
                           "squares (including extension): ")
-        with open(file_name, "r") as squares_file:
-            squares = []
-            for line in squares_file:
-                if line.startswith("("):
-                    square = tuple(word_class(word) 
-                        for word in line[2:len(line)-3].split("', '"))
-                    squares.append(square)
-
+        squares = get_squares(file_name)
         sorted_squares = sort_directed_squares(squares)
         with open(file_prefix + graph_size + "_squares_sorted.txt", "w") \
                 as sorted_squares_file:
@@ -306,23 +310,28 @@ if __name__ == "__main__":
                 print("\n\n", file=sorted_squares_file)
 
     if request == "3":
-        file_name = input("\nEnter name of file containing sorted directed "  
-                          "squares (including extension): ")
-        with open(file_name, "r") as sorted_squares_file:
-            sorted_squares = {}
-            for line in sorted_squares_file:
-                line = line.strip()
-                if line.endswith(":"):
-                    directed_structure = tuple((int(edge[0]), int(edge[3])) 
-                        for edge in line[2:len(line)-3].split("), ("))
-                    sorted_squares[directed_structure] = []
-                if line.startswith("('"):
-                    square = tuple(word_class(word) 
-                        for word in line[2:len(line)-2].split("', '"))
-                    sorted_squares[directed_structure].append(square)
-
-        squares = extract_squares(sorted_squares)
+        if not gpu or int(graph_size) < 5:
+            file_name = input("\nEnter name of file containing sorted directed "  
+                              "squares (including extension): ")
+            with open(file_name, "r") as sorted_squares_file:
+                sorted_squares = {}
+                for line in sorted_squares_file:
+                    line = line.strip()
+                    if line.endswith(":"):
+                        directed_structure = tuple((int(edge[0]), int(edge[3])) 
+                            for edge in line[2:len(line)-3].split("), ("))
+                        sorted_squares[directed_structure] = []
+                    if line.startswith("('"):
+                        square = tuple(word_class(word) 
+                            for word in line[2:len(line)-2].split("', '"))
+                        sorted_squares[directed_structure].append(square)
+            squares = extract_squares(sorted_squares)
+            
         if gpu:
+            if int(graph_size) >= 5:
+                file_name = input("\nEnter name of file containing directed "  
+                          "squares (including extension): ")
+                squares = get_squares(file_name)
             sorted_cubes = filter_cubes(find_subgraphs_gpu(
                 "cube", expand_word_graph(word_graph), 
                 ascending_order, word_class, data=squares))

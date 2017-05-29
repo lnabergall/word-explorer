@@ -15,7 +15,7 @@ from numba.types import int64
 from word_graph_gpu2 import *
 
 
-NEIGHBOR_MAX = 250
+NEIGHBOR_MAX = 150
 PATH3_MAX = 20000
 
 
@@ -36,7 +36,7 @@ def find_subgraphs(subgraph_type, word_graph,
     Word = word_class
     start_time = time()
     max_nbhd_size = max(len(word_graph[word]) for word in word_graph)
-    print(max_nbhd_size)
+    print("Max neighborhood size:", max_nbhd_size)
     max_word_size = max(len(word)//2 for word in word_graph)
     word_graph_array = zeros_py((len(word_graph), max_nbhd_size+1), dtype=int64_py)
     word_list = list(word_graph.keys())
@@ -166,7 +166,7 @@ def find_subgraphs(subgraph_type, word_graph,
             for i, index in enumerate(word_batch_indices):
                 batch_indices_array[i] = index
             device_batch_indices = cuda.to_device(batch_indices_array)
-            triangles = zeros_py((len(word_batch_indices), 2000, 3), dtype=int64_py)
+            triangles = zeros_py((len(word_batch_indices), 1200, 3), dtype=int64_py)
             device_triangles = cuda.to_device(triangles)
             triangles_per = zeros_py(word_graph_array.shape[0], dtype=int64_py)
             device_triangles_per = cuda.to_device(triangles_per)
@@ -200,7 +200,7 @@ def find_subgraphs(subgraph_type, word_graph,
         length3_paths_array = create_subgraphs_array(length3_paths, 3)
         device_all_3paths = cuda.to_device(length3_paths_array)
         all_squares = []
-        batches = 1
+        batches = 1000
         for k in range(batches):
             print("Batch", k)
             length3_paths_batch = length3_paths[k*len(length3_paths) // batches: 
@@ -391,8 +391,8 @@ def find_triangles(word_graph, word_indices, triangles, triangles_per):
 @cuda.jit("void(int64[:,:], int64[:,:], int64[:,:], int64[:,:])")
 def find_squares(word_graph, length3_paths, length3_path_batch, squares):
     thread_num = cuda.grid(1)
-    i = thread_num // length3_paths.shape[0]
-    j = thread_num % length3_paths.shape[0]
+    i = thread_num // length3_path_batch.shape[0]
+    j = thread_num % length3_path_batch.shape[0]
     path1_array = zeros1D(cuda.local.array(3, int64))
     path1 = get_row(length3_paths, i, 0, path1_array)
     path2_array = zeros1D(cuda.local.array(3, int64))
