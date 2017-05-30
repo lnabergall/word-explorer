@@ -15,7 +15,7 @@ from numba.types import int64
 from word_graph_gpu2 import *
 
 
-NEIGHBOR_MAX = 150
+NEIGHBOR_MAX = 210
 PATH3_MAX = 20000
 
 
@@ -117,7 +117,7 @@ def find_subgraphs(subgraph_type, word_graph,
     elif subgraph_type == "4-path":
         length3_paths = data
         all_paths = []
-        batches = 175
+        batches = 250
         for k in range(batches):
             print("Batch", k)
             length3_paths_batch = length3_paths[k*len(length3_paths) // batches: 
@@ -157,7 +157,7 @@ def find_subgraphs(subgraph_type, word_graph,
         return all_paths
     elif subgraph_type == "triangle":
         all_triangles = []
-        batches = 1
+        batches = 50
         for k in range(batches):
             print("Batch", k)
             word_batch_indices = list(range(k*word_graph_array.shape[0] // batches, 
@@ -166,7 +166,7 @@ def find_subgraphs(subgraph_type, word_graph,
             for i, index in enumerate(word_batch_indices):
                 batch_indices_array[i] = index
             device_batch_indices = cuda.to_device(batch_indices_array)
-            triangles = zeros_py((len(word_batch_indices), 1200, 3), dtype=int64_py)
+            triangles = zeros_py((len(word_batch_indices), 1500, 3), dtype=int64_py)
             device_triangles = cuda.to_device(triangles)
             triangles_per = zeros_py(word_graph_array.shape[0], dtype=int64_py)
             device_triangles_per = cuda.to_device(triangles_per)
@@ -205,11 +205,11 @@ def find_subgraphs(subgraph_type, word_graph,
             print("Batch", k)
             length3_paths_batch = length3_paths[k*len(length3_paths) // batches: 
                                                 (k+1)*len(length3_paths) // batches]
+            batch_array = create_subgraphs_array(length3_paths_batch, 3)
+            device_3paths_batch = cuda.to_device(batch_array)
             squares = zeros_py(
                 (len(length3_paths)*len(length3_paths_batch), 4), dtype=int64_py)
             device_squares = cuda.to_device(squares)
-            batch_array = create_subgraphs_array(length3_paths_batch, 3)
-            device_3paths_batch = cuda.to_device(batch_array)
             blocks_perdim = ((len(length3_paths)*len(length3_paths_batch)
                              + (threads_perblock - 1)) // threads_perblock)
             print("Starting GPU computations...")
@@ -238,27 +238,38 @@ def find_subgraphs(subgraph_type, word_graph,
         squares = data
         squares_array = create_subgraphs_array(squares, 4)
         device_squares = cuda.to_device(squares_array)
-        cubes = zeros_py((len(squares)**2, 8), dtype=int64_py)
-        device_cubes = cuda.to_device(cubes)
-        blocks_perdim = (
-            (len(squares)**2 + (threads_perblock - 1)) // threads_perblock)
-        print("Starting GPU computations...")
-        find_cubes[blocks_perdim, threads_perblock](
-            device_word_graph_array, device_squares, device_cubes)
-        cubes_found = device_cubes.copy_to_host()
-        print("Finished GPU computations.")
-        end_time = time()
-        cubes = []
-        for i in range(cubes_found.shape[0]):
-            if cubes_found[i, 0] != 0 and cubes_found[i, 1] != 0:
-                cube = []
-                for j in range(cubes_found.shape[1]):
-                    word = (Word(str(cubes_found[i, j])) 
-                            if cubes_found[i, j] != -1 else Word(""))
-                    cube.append(word)
-                cubes.append(tuple(cube))
+        all_cubes = []
+        batches = 1000
+        for k in range(batches):
+            print("Batch", k)
+            squares_batch = squares[k*len(squares) // batches: 
+                                    (k+1)*len(squares) // batches]
+            squares_batch_array = create_subgraphs_array(squares_batch, 4)
+            device_squares_batch = cuda.to_device(squares_batch_array)
+            cubes = zeros_py((len(squares)*len(squares_batch), 8), dtype=int64_py)
+            device_cubes = cuda.to_device(cubes)
+            blocks_perdim = (
+                (len(squares)*len(squares_batch) + (threads_perblock - 1)) 
+                // threads_perblock)
+            print("Starting GPU computations...")
+            find_cubes[blocks_perdim, threads_perblock](
+                device_word_graph_array, device_squares, 
+                device_squares_batch, device_cubes)
+            cubes_found = device_cubes.copy_to_host()
+            print("Finished GPU computations.")
+            end_time = time()
+            cubes = []
+            for i in range(cubes_found.shape[0]):
+                if cubes_found[i, 0] != 0 and cubes_found[i, 1] != 0:
+                    cube = []
+                    for j in range(cubes_found.shape[1]):
+                        word = (Word(str(cubes_found[i, j])) 
+                                if cubes_found[i, j] != -1 else Word(""))
+                        cube.append(word)
+                    cubes.append(tuple(cube))
+            all_cubes.extend(cubes)
         print(end_time - start_time)
-        return cubes
+        return all_cubes
 
 
 @cuda.jit("int64[:](int64[:,:], int64, int64, int64[:])", device=True)
@@ -412,15 +423,15 @@ def find_squares(word_graph, length3_paths, length3_path_batch, squares):
             squares[thread_num, 3] = path2[1]
 
 
-@cuda.jit("void(int64[:,:], int64[:,:], int64[:,:])")
-def find_cubes(word_graph, squares, cubes):
+@cuda.jit("void(int64[:,:], int64[:,:], int64[:,:], int64[:,:])")
+def find_cubes(word_graph, squares, squares_batch, cubes):
     thread_num = cuda.grid(1)
-    i = thread_num // squares.shape[0]
-    j = thread_num % squares.shape[0]
+    i = thread_num // squares_batch.shape[0]
+    j = thread_num % squares_batch.shape[0]
     square1_array = zeros1D(cuda.local.array(4, int64))
     square1 = get_row(squares, i, 0, square1_array)
     square2_array = zeros1D(cuda.local.array(4, int64))
-    square2 = get_row(squares, j, 0, square2_array)
+    square2 = get_row(squares_batch, j, 0, square2_array)
     cube = zeros1D(cuda.local.array(8, int64))
     invalid = False
     for k in range(square1.size):
