@@ -7,19 +7,19 @@ import igraph as ig
 class BasicNode: # should be interfaced to from a graph object
     def __init__(self, content=None, labels=None):
         self.content = content
-        self.incident_edges =set([])
-        self.incident_outward_edges=set([])
-        self.incident_inward_edges=set([])
-        self.label=None
+        self.incident_edges = set([])
+        self.incident_outward_edges = set([])
+        self.incident_inward_edges = set([])
+        self.label = None
     
-    def add_edge(self,Edge): 
+    def add_edge(self, Edge): 
         self.incident_edges.add(Edge)
-        if Edge.source()==self:
+        if Edge.source() == self:
             self.incident_outward_edges.add(Edge)
         else:
             self.incident_inward_edges.add(Edge)
     
-    def remove_edge(self,Edge):
+    def remove_edge(self, Edge):
         self.incident_edges.discard(Edge)
         
     def get_neighbors(self): 
@@ -40,10 +40,10 @@ class BasicNode: # should be interfaced to from a graph object
         return sources
 
     def add_label(self, label):
-        self.label =label
+        self.label = label
         
     def remove_label(self, label):
-        self.label=None
+        self.label = None
 
 
 class BasicEdge: # should be interfaced to from a graph object
@@ -51,9 +51,9 @@ class BasicEdge: # should be interfaced to from a graph object
         self.content = content
         self.ends = ends
         if labels is None:
-            self.labels=set([])
+            self.labels = set([])
         else:
-            self.labels=labels
+            self.labels = labels
                
     def source(self):
         return self.ends[0]
@@ -93,12 +93,12 @@ class Graph(object):
             
         if edges == None:
             edges = []
-        self.edges=set(edges)
+        self.edges = set(edges)
         if vertices == None:
             vertices = []
-        self.vertices=vertices
+        self.vertices = vertices
         self.vertex_dict = {}
-        self.edges_dict={}
+        self.edges_dict = {}
         self.Vertex = Vertex
         self.Edge = Edge
         
@@ -113,7 +113,7 @@ class Graph(object):
         self.vertices.append(Vertex)
 
     def create_edge(self, ends):
-        NewEdge=self.Edge(ends=ends)
+        NewEdge = self.Edge(ends=ends)
         self.edges.add(NewEdge)
         for Vertex in ends:
             Vertex.add_edge(NewEdge)
@@ -154,8 +154,8 @@ class Graph(object):
         return self.get_adjacency_matrix().tolist()
     
     def set_adjacency_list(self, adj_list):
-        self.vertices=[]
-        self.edges=[]
+        self.vertices = []
+        self.edges = []
                 
     def is_in(self,vertex_or_edge):
         if (vertex_or_edge in self.edges) or (vertex_or_edge in self.vertices):
@@ -188,10 +188,10 @@ class Graph(object):
     def get_vertex_label(self, vertex):
         labels = vertex.get_labels()
         labels = labels & self.vertex_dict.keys()
-        labels = filter(lambda x: self.get_vertex[x]==vertex,labels)
+        labels = filter(lambda x: self.get_vertex[x] == vertex, labels)
         
     def remove_vertex_label(self, label):
-        vertex=self.vertex_dict.pop(label, 'Not Found')
+        vertex = self.vertex_dict.pop(label, 'Not Found')
         if vertex == 'Not Found':
             return
         else:
@@ -209,10 +209,10 @@ class Graph(object):
             
     def get_edge_label(self, edge):
         labels = edge.get_labels()
-        labels = filter(lambda x: self.get_edge[x]==edge,labels)
+        labels = filter(lambda x: self.get_edge[x] == edge, labels)
         
     def remove_edge_label(self, label):
-        edge=self.edge_dict.pop(label, 'Not Found')
+        edge = self.edge_dict.pop(label, 'Not Found')
         if edge == 'Not Found':
             return
         else:
@@ -223,7 +223,7 @@ class UnDirGraph(Graph, object):
  
     def get_adjacency_list_of_vertex(self, Vertex):
             N = self.get_number_vertices()
-            adj_list= [0 for x in range(N)]
+            adj_list = [0 for x in range(N)]
             incident_edges = self.get_incident_edges(Vertex)
             for Edge in incident_edges:
                 ends = Edge.ends
@@ -240,12 +240,12 @@ class UnDirGraph(Graph, object):
             print('Wrong shape, expecting square matrix.')
             return
         n = shape[0]
-        self.vertices=[]
-        self.edges=set([])
+        self.vertices = []
+        self.edges = set([])
         self.create_vertices(n)
         for row in range(n):
             Source = self.vertices[row]
-            for col  in range(row+1):
+            for col in range(row + 1):
                 no_edges = adj_mat[row, col]
                 Target = self.vertices[col]
                 for Edge in range(no_edges):
@@ -257,13 +257,13 @@ class UnDirGraph(Graph, object):
         for vertex in self.vertices:
             if vertex.label !=None:
                 # print vertex.label
-                index=self.vertices.index(vertex)
-                g.vs[index]['label']=vertex.label
+                index = self.vertices.index(vertex)
+                g.vs[index]['label'] = vertex.label
         # layout = g.layout("rt", root=0)
         visual_style = {}
         visual_style["vertex_size"] = 20
-        visual_style["vertex_label_angle"]=0
-        visual_style["vertex_label_dist"] =1
+        visual_style["vertex_label_angle"] = 0
+        visual_style["vertex_label_dist"] = 1
         # layout.rotate(180)
         ig.plot(g, margin=60, **visual_style)
 
@@ -272,7 +272,7 @@ class DirGraph(Graph):
     
     def get_adjacency_list_of_vertex(self, Vertex):
         N = self.get_number_vertices()
-        adj_list= [0 for x in range(N)]
+        adj_list = [0 for x in range(N)]
         incident_edges = self.get_incident_outward_edges(Vertex)
         for Edge in incident_edges:
             target = Edge.target()
@@ -286,8 +286,8 @@ class DirGraph(Graph):
             print('Wrong shape, expecting square matrix.')
             return
         n = shape[0]
-        self.vertices=[]
-        self.edges=set([])
+        self.vertices = []
+        self.edges = set([])
         self.create_vertices(n)
         for row in range(n):
             for col in range(n):
@@ -309,11 +309,10 @@ class DirGraph(Graph):
         A = self.get_adjacency_matrix_as_list()
         g = ig.Graph.Adjacency(A)
         for vertex in self.vertices:
-            if vertex.label !=None:
-                
-                index=self.vertices.index(vertex)
-                g.vs[index]['label']=vertex.label
-                g.vs[index]['label_dist']=2
+            if vertex.label != None:
+                index = self.vertices.index(vertex)
+                g.vs[index]['label'] = vertex.label
+                g.vs[index]['label_dist'] = 2
         
         layout = g.layout("circle")
         ig.plot(g)
@@ -324,29 +323,29 @@ class DirGraph(Graph):
 
 def return_linear_class(directed=False):
     if directed:
-        base=DirGraph
+        base = DirGraph
     else:
-        base=UnDirGraph
+        base = UnDirGraph
     class Linear(base, object): 
         def __init__(self, number_vertices=0, number_edges=0, **kwargs):
             super(Linear, self).__init__(**kwargs)
             self.linear_generate(number_vertices, number_edges)
     
-        def linear_generate(self,number_vertices, number_edges):
-            if (not number_edges ==0) and (not number_vertices==0):
-                if not number_vertices == number_edges+1:
+        def linear_generate(self, number_vertices, number_edges):
+            if (not number_edges == 0) and (not number_vertices == 0):
+                if not number_vertices == number_edges + 1:
                     print('Number of edges and vertices incompatible!')
                     return
                 else:
-                    self.number_vertices=number_vertices
+                    self.number_vertices = number_vertices
                     
-            elif not number_edges==0:
-                self.number_vertices = number_edges +1
+            elif not number_edges == 0:
+                self.number_vertices = number_edges + 1
             else:
                 self.number_vertices = number_vertices
                             
             self.create_vertices(self.number_vertices)
-            for index in range(self.number_vertices -1):
+            for index in range(self.number_vertices - 1):
                 Source = self.vertices[index]
                 Target = self.vertices[index+1]
                 self.create_edge([Source, Target])
@@ -354,8 +353,8 @@ def return_linear_class(directed=False):
 
 
 #instantiates the Linear class
-def create_linear(directed=False, number_vertices=0, number_edges=0,**kwargs):
-    linear = return_linear_class(directed)(number_vertices, number_edges,**kwargs)
+def create_linear(directed=False, number_vertices=0, number_edges=0, **kwargs):
+    linear = return_linear_class(directed)(number_vertices, number_edges, **kwargs)
     return linear
 
 
@@ -370,11 +369,11 @@ def return_cycle_class(directed=False):
     class Cycle(base, object):
         def __init__(self, number_vertices=0, number_edges=0, **kwargs):
             super(Cycle, self).__init__(**kwargs)
-            if (not number_edges==0) and (not number_vertices==0):
+            if (not number_edges == 0) and (not number_vertices == 0):
                 if not number_edges == number_vertices:
                     print('Numbers of edges and vertices incompatible!')
                     return
-            elif not number_edges ==0:
+            elif not number_edges == 0:
                 number_vertices = number_edges
             Linear_part = create_linear()
             Linear_part.linear_generate(number_vertices, number_edges-1)
@@ -396,10 +395,10 @@ def create_cycle(directed=False, number_vertices=0, number_edges=0, **kwargs):
 
 
 class Complete(UnDirGraph, object):
-    def __init__(self,number_vertices=0, **kwargs):
+    def __init__(self, number_vertices=0, **kwargs):
         super(Complete, self).__init__(**kwargs)
         self.create_vertices(no_create=number_vertices)
-        ends=[]
+        ends = []
         for Source in self.vertices:
             for Target in self.vertices:
                 if [Source,Target] not in ends:
@@ -418,14 +417,14 @@ def return_tree_class(directed=False):
     class Tree(base, object):
         def __init__(self, **kwargs):
             super(Tree, self).__init__(**kwargs)
-            self.leaves=set([])
+            self.leaves = set([])
             self.find_leaves()
             
         def is_leaf(self, vertex):
            
             if self.get_degree(vertex) == 1:
                 return True
-            elif self.get_number_vertices() ==1:
+            elif self.get_number_vertices() == 1:
                 return True
             else:
                 return False
@@ -439,7 +438,7 @@ def return_tree_class(directed=False):
             return self.get_vertex('Root')
         
         def find_leaves(self):
-            self.leaves = set(filter(self.is_leaf,self.vertices))
+            self.leaves = set(filter(self.is_leaf, self.vertices))
             return [leaf for leaf in self.leaves]
 
     return Tree
@@ -453,7 +452,7 @@ def create_tree(directed=False, **kwargs):
 def return_nary_tree_class(directed=False):
     base = return_tree_class(directed)
 
-    class NaryRootedTree(base,object):
+    class NaryRootedTree(base, object):
         def __init__(self, N=0, **kwargs):
             super(NaryRootedTree, self).__init__(**kwargs)
             self.N = N
@@ -467,16 +466,16 @@ def return_nary_tree_class(directed=False):
                 for Child in children:
                     self.add_vertex(Child)
                     self.leaves.add(Child)
-                    Child.parent=vertex
+                    Child.parent = vertex
                     self.create_edge(ends=[vertex, Child])
 
         def fuse_vertex(self, vertex):
             self.leaves.add(vertex)
             try:
-                children=vertex.children
+                children = vertex.children
             except AttributeError:
                 return
-            if children==None:
+            if children == None:
                 return
             
             for child in children:
@@ -487,24 +486,24 @@ def return_nary_tree_class(directed=False):
                 vertex.children = None
 
         def create_full_n_level(self, n):
-            self.vertices =[]
-            self.edges =set([])
+            self.vertices = []
+            self.edges = set([])
             self.create_vertex()
             self.set_root(self.vertices[0])
             for level in range(n):
-                leaves=self.find_leaves()
+                leaves = self.find_leaves()
                 for Leaf in leaves:
                     self.split_vertex(Leaf)
                     
         def get_descendants(self, node, desc=set({})):
             try:
-                children=node.children
+                children = node.children
             except AttributeError:
-                node.children=None
+                node.children = None
             if children != None:
                 for child in children:
                     desc = desc.union(set({child}))
-                    desc= desc.union(self.get_descendants(child))
+                    desc = desc.union(self.get_descendants(child))
                 return desc
             else:
                 return desc
@@ -512,6 +511,6 @@ def return_nary_tree_class(directed=False):
     return NaryRootedTree
 
 
-def create_nary_tree(directed=False, N=0,**kwargs):
+def create_nary_tree(directed=False, N=0, **kwargs):
     nary_tree = return_nary_tree_class(directed)(N, **kwargs)
     return nary_tree
