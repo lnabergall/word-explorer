@@ -63,6 +63,7 @@ def find_subgraphs(subgraph_type, word_graph,
                       + (threads_perblock - 1)) // threads_perblock)
     device_word_graph_array = cuda.to_device(word_graph_array)
     if subgraph_type == "3-path":
+        directed = data
         max_root_size = max_word_size - 2
         path_root_count = 1
         for i in range(max_root_size):
@@ -72,52 +73,51 @@ def find_subgraphs(subgraph_type, word_graph,
                                     // ((2**root_size) * factorial(root_size)))
             else:
                 raise NotImplementedError
-        paths = zeros_py((path_root_count, PATH3_MAX, 3), dtype=int64_py)
-        device_paths = cuda.to_device(paths)
-        blocks_perdim = ((path_root_count
-                          + (threads_perblock - 1)) // threads_perblock)
-        path_num_array = zeros_py(path_root_count, dtype=int64_py)
-        device_path_num_array = cuda.to_device(path_num_array)
-        print("Starting GPU computations...")
-        find_3paths[blocks_perdim, threads_perblock](
-            device_word_graph_array, device_paths, device_path_num_array)
-        paths_found = device_paths.copy_to_host()
-        path_num_array = device_path_num_array.copy_to_host()
-        print("Finished GPU computations.")
-        paths_list = paths_found.tolist()
-        end_time = time()
-        paths = []
-        for i in range(paths_found.shape[0]):
-            for j in range(paths_found.shape[1]):
-                if paths_found[i, j, 0] != 0:
-                    word1 = (Word(str(paths_found[i, j, 0])) 
-                             if paths_found[i, j, 0] != -1 else Word(""))
-                    word2 = (Word(str(paths_found[i, j, 1])) 
-                             if paths_found[i, j, 1] != -1 else Word(""))
-                    word3 = (Word(str(paths_found[i, j, 2])) 
-                             if paths_found[i, j, 2] != -1 else Word(""))
-                    if word3 is None and i < 1:
-                        print(word3, i, j)
-                    paths.append((word1, word2, word3))
-        path_counts = Counter(paths)
-        duplicated_paths = list(set([path for path in paths if path_counts[path] > 1]))
-        duplicated_paths.sort()
-        count_repetitions = [0, 0]
-        for path in duplicated_paths:
-            if str(path[0]) == "122133" and str(path[1]) == "12231434":
-                count_repetitions[1] += 1
-            elif str(path[0]) == "1212" and str(path[1]) == "12312434":
-                count_repetitions[0] += 1
-            else:
-                raise ValueError("Unexpected path type!")
-            print(path, path_counts[path])
-        print(count_repetitions)
-        print("\n", end_time - start_time, "\n")
-        return paths
+        if not directed:
+            path_root_count = len(word_graph)
+        all_paths = []
+        batches = 100
+        batch_path_root_count = (path_root_count + batches - 1) // batches
+        for k in range(batches):
+            root_indices = range(k*batch_path_root_count, 
+                                 (k+1)*batch_path_root_count)
+            root_indices_array = zeros_py(batch_path_root_count, dtype=int64_py)
+            for i, index in enumerate(root_indices):
+                root_indices_array[i] = index
+            device_root_indices = cuda.to_device(root_indices_array)
+            paths = zeros_py((batch_path_root_count, PATH3_MAX, 3), dtype=int64_py)
+            device_paths = cuda.to_device(paths)
+            blocks_perdim = ((batch_path_root_count
+                              + (threads_perblock - 1)) // threads_perblock)
+            path_num_array = zeros_py(batch_path_root_count, dtype=int64_py)
+            device_path_num_array = cuda.to_device(path_num_array)
+            print("Starting GPU computations...")
+            find_3paths[blocks_perdim, threads_perblock](
+                device_word_graph_array, device_paths, device_root_indices,
+                device_path_num_array, directed)
+            paths_found = device_paths.copy_to_host()
+            path_num_array = device_path_num_array.copy_to_host()
+            print("Finished GPU computations.")
+            print(max(path_num_array.tolist()))
+            end_time = time()
+            paths = []
+            for i in range(paths_found.shape[0]):
+                for j in range(paths_found.shape[1]):
+                    if paths_found[i, j, 0] != 0:
+                        word1 = (Word(str(paths_found[i, j, 0])) 
+                                 if paths_found[i, j, 0] != -1 else Word(""))
+                        word2 = (Word(str(paths_found[i, j, 1])) 
+                                 if paths_found[i, j, 1] != -1 else Word(""))
+                        word3 = (Word(str(paths_found[i, j, 2])) 
+                                 if paths_found[i, j, 2] != -1 else Word(""))
+                        paths.append((word1, word2, word3))
+            all_paths.extend(paths)
+        print(end_time - start_time)
+        return all_paths
     elif subgraph_type == "4-path":
         length3_paths = data
         all_paths = []
-        batches = 250
+        batches = 350
         for k in range(batches):
             print("Batch", k)
             length3_paths_batch = length3_paths[k*len(length3_paths) // batches: 
@@ -200,7 +200,7 @@ def find_subgraphs(subgraph_type, word_graph,
         length3_paths_array = create_subgraphs_array(length3_paths, 3)
         device_all_3paths = cuda.to_device(length3_paths_array)
         all_squares = []
-        batches = 1000
+        batches = 100000
         for k in range(batches):
             print("Batch", k)
             length3_paths_batch = length3_paths[k*len(length3_paths) // batches: 
@@ -239,7 +239,7 @@ def find_subgraphs(subgraph_type, word_graph,
         squares_array = create_subgraphs_array(squares, 4)
         device_squares = cuda.to_device(squares_array)
         all_cubes = []
-        batches = 1000
+        batches = 25
         for k in range(batches):
             print("Batch", k)
             squares_batch = squares[k*len(squares) // batches: 
@@ -306,34 +306,38 @@ def get_value(dict_array, key, flat_array):
     return flat_array
 
 
-@cuda.jit("void(int64[:,:], int64[:,:,:], int64[:])")
-def find_3paths(word_graph, paths, path_num_array):
+@cuda.jit("void(int64[:,:], int64[:,:,:], int64[:], int64[:], boolean)")
+def find_3paths(word_graph, paths, root_indices, path_num_array, directed):
     thread_num = cuda.grid(1)
     paths_index = 0
-    word = word_graph[thread_num, 0]
-    neighbors1_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
-    neighbors1 = get_row(word_graph, thread_num, 1, neighbors1_array)
-    for j in range(neighbors1.size):
-        neighbor1 = neighbors1[j]
-        if neighbor1 != 0:
-            neighbors2_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
-            neighbors2 = get_value(word_graph, neighbor1, neighbors2_array)
-            for k in range(neighbors2.size):
-                neighbor2 = neighbors2[k]
-                if neighbor2 != 0:
-                    neighbors3_array = zeros1D(
-                        cuda.local.array(NEIGHBOR_MAX, int64))
-                    neighbors3 = get_value(
-                        word_graph, neighbor2, neighbors3_array)
-                    if (not contains(neighbors1, neighbor2) 
-                            and not contains(neighbors3, word)
-                            and length(word) < length(neighbor1) 
-                            and length(neighbor1) < length(neighbor2)):
-                        paths[thread_num, paths_index, 0] = word
-                        paths[thread_num, paths_index, 1] = neighbor1
-                        paths[thread_num, paths_index, 2] = neighbor2
-                        paths_index += 1
-    path_num_array[thread_num] = paths_index
+    if root_indices.size > thread_num:
+        root_index = root_indices[thread_num]
+        if root_index < word_graph.shape[0]:
+            word = word_graph[root_index, 0]
+            neighbors1_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+            neighbors1 = get_row(word_graph, root_index, 1, neighbors1_array)
+            for j in range(neighbors1.size):
+                neighbor1 = neighbors1[j]
+                if neighbor1 != 0:
+                    neighbors2_array = zeros1D(cuda.local.array(NEIGHBOR_MAX, int64))
+                    neighbors2 = get_value(word_graph, neighbor1, neighbors2_array)
+                    for k in range(neighbors2.size):
+                        neighbor2 = neighbors2[k]
+                        if neighbor2 != 0:
+                            neighbors3_array = zeros1D(
+                                cuda.local.array(NEIGHBOR_MAX, int64))
+                            neighbors3 = get_value(
+                                word_graph, neighbor2, neighbors3_array)
+                            if (not contains(neighbors1, neighbor2) 
+                                    and not contains(neighbors3, word)
+                                    and ((not directed and word != neighbor2) 
+                                          or (length(word) < length(neighbor1) 
+                                         and length(neighbor1) < length(neighbor2)))):
+                                paths[thread_num, paths_index, 0] = word
+                                paths[thread_num, paths_index, 1] = neighbor1
+                                paths[thread_num, paths_index, 2] = neighbor2
+                                paths_index += 1
+            path_num_array[thread_num] = paths_index
 
 
 @cuda.jit("void(int64[:,:], int64[:,:], int64[:,:,:], int64[:])")

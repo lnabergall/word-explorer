@@ -216,7 +216,13 @@ class Word(str):
 			return str.__new__(cls, content)
 
 	def __eq__(self, other):
-		return is_equivalent(self, other)
+		return str(self) == str(other)
+		# if self is None:
+		# 	return other is None
+		# elif other is None:
+		# 	return self is None
+		# else:
+		# 	return is_equivalent(self, other)
 
 	def __ne__(self, other):
 		return not self.__eq__(other)
@@ -234,8 +240,8 @@ class Word(str):
 
 	def __init__(self, content):
 		self.size = len(self) // 2
-		self.irreducible = Word.is_irreducible(content)
-		self.strongly_irreducible = self.is_strongly_irreducible(content)
+		# self.irreducible = Word.is_irreducible(content)
+		# self.strongly_irreducible = self.is_strongly_irreducible(content)
 
 	@staticmethod
 	def is_double_occurrence_word(word_string):

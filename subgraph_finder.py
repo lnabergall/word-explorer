@@ -18,14 +18,15 @@ def expand_word_graph(word_graph):
     return expanded_word_graph
 
 
-def find_3paths(word_graph):
+def find_3paths(word_graph, directed=True):
     paths = set()
     for word in word_graph:
         for neighbor1 in list(word_graph[word]):
             for neighbor2 in list(word_graph[neighbor1]):
                 if (neighbor2 not in word_graph.get(word, []) 
                         and word not in word_graph.get(neighbor2, [])
-                        and len(word) <= len(neighbor1) <= len(neighbor2)):
+                        and ((not directed and word != neighbor2) 
+                            or (len(word) <= len(neighbor1) <= len(neighbor2)))):
                     paths.add((word, neighbor1, neighbor2))
 
     return list(paths)
@@ -59,12 +60,15 @@ def find_triangles(word_graph):
 
 def filter_subgraphs(subgraphs):
     subgraphs = list(subgraphs)
-    subgraphs = [list(subgraph) for subgraph in subgraphs]
+    subgraph_sets = set()
+    filtered_subgraphs = []
     for subgraph in subgraphs:
-        subgraph.sort()
-    subgraphs = [tuple(subgraph) for subgraph in subgraphs]
+        subgraph_set = frozenset(subgraph)
+        if subgraph_set not in subgraph_sets:
+            filtered_subgraphs.append(subgraph)
+            subgraph_sets.add(subgraph_set)
 
-    return list(set(subgraphs))
+    return filtered_subgraphs
 
 
 def find_squares(word_graph):
@@ -227,14 +231,19 @@ def extract_word_graph(graph_file, word_class=Word):
     return word_graph
 
 
-def get_3paths(file_prefix, graph_size):
-    with open(file_prefix + graph_size + "_3paths.txt", "r") as paths_file:
+def get_3paths(file_prefix, graph_size, directed=True):
+    if directed:
+        file_name_end = "_3paths.txt"
+    else:
+        file_name_end = "_3paths_undirected.txt"
+    with open(file_prefix + graph_size + file_name_end, "r") as paths_file:
         paths = []
         for line in paths_file:
             if line.startswith("("):
                 path = tuple(word_class(word) 
                     for word in line[2:len(line)-3].split("', '"))
                 paths.append(path)
+
     return paths
 
 
@@ -242,7 +251,7 @@ def get_squares(file_name):
     with open(file_name, "r") as squares_file:
             squares = []
             for line in squares_file:
-                if line.startswith("("):
+                if line.startswith("('"):
                     square = tuple(word_class(word) 
                         for word in line[2:len(line)-3].split("', '"))
                     squares.append(square)
@@ -255,6 +264,9 @@ if __name__ == "__main__":
                     "find cubes from directed squares, find " 
                     "triangles, find 3-paths, or find 4-paths? " 
                     "('1', '2', '3', '4', '5', or '6'): ")
+    if request == "5":
+        directed = input("\nDirected or undirected 3-paths? ")
+        directed = False if directed.strip().lower().startswith("u") else True
     graph_size = input("\nWord graph size? ")
     gpu = input("\nUse GPU? ")
     gpu = False if gpu.strip().lower().startswith("n") else True
@@ -274,7 +286,7 @@ if __name__ == "__main__":
     if request == "1":
         word_graph = expand_word_graph(word_graph)
         if gpu:
-            paths = get_3paths(file_prefix, graph_size)
+            paths = get_3paths(file_prefix, graph_size, directed=False)
             squares = filter_subgraphs(find_subgraphs_gpu(
                 "square", word_graph, ascending_order, word_class, data=paths))
         else:
@@ -330,7 +342,7 @@ if __name__ == "__main__":
         if gpu:
             if int(graph_size) >= 5:
                 file_name = input("\nEnter name of file containing directed "  
-                          "squares (including extension): ")
+                                  "squares (including extension): ")
                 squares = get_squares(file_name)
             sorted_cubes = filter_cubes(find_subgraphs_gpu(
                 "cube", expand_word_graph(word_graph), 
@@ -373,11 +385,17 @@ if __name__ == "__main__":
         if gpu:
             paths = find_subgraphs_gpu(
                 "3-path", expand_word_graph(word_graph), 
-                ascending_order, word_class)
+                ascending_order, word_class, data=directed)
         else:
-            paths = find_3paths(expand_word_graph(word_graph))
+            paths = find_3paths(expand_word_graph(word_graph), directed)
+        if not directed:
+            paths = filter_subgraphs(paths)
         paths.sort(key=lambda path: len(path[0]))
-        with open(file_prefix + graph_size + "_3paths.txt", "w") as paths_file:
+        if directed:
+            file_name_end = "_3paths.txt"
+        else:
+            file_name_end = "_3paths_undirected.txt"
+        with open(file_prefix + graph_size + file_name_end, "w") as paths_file:
             print("3-path subgraph count: " + str(len(paths)) + "\n\n",
                   file=paths_file)
             for path in paths:
