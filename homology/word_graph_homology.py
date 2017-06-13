@@ -5,15 +5,13 @@ corresponding to word graphs.
 
 import os
 import sys
+import threading
 
 import numpy as np
 from simplex import SimplicialComplex
 
 from objects import Word
 from subgraph_finder import extract_word_graph, expand_word_graph
-
-
-sys.setrecursionlimit(10000000)
 
 
 def get_word_labels(file_prefix, size):
@@ -43,7 +41,7 @@ def get_maximal_simplices(file_prefix, size, word_labels):
     return maximal_simplices
 
 
-if __name__ == '__main__':
+def main():
     print("This script calculates the homology of a simplicial complex"
           + " corresponding to a given ascending order word graph.\n")
     size = int(input("Word graph size? ").strip())
@@ -52,13 +50,23 @@ if __name__ == '__main__':
     maximal_simplices = get_maximal_simplices(file_prefix, size, word_labels)
     simplicial_complex = SimplicialComplex(maximal_simplices)
     with open(file_prefix + str(size) + "_homology.txt", "w") as homology_file:
-        np.set_printoptions(threshold=10000000)
+        np.set_printoptions(threshold=100000000000)
         for i in range(4):
+            boundary_matrix = simplicial_complex.get_boundary_matrix(i, 2)
             print("\nBoundary matrix of dimension", i, file=homology_file)
-            print(simplicial_complex.get_boundary_matrix(i, 2), file=homology_file)
+            print(boundary_matrix, file=homology_file)
             print("\nReduced boundary matrix of dimension", i, file=homology_file)
-            print(simplicial_complex.reduce_matrix(
-                simplicial_complex.get_boundary_matrix(i, 2))[0], file=homology_file)
-            print("\nBetti number", i, "=", 
-                simplicial_complex.betti_number(i, 2), file=homology_file)
+            print(simplicial_complex.reduce_matrix(boundary_matrix)[0], 
+                  file=homology_file)
+            print("\nBetti number", i, "=", simplicial_complex.betti_number(i, 2), 
+                  file=homology_file)
             print("\n--------------------------\n", file=homology_file)
+
+
+if __name__ == '__main__':
+    threading.stack_size(67108864) # 64MB stack
+    sys.setrecursionlimit(2**22) # something real big, 64MB limit hit first
+
+    # only new threads get the redefined stack size
+    thread = threading.Thread(target=main)
+    thread.start()
