@@ -3,10 +3,11 @@ Produces a list of all DOWs up to a user-specified size
 and saves the list to a (user-specified) text file.
 """
 
+from random import shuffle
 from itertools import permutations, combinations
 
 #from objects import Word
-from word_graph import Word
+from word_graph import Word, convert_to_ascending_order
 
 
 def main():
@@ -50,6 +51,17 @@ def get_word_list_noeq(size):
     word_list.sort()
     word_list.sort(key=lambda word: len(word))
     return word_list
+
+
+def get_random_sample(word_list):
+    random_sample = []
+    for word in word_list:
+        letters = [letter for letter in word]
+        shuffle(letters)
+        random_word = Word(convert_to_ascending_order("".join(letters)))
+        random_sample.append(random_word)
+
+    return random_sample
 
 
 if __name__ == '__main__':
