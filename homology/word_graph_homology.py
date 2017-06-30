@@ -13,29 +13,49 @@ from simplex import SimplicialComplex
 from objects import Word
 from subgraph_finder import extract_word_graph, expand_word_graph
 
+ 
+FACE_SQUARE_STRUCTURES = ("((0, 1), (1, 2), (3, 2), (0, 3))",
+                          "((0, 1), (1, 2), (2, 3), (0, 3))", 
+                          "((0, 1), (2, 1), (3, 2), (0, 3))")
 
-def get_word_labels(file_prefix, size):
-    with open(os.path.join(os.pardir, 
-            file_prefix + str(size) + ".txt"), "r") as graph_file:
+
+def get_word_labels(file_path):
+    with open(file_path + ".txt", "r") as graph_file:
         word_graph = expand_word_graph(extract_word_graph(graph_file, Word))
     words = sorted(list(word_graph))
     return {word: i for i, word in enumerate(words)}
 
 
-def get_maximal_simplices(file_prefix, size, word_labels):
-    """Assumes triangles are the maximal simplices."""
+def get_maximal_simplices(file_path, word_labels):
+    """
+    Assumes triangles and parallel + (3,1) squares 
+    are the maximal simplices.
+    """
+    # Collect triangles
     triangles = []
-    with open(os.path.join(os.pardir, 
-            file_prefix + str(size) + "_triangles.txt"), "r") as triangle_file:
+    with open(file_path + "_triangles.txt", "r") as triangle_file:
         for line in triangle_file:
             if line.startswith("(") or line.startswith("["):
                 triangle_string = line.strip()[2:-2].split("', '")
                 triangle = [Word(word) for word in triangle_string]
                 triangles.append(triangle)
 
+    Collect parallel + (3,1) squares
+    directed_structure = None
+    squares = []
+    with open(file_path + "_squares_sorted.txt", "r") as sorted_squares_file:
+        for line in sorted_squares_file:
+            if line.strip().endswith("):"):
+                directed_structure = line.strip()[:-1]
+            if (directed_structure in FACE_SQUARE_STRUCTURES 
+                    and line.startswith("('")):
+                square_string = line.strip()[2:-2].split("', '")
+                square = [Word(word) for word in square_string]
+                squares.append(square)
+
     maximal_simplices = []
-    for triangle in triangles:
-        simplex = [word_labels[word] for word in triangle]
+    for subgraph in triangles + squares:
+        simplex = [word_labels[word] for word in subgraph]
         maximal_simplices.append(simplex)
 
     return maximal_simplices
@@ -43,13 +63,20 @@ def get_maximal_simplices(file_prefix, size, word_labels):
 
 def main():
     print("This script calculates the homology of a simplicial complex"
-          + " corresponding to a given ascending order word graph.\n")
+          + " corresponding to a given ascending order word graph or subgraph.\n")
     size = int(input("Word graph size? ").strip())
-    file_prefix = "aoword_graph_size"
-    word_labels = get_word_labels(file_prefix, size)
-    maximal_simplices = get_maximal_simplices(file_prefix, size, word_labels)
+    graph_type = input("Word graph or subgraph? ")
+    if graph_type.strip().lower().startswith("s"):
+        word_graph_file_name = input("Enter name of file containing a word subgraph" 
+                                     + "(excluding extension): ").strip()
+        file_path = os.path.join(os.pardir, word_graph_file_name)
+    else:
+        file_prefix = "aoword_graph_size"
+        file_path = os.path.join(os.pardir, file_prefix + str(size))
+    word_labels = get_word_labels(file_path)
+    maximal_simplices = get_maximal_simplices(file_path, word_labels)
     simplicial_complex = SimplicialComplex(maximal_simplices)
-    with open(file_prefix + str(size) + "_homology.txt", "w") as homology_file:
+    with open(file_path + "_homology_triangle.txt", "w") as homology_file:
         np.set_printoptions(threshold=100000000000)
         for i in range(4):
             boundary_matrix = simplicial_complex.get_boundary_matrix(i, 2)
