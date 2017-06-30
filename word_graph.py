@@ -10,8 +10,8 @@ from numpy import array
 
 from objects import is_equivalent, Word as Word_eq
 #from word_graph_gpu import find_adjacent_vertices as find_adjacent_vertices_gpu
-from word_graph_gpu2 import find_adjacent_vertices as find_adjacent_vertices_gpu
-#from word_graph_gpu_cputest import find_adjacent_vertices as find_adjacent_vertices_gpu
+#from word_graph_gpu2 import find_adjacent_vertices as find_adjacent_vertices_gpu
+from word_graph_gpu_cputest import find_adjacent_vertices as find_adjacent_vertices_gpu
 
 
 WORDS_LEQ2_FILE = "words_up_to_size_2_all.txt"
@@ -85,8 +85,10 @@ class WordGraph:
         self.ascending_order = ascending_order
         self.directed_neighborhoods = self.compute_neighborhoods()
         if self.ascending_order:
+            print("Converting to ascending order...")
             self.directed_neighborhoods = convert_to_ascending_order(
                 self.directed_neighborhoods)
+            print("Finished!")
         self.vertex_count = len(self.vertices)
         self.edge_count = 0
         for vertex in self.directed_neighborhoods:
@@ -101,28 +103,24 @@ class WordGraph:
                     neighborhoods[word] = neighbors
         else:
             for word in self.vertices:
-                neighbors = WordGraph.find_adjacent_vertices(
-                    word, self.size_limit, self.word_class)
+                neighbors = self.find_adjacent_vertices(word)
                 neighborhoods[word] = neighbors
 
         return neighborhoods
 
-    @staticmethod
-    def find_adjacent_vertices(word, size_limit, word_class):
+    def find_adjacent_vertices(self, word):
         neighbors = set()
-        patterns = (REPEAT_WORD + RETURN_WORD if word_class == Word 
+        patterns = (REPEAT_WORD + RETURN_WORD if self.word_class == Word 
                     else REPEAT_WORD_AO + RETURN_WORD_AO)
         for pattern_instance in patterns:
-            if len(word)//2 + (len(pattern_instance) - 3)//2 <= size_limit:
-                some_neighbors = WordGraph.generate_insertions(
-                    word, pattern_instance, size_limit, word_class)
+            if len(word)//2 + (len(pattern_instance) - 3)//2 <= self.size_limit:
+                some_neighbors = self.generate_insertions(word, pattern_instance)
                 neighbors |= some_neighbors
 
         return neighbors
 
-    @staticmethod
-    def generate_insertions(word, pattern_instance, size_limit, word_class):
-        new_letters = list(range(1, size_limit + 1))
+    def generate_insertions(self, word, pattern_instance):
+        new_letters = list(range(1, self.size_limit + 1))
         new_letters = [str(letter) for letter in new_letters 
                        if str(letter) not in word]
         instance_letters = list(set(pattern_instance.replace("...", "")))
@@ -132,24 +130,26 @@ class WordGraph:
         insertions = set()
         instances = []
 
-        for indices in permutations(new_letters, len(instance_letters)):
-            for i in range(len(pattern_parts)):
+        for i, indices in enumerate(permutations(new_letters, len(instance_letters))):
+            if self.ascending_order and i != 0:
+                break
+            for j in range(len(pattern_parts)):
                 relabeled_part = ""
-                for j in range(len(instance_letters)):
-                    relabeled_part += indices[j]
-                if return_word and i == 1:
+                for k in range(len(instance_letters)):
+                    relabeled_part += indices[k]
+                if return_word and j == 1:
                     relabeled_part = relabeled_part[::-1]   # Reverses relabeled_part
-                pattern_parts[i] = relabeled_part
+                pattern_parts[j] = relabeled_part
             instances.append(pattern_parts[:])
 
         for instance in instances:
             for i, j in product(range(len(word)+1), range(len(word)+1)):
                 if i < j:
-                    new_word = word_class(word[:i] + instance[0] + word[i:j] 
-                                          + instance[1] + word[j:])
+                    new_word = self.word_class(word[:i] + instance[0] + word[i:j] 
+                                               + instance[1] + word[j:])
                 else:
-                    new_word = word_class(word[:j] + instance[1] + word[j:i]
-                                          + instance[0] + word[i:])
+                    new_word = self.word_class(word[:j] + instance[1] + word[j:i]
+                                               + instance[0] + word[i:])
                 insertions.add(new_word)
 
         return insertions
@@ -173,31 +173,36 @@ def convert_to_ascending_order(word_collection):
         return tuple(convert_to_ascending_order(list(word_collection)))
     elif collection_type == set:
         return set(convert_to_ascending_order(list(word_collection)))
-    elif collection_type == Word_eq:
-        if word_collection.size >= 10:
-            raise NotImplementedError()
+    elif collection_type == Word_eq or collection_type == str:
         translation = {}
         new_word = ""
         for char in word_collection:
             try:
                 new_letter = translation[char]
             except KeyError:
-                new_letter = str(len(translation)+1)
+                if len(translation) < 9:
+                    new_letter = str(len(translation)+1)
+                else:
+                    offset = len(translation) - 9
+                    new_letter = chr(97 + offset)
                 translation[char] = new_letter
             finally:
                 new_word += new_letter
-        return Word_eq(new_word)
+        if collection_type == Word_eq:
+            return Word_eq(new_word)
+        elif collection_type == str:
+            return new_word
     else:
         raise TypeError("Invalid word collection type!")
 
 
 if __name__ == '__main__':
-    words = load_words(AOWORDS_LEQ7_FILE)
+    words = load_words(AOWORDS_LEQ6_FILE)
     start_time = time()
-    word_graph = WordGraph(words, size_limit=7, ascending_order=True, use_gpu=True)
+    word_graph = WordGraph(words, size_limit=6, ascending_order=True, use_gpu=False)
     end_time = time()
     print("Total time:", end_time - start_time)
-    with open("aoword_graph_size7_gputest.txt", "w") as output_file:
+    with open("aoword_graph_size6_fast.txt", "w") as output_file:
         print("Vertex count: " + str(word_graph.vertex_count), file=output_file)
         print("Edge count: " + str(word_graph.edge_count) + "\n\n", file=output_file)
         words = list(word_graph.directed_neighborhoods.keys())
@@ -207,8 +212,8 @@ if __name__ == '__main__':
                 neighborhood = word + ": " + str(
                     word_graph.directed_neighborhoods[word])
                 print(neighborhood, file=output_file)
-    with open("aoword_graph_size7_gputest.txt", "r") as output_file:
+    with open("aoword_graph_size6_fast.txt", "r") as output_file:
         text = output_file.read()
         text = text.replace("\'", "")
-    with open("aoword_graph_size7_gputest.txt", "w") as output_file:
+    with open("aoword_graph_size6_fast.txt", "w") as output_file:
         output_file.write(text)
