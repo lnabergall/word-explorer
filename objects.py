@@ -83,6 +83,8 @@ class Pattern(list):
 	def __init__(self, *args, name=None, base=None, inductive_step=None):
 		if name is None:
 			raise ValueError("Name argument not provided!")
+		if args:
+			args = ([PatternExample(arg) for arg in args[0]],)
 		list.__init__(self, *args)
 		if base is not None and (len(inductive_step) != 2 or 
 				len(inductive_step[0]) != 2 or len(inductive_step[1]) != 2 
@@ -209,20 +211,20 @@ class Pattern(list):
 
 class Word(str):
 
-	def __new__(cls, content):
-		if content != "" and not Word.is_double_occurrence_word(content):
+	def __new__(cls, content, double_occurrence=True):
+		if (double_occurrence and content != "" 
+				and not Word.is_double_occurrence_word(content)):
 			return None
 		else:
 			return str.__new__(cls, content)
 
 	def __eq__(self, other):
-		return str(self) == str(other)
-		# if self is None:
-		# 	return other is None
-		# elif other is None:
-		# 	return self is None
-		# else:
-		# 	return is_equivalent(self, other)
+		if self is None:
+			return other is None
+		elif other is None:
+			return self is None
+		else:
+			return is_equivalent(self, other)
 
 	def __ne__(self, other):
 		return not self.__eq__(other)
@@ -238,8 +240,9 @@ class Word(str):
 			letter_indices_list.append(index_list)
 		return hash((tuple(letter_indices_list), ))
 
-	def __init__(self, content):
-		self.size = len(self) // 2
+	def __init__(self, content, double_occurrence=True):
+		if double_occurrence:
+			self.size = len(self) // 2
 		# self.irreducible = Word.is_irreducible(content)
 		# self.strongly_irreducible = self.is_strongly_irreducible(content)
 
