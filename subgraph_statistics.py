@@ -5,8 +5,9 @@ from text files containing computed subgraphs.
 
 import re
 
-BASE = "aoword_graph_size"
+BASE = "loops_removed_dataD_rearrangements_random1_subgraph_size"
 EXT = ".txt"
+SAVE_FILE_NAME = "loops_removed_dataD_rearrangements_random1_subgraph_statistics.txt"
 PARALLEL_STRUCTURE = "((0, 1), (1, 2), (3, 2), (0, 3))"
 
 
@@ -23,8 +24,10 @@ def get_subgraph_statistics(sizes):
     for size in sizes:
         statistics[size] = {}
 
+        file_path_base = BASE + str(size) + "_weak"
+
         # Get word graph stats
-        with open(BASE + str(size) + EXT, "r") as word_graph_file:
+        with open(file_path_base + EXT, "r") as word_graph_file:
             for line in word_graph_file:
                 if line.startswith("Vertex count"):
                     vertex_count = get_integer(line)
@@ -35,35 +38,35 @@ def get_subgraph_statistics(sizes):
 
         # Get 3-path stats
         try:
-            with open(BASE + str(size) + "_3paths" + EXT) as length3_paths_file:
+            with open(file_path_base + "_3paths" + EXT) as length3_paths_file:
                 for line in length3_paths_file:
                     if line.startswith("3-path subgraph count"):
                         statistics[size]["3-paths"] = get_integer(line)
         except FileNotFoundError:
-            print("File", BASE + str(size) + "_3paths" + EXT, "not found")
+            print("File", file_path_base + "_3paths" + EXT, "not found")
 
         # Get 4-path stats
         try:
-            with open(BASE + str(size) + "_4paths" + EXT) as length4_paths_file:
+            with open(file_path_base + "_4paths" + EXT) as length4_paths_file:
                 for line in length4_paths_file:
                     if line.startswith("4-path subgraph count"):
                         statistics[size]["4-paths"] = get_integer(line)
         except FileNotFoundError:
-            print("File", BASE + str(size) + "_4paths" + EXT, "not found")
+            print("File", file_path_base + "_4paths" + EXT, "not found")
 
         # Get triangle stats
         try:
-            with open(BASE + str(size) + "_triangles" + EXT) as triangles_file:
+            with open(file_path_base + "_triangles" + EXT) as triangles_file:
                 for line in triangles_file:
                     if line.startswith("Triangle subgraph count"):
                         statistics[size]["triangles"] = get_integer(line)
         except FileNotFoundError:
-            print("File", BASE + str(size) + "_triangles" + EXT, "not found")
+            print("File", file_path_base + "_triangles" + EXT, "not found")
 
         # Get square stats
         statistics[size]["squares"] = {}
         try:
-            with open(BASE + str(size) + "_squares_sorted" + EXT, "r") as sorted_squares_file:
+            with open(file_path_base + "_squares_sorted" + EXT, "r") as sorted_squares_file:
                 for line in sorted_squares_file:
                     if line.startswith("Square subgraph count"):
                         statistics[size]["squares"]["total"] = get_integer(line)
@@ -71,20 +74,20 @@ def get_subgraph_statistics(sizes):
                         statistics[size]["squares"][line[:line.find("))")+2]] = (
                             get_integer(line))
         except FileNotFoundError:
-            print("File", BASE + str(size) + "_squares_sorted" + EXT, "not found")
+            print("File", file_path_base + "_squares_sorted" + EXT, "not found")
             try:
-                with open(BASE + str(size) + "_squares_parallel" + EXT) as parallel_squares_file:
+                with open(file_path_base + "_squares_parallel" + EXT) as parallel_squares_file:
                     for line in parallel_squares_file:
                         if line.startswith("Square subgraph count"):
                             statistics[size]["squares"][PARALLEL_STRUCTURE] = (
                                 get_integer(line))
             except FileNotFoundError:
-                print("File", BASE + str(size) + "_squares_parallel" + EXT, "not found")
+                print("File", file_path_base + "_squares_parallel" + EXT, "not found")
 
         # Get cube stats
         statistics[size]["cubes"] = {}
         try:
-            with open(BASE + str(size) + "_cubes" + EXT) as cubes_file:
+            with open(file_path_base + "_cubes" + EXT) as cubes_file:
                 for line in cubes_file:
                     if line.startswith("Cube subgraph count"):
                         statistics[size]["cubes"]["total"] = get_integer(line)
@@ -93,9 +96,9 @@ def get_subgraph_statistics(sizes):
                     elif line.startswith("Not Linearly Ordered cube subgraph count:"):
                         statistics[size]["cubes"]["nonlinear"] = get_integer(line)
         except FileNotFoundError:
-            print("File", BASE + str(size) + "_cubes" + EXT, "not found")
+            print("File", file_path_base + "_cubes" + EXT, "not found")
             try:
-                with open(BASE + str(size) + "_cubes_parallel" + EXT) as cubes_file:
+                with open(file_path_base + "_cubes_parallel" + EXT) as cubes_file:
                     for line in cubes_file:
                         if line.startswith("Cube subgraph count"):
                             statistics[size]["cubes"]["total"] = get_integer(line)
@@ -104,13 +107,13 @@ def get_subgraph_statistics(sizes):
                         elif line.startswith("Not Linearly Ordered cube subgraph count:"):
                             statistics[size]["cubes"]["nonlinear"] = get_integer(line)
             except FileNotFoundError:
-                print("File", BASE + str(size) + "_cubes_parallel" + EXT, "not found")
+                print("File", file_path_base + "_cubes_parallel" + EXT, "not found")
 
     return statistics
 
 
 def save_subgraph_statistics(subgraph_statistics):
-    with open("aoword_graph_subgraph_statistics.txt", "w") as statistics_file:
+    with open(SAVE_FILE_NAME, "w") as statistics_file:
         print("\nAscending Order Double Occurrence Word Subgraph Statistics", 
               file=statistics_file)
         for i, size in enumerate(subgraph_statistics):

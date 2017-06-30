@@ -13,12 +13,15 @@ def get_vertices(vertex_file, word_class):
     vertices = []
     for line in vertex_file:
         if line:
-            letters = re.findall(r"\d+", line)
-            digit_strings = [str(i) for i in range(1, 10)]
-            for i, letter in enumerate(letters):
-                if letter not in digit_strings:
-                    letters[i] = chr(int(letter) + 96)
-            word = word_class("".join(letters))
+            if "," in line:
+                letters = re.findall(r"\d+", line)
+                digit_strings = [str(i) for i in range(1, 10)]
+                for i, letter in enumerate(letters):
+                    if letter not in digit_strings:
+                        letters[i] = chr(int(letter) + 87)
+                word = word_class("".join(letters))
+            else:
+                word = word_class(line.strip())
             if word is None:
                 print("Encountered a non-DOW!")
                 print(letters)
