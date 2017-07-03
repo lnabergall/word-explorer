@@ -1,5 +1,5 @@
 import re
-from itertools import combinations
+from itertools import combinations, chain
 from collections import Counter, OrderedDict
 
 
@@ -14,6 +14,153 @@ def is_equivalent(seq1, seq2):
 
 def is_equivalent_ascending(seq1, seq2):
 	return str(seq1) == str(seq2)
+
+
+class GeneralizedPattern(tuple):
+
+	def __new__(cls, pattern, strict=False, literal=False, name=None):
+		GeneralizedPattern.test_pattern(pattern)
+		return super().__new__(cls, pattern)
+
+	def __init__(self, pattern, strict=False, literal=False, name=None):
+		self.strict = strict
+		self.literal = literal
+		self.name = name
+
+		self.variable_string = "".join(
+			[variable for variable, reversed_indicator in pattern])
+		self.variables = set(self.variable_string)
+		self.max_variable_repetitions = max(self.variable_string.count(variable) 
+											for variable in list(self.variables))
+		self.size = len(self.variables)
+
+	def __eq__(self, other):
+		if type(other) != GeneralizedPattern:
+			return False
+		reversal_sequence = [reversed_indicator 
+							for variable, reversed_indicator in self]
+		reversal_sequence_other = [reversed_indicator 
+								  for variable, reversed_indicator in self]
+		return (reversal_sequence == reversal_sequence_other 
+				and is_equivalent(self.variable_string, other.variable_string))
+
+	def __ne__(self, other):
+		if len(self) != len(other):
+			return True
+		else:
+			return not self.__eq__(other)
+
+	@staticmethod
+	def test_pattern(sequence):
+		for element in sequence:
+			if (len(element) != 2 or type(element[0]) != str 
+					or (element[1] != "" and element[1] != "R")
+					or not bool(re.fullmatch(r"[a-z]", element[0]))):
+				raise ValueError("Invalid pattern!")
+
+	def is_reverse(self, index):
+		return self[index][1] == "R"
+
+	def get_reverse(self, index):
+		if self.is_reverse(index):
+			return (self[index][0], "")
+		else:
+			return (self[index][0], "R")
+
+	def is_instance(self, sequence):
+		string = "".join(sequence)
+		if not self.strict and len(sequence) != len(self):
+			return False
+		elif self.strict and len(sequence) > 1:
+			return False
+		elif self.literal and len(string) != len(self):
+			return False
+		else:
+			morphism = {}
+			for i, part in enumerate(sequence):
+				image = morphism.get(self[i], None)
+				image_reversed = morphism.get(self.get_reverse(i), None)
+				if image_reversed:
+					if part[::-1] != image_reversed:
+						return False
+				if image:
+					if part != image:
+						return False
+				else:
+					morphism[self[i]] = part
+			return True
+
+	def instance_from_morphism(self, morphism):
+		pattern_instance = []
+		for variable, reversed_indicator in self:
+			if reversed_indicator == "R":
+				pattern_instance.append(morphism[variable][::-1])
+			else:
+				pattern_instance.append(morphism[variable])
+
+		return pattern_instance
+
+
+
+def subwords(word, max_length=None, index_offset=0, calculated_subwords=None):
+	subword_indices_list = []
+	if calculated_subwords is None:
+		calculated_subwords = {}
+	start_end_indices = combinations(range(len(word)+1), 2)
+	for start_index, end_index in start_end_indices:
+		subword_indices_list.append(
+			[list(range(start_index+index_offset, end_index+index_offset))])
+		if max_length == 1:
+			continue
+		suffix_subwords = calculated_subwords.get(end_index+index_offset, None)
+		if suffix_subwords is None:
+			if max_length is not None:
+				new_max_length = max_length-1
+			else:
+				new_max_length = None
+			suffix_subwords = subwords(
+				word[end_index:], max_length=new_max_length, 
+				index_offset=index_offset+end_index,
+				calculated_subwords=calculated_subwords)
+			calculated_subwords[end_index+index_offset] = suffix_subwords
+		for subword in suffix_subwords:
+			subword_indices_list.append(
+				[list(range(start_index+index_offset, 
+							end_index+index_offset))] + subword)
+
+	return subword_indices_list
+
+
+def subwords_slow(word, length):
+	# Generate factors
+	factor_indices_list = []
+	start_end_indices = combinations(range(len(word)+1), 2)
+	for start_index, end_index in start_end_indices:
+		factor_indices_list.append(list(range(start_index, end_index)))
+
+	# Then generate sets of factors and filter
+	possible_subwords = combinations(factor_indices_list, length)
+	subword_indices_list = []
+	for subword_indices in possible_subwords:
+		indices = list(chain.from_iterable(subword_indices))
+		if len(set(indices)) == len(indices):
+			subword_indices_list.append(subword_indices)
+
+	return subword_indices_list
+
+
+def find_instances(word, pattern):
+	if type(pattern) != GeneralizedPattern:
+		raise TypeError("Expects pattern of type 'GeneralizedPattern'")
+	else:
+		instances = []
+		all_subword_indices = subwords(word, max_length=len(pattern))
+		for subword_indices in all_subword_indices:
+			subword = ["".join(word[i] for i in factor_indices) 
+					   for factor_indices in subword_indices]
+			if pattern.is_instance(subword):
+				instances.append(list(chain.from_iterable(subword_indices)))
+		return instances
 
 
 class PatternExample(str):
@@ -219,6 +366,8 @@ class Word(str):
 			return str.__new__(cls, content)
 
 	def __eq__(self, other):
+		if not self.double_occurrence or not other.double_occurrence:
+			return str(self) == str(other)
 		if self is None:
 			return other is None
 		elif other is None:
@@ -241,6 +390,7 @@ class Word(str):
 		return hash((tuple(letter_indices_list), ))
 
 	def __init__(self, content, double_occurrence=True):
+		self.double_occurrence = double_occurrence
 		if double_occurrence:
 			self.size = len(self) // 2
 		# self.irreducible = Word.is_irreducible(content)
@@ -281,59 +431,62 @@ class Word(str):
 		Returns: List of lists of indices of the instances of the 
 				 input pattern in this word.
 		"""
-
-		pattern_parts = [pattern[i].split("...") 
-						 for i in range(len(pattern))]
-		pattern_parts_sizes = ([len(part) for part in pattern_parts[i]] 
-							   for i in range(len(pattern_parts)))
-		instances = []
-		sizes_found = set()
-		for i, sizes in enumerate(pattern_parts_sizes):
-			# First test if there is a size dependency and that an 
-			# instance of that size was not found already.
-			if i >= 2:
-				skip = False
-				for j in range(2,i+1):
-					if j in pattern.size_dependencies.get(i+1, set()) \
-					and j not in sizes_found:
-						skip = True
-						break
-				if skip:
-					continue
-
-			start_index_lists = combinations(range(len(self)), len(sizes))
-			for indices in start_index_lists:
-				# First check if these indices are spread wide 
-				# enough for this pattern example.
-				valid_starts = True
-				for j, size in enumerate(sizes):
-					try:
-						if not indices[j+1]-indices[j] >= size:
-							valid_starts = False
+		if type(pattern) == GeneralizedPattern:
+			return find_instances(self, pattern)
+		else:
+			pattern_parts = [pattern[i].split("...") 
+							 for i in range(len(pattern))]
+			pattern_parts_sizes = ([len(part) for part in pattern_parts[i]] 
+								   for i in range(len(pattern_parts)))
+			instances = []
+			sizes_found = set()
+			for i, sizes in enumerate(pattern_parts_sizes):
+				# First test if there is a size dependency and that an 
+				# instance of that size was not found already.
+				if i >= 2:
+					skip = False
+					for j in range(2,i+1):
+						if j in pattern.size_dependencies.get(i+1, set()) \
+						and j not in sizes_found:
+							skip = True
 							break
-					except IndexError:
-						break
-				if not len(self)-indices[-1] >= sizes[-1]:
-					valid_starts = False
-				if not valid_starts:
-					continue
-				# Indices have passed, so compare the sequence defined 
-				# by these indices against the pattern. 
-				else:
-					sequence = []
-					sequence_indices = []
-					for size, index in zip(sizes, indices):
-						sequence.append(self[index:index+size])
-						sequence_indices.extend(range(index, index+size))
-					if pattern.is_instance(sequence, i+1):
-						instances.append(sequence_indices)
-						sizes_found.add(i+1)
+					if skip:
+						continue
 
-		return instances
+				start_index_lists = combinations(range(len(self)), len(sizes))
+				for indices in start_index_lists:
+					# First check if these indices are spread wide 
+					# enough for this pattern example.
+					valid_starts = True
+					for j, size in enumerate(sizes):
+						try:
+							if not indices[j+1]-indices[j] >= size:
+								valid_starts = False
+								break
+						except IndexError:
+							break
+					if not len(self)-indices[-1] >= sizes[-1]:
+						valid_starts = False
+					if not valid_starts:
+						continue
+					# Indices have passed, so compare the sequence defined 
+					# by these indices against the pattern. 
+					else:
+						sequence = []
+						sequence_indices = []
+						for size, index in zip(sizes, indices):
+							sequence.append(self[index:index+size])
+							sequence_indices.extend(range(index, index+size))
+						if pattern.is_instance(sequence, i+1):
+							instances.append(sequence_indices)
+							sizes_found.add(i+1)
+
+			return instances
 
 	def perform_reduction(self, pattern_instance_indices):
 		return Word("".join(self[i] for i in range(len(self)) 
-							if i not in pattern_instance_indices))
+							if i not in pattern_instance_indices), 
+					double_occurrence=self.double_occurrence)
 
 
 class PatternIndex():
