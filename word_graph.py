@@ -5,10 +5,10 @@ representing the deletion of a repeat or return word.
 
 from time import time
 
-from itertools import product, permutations
 from numpy import array
 
 from objects import is_equivalent, Word as Word_eq
+from insertions import generate_insertions
 from ascending_order import convert_to_ascending_order
 #from word_graph_gpu import find_adjacent_vertices as find_adjacent_vertices_gpu
 #from word_graph_gpu2 import find_adjacent_vertices as find_adjacent_vertices_gpu
@@ -121,39 +121,9 @@ class WordGraph:
         return neighbors
 
     def generate_insertions(self, word, pattern_instance):
-        new_letters = list(range(1, self.size_limit + 1))
-        new_letters = [str(letter) for letter in new_letters 
-                       if str(letter) not in word]
-        instance_letters = list(set(pattern_instance.replace("...", "")))
-        instance_letters.sort()
-        pattern_parts = pattern_instance.split("...")
-        return_word = pattern_parts[0] == pattern_parts[1][::-1]
-        insertions = set()
-        instances = []
-
-        for i, indices in enumerate(permutations(new_letters, len(instance_letters))):
-            if self.ascending_order and i != 0:
-                break
-            for j in range(len(pattern_parts)):
-                relabeled_part = ""
-                for k in range(len(instance_letters)):
-                    relabeled_part += indices[k]
-                if return_word and j == 1:
-                    relabeled_part = relabeled_part[::-1]   # Reverses relabeled_part
-                pattern_parts[j] = relabeled_part
-            instances.append(pattern_parts[:])
-
-        for instance in instances:
-            for i, j in product(range(len(word)+1), range(len(word)+1)):
-                if i < j:
-                    new_word = self.word_class(word[:i] + instance[0] + word[i:j] 
-                                               + instance[1] + word[j:])
-                else:
-                    new_word = self.word_class(word[:j] + instance[1] + word[j:i]
-                                               + instance[0] + word[i:])
-                insertions.add(new_word)
-
-        return insertions
+        return generate_insertions(
+            word, pattern_instance, self.size_limit, self.word_class, 
+            ascending_order=self.ascending_order)
 
 
 if __name__ == '__main__':
