@@ -104,7 +104,11 @@ def test_flipping(start_word, pattern, alphabet_size, max_path_length,
 
     counterexamples = 0
     for end_word in path_types:
-        if all(type_tuple[0] == "peak" for type_tuple in path_types[end_word]):
+        if (all(type_tuple[0] == "peak" for type_tuple in path_types[end_word]) 
+                or min([len(paths[type_tuple[1]]) for type_tuple in path_types[end_word]
+                        if type_tuple[0] == "peak"], default=100000)
+                < min([len(paths[type_tuple[1]]) for type_tuple in path_types[end_word]
+                       if type_tuple[0] == "no_peak"], default=100000)):
             print("Counterexample found!")
             print(end_word)
             if end_word == "123342":
@@ -115,13 +119,13 @@ def test_flipping(start_word, pattern, alphabet_size, max_path_length,
                     print(paths[type_tuple[1]])
             counterexamples += 1
 
-    print("Start word:", start_word)
+    print("\nStart word:", "'" + start_word + "'")
     print("Paths:", len(paths))
     print("End words:", len(path_types))
     print("Counterexamples:", counterexamples)
 
 
 if __name__ == '__main__':
-    word = Word("1234", double_occurrence=False)
+    word = Word("1212", double_occurrence=False)
     pattern = GeneralizedPattern((("a", ""), ("a", "")))
-    test_flipping(word, pattern, 4, 3, 8, ascending_order=True)
+    test_flipping(word, pattern, 6, 3, 9, ascending_order=True)
