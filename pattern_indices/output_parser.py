@@ -1,6 +1,14 @@
 """
-Parses an output text file (for a batch calculation) from the pattern 
-index calculator and provides functions for calculating various statistics.
+Provides functions for parsing an output text file (for a batch calculation) 
+from the pattern index calculator implemented in interface.py and provides 
+functions for calculating various statistics.
+
+Functions:
+
+	main, output_statistics_batchwise, get_statistics, get_metrics_legacy, 
+	process_multibatch_output_file, process_data_output, 
+	compute_statistics_batchwise, compute_statistics_sizewise, 
+	plot_statistics_batchwise, plot_statistics_sizewise
 """
 import re
 
