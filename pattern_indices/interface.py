@@ -1,7 +1,16 @@
 """
-interface.py
+A tkinter GUI for the pattern index calculator (that is, the class
+Calculator) implemented in main.py.
 
-A tkinter GUI for the pattern index calculator implemented in main.py.
+Usage:
+
+	$ python interface.py
+
+Classes:
+
+	PatternIndexApp, CalculatingThread, CalculatingDialog, Controller,
+	ReductionOptionsView, ReductionSelectionsView, SizedButton, 
+	OutputView, PatternDialog, IndexDialog
 """
 
 import threading
@@ -12,7 +21,7 @@ from tkinter.filedialog import asksaveasfile, askopenfile
 
 from main import Calculator
 from storage import StorageHandler, SQLStorageHandler
-from objects import Pattern, Word, PatternIndex, PatternExample
+from word_explorer.objects import Pattern, Word, PatternIndex, PatternExample
 
 
 class PatternIndexApp(ttk.Frame):
@@ -420,8 +429,11 @@ class Controller():
 					self._word, patterns)
 				if self.calc.stop == True:
 					return
-				self._storage_handler.store_word_index(self._word, 
-					index_value, patterns=patterns)
+				try:
+					self._storage_handler.store_word_index(self._word, 
+						index_value, patterns=patterns)
+				except OSError:
+					pass
 			return [index_value]
 		elif indices is not None:
 			indices = [self._storage_handler.get_index(index) 
@@ -435,8 +447,11 @@ class Controller():
 						index.patterns)
 					if self.calc.stop == True:
 						return
-					self._storage_handler.store_word_index(self._word, 
-						index_value, index=index)
+					try:
+						self._storage_handler.store_word_index(self._word, 
+							index_value, index=index)
+					except OSError:
+						pass
 				index_values.append(index_value)
 			return index_values
 
@@ -985,6 +1000,8 @@ if __name__ == '__main__':
 	pattern_index_app = PatternIndexApp(master=root)
 	pattern_index_app.mainloop()
 
+
+# POSSIBLE EXTENSIONS:
 
 # Implement use of inductive definition to extend pattern examples into 
 # more sizes when necessary. (1)

@@ -1,16 +1,26 @@
 """
-main.py
-
-Reduces a double occurrence word using arbitrary user-defined patterns 
+Reduces a double occurrence word using user-defined patterns 
 and associated reductions. Outputs the associated pattern index of the 
-word. This script contains a simple command-line interface; a more 
-powerful GUI is implemented in interface.py.
+word. This module also contains a simple command-line interface; a more 
+powerful and flexible GUI is implemented in interface.py.
 
 Usage:
-	$ python reductions_PI.py
+	
+	$ python main.py
+
+Classes:
+
+	Calculator
+
+Functions:
+
+	output_instructions, output_choices, get_pattern_examples, 
+	get_user_input, filter_equivalent_reductions, 
+	contains_no_complete_reductions
 """
 
-from objects import Pattern, Word, PatternIndex, PatternExample, is_equivalent
+from word_explorer.objects import (Pattern, Word, PatternIndex, 
+								   PatternExample, is_equivalent)
 from storage import StorageHandler
 
 
@@ -27,9 +37,13 @@ def output_instructions():
 
 def output_choices(storage_handler):
 	"""
-	Prints pattern and index names to the screen and returns a dictionary
-	containing these names as values for retrieval of the chosen patterns 
-	and indices.
+	Args:
+		storage_handler: An instance of StorageHandler.
+	Prints:
+		Pattern and pattern index names.
+	Returns:
+		A dictionary containing pattern and pattern index names as values 
+		for retrieval of the chosen patterns and indices.
 	"""
 	# Output indices
 	index_names = storage_handler.get_index_names()
@@ -54,6 +68,15 @@ def output_choices(storage_handler):
 
 
 def get_pattern_examples(start_size):
+	"""
+	A function for querying a user via the command-line for 
+	pattern examples of size start_size or greater.
+
+	Args:
+		start_size: Integer.
+	Returns:
+		A list of instances of PatternExample. 
+	"""
 	pattern_examples = []
 
 	# First example
@@ -191,11 +214,12 @@ def get_user_input():
 
 def filter_equivalent_reductions(reductions):
 	"""
-	Reduces each 'equivalence class' of reductions down to a single reduction 
-	by checking for equivalent final words. Assumes that all input reductions 
-	are of the same size. 
-
-	Returns: List of unique reductions.
+	Args:
+		reductions: List of reductions, where each reduction is 
+			a list of words. Assumes that each reduction is of the same length.
+	Returns: 
+		A filtered copy of reductions that does not contain two reductions 
+		with the same last word.
 	"""
 	# Remove identical words
 	reductions_equivalence_classes = {}
@@ -214,12 +238,22 @@ def filter_equivalent_reductions(reductions):
 	return unique_reductions
 
 def contains_no_complete_reductions(reductions):
+	"""Checks whether reductions contains a reduction with the empty word."""
 	for reduction in reductions:
 		if reduction[-1] == "":
 			return False
 	return True
 
 class Calculator():
+	"""
+	A class for handling the calculation of the pattern index of a given word.
+	Uses an instance method, stop, to add the option to halt 
+	the computation prematurely.
+
+	Methods:
+
+		stop, calculate_pattern_index
+	"""
 
 	def __init__(self):
 		self.stop = False
@@ -327,6 +361,3 @@ if __name__ == '__main__':
 # but can't assume that a pattern is defined for every natural number 
 # size. So either convert to dictionary or create PatternExample class
 # with a size attribute.
-
-# EVENTUALLY!
-# Subsequences idea...

@@ -7,9 +7,9 @@ from time import time
 
 from numpy import array
 
-from objects import is_equivalent, Word as Word_eq
-from insertions import generate_insertions
-from ascending_order import convert_to_ascending_order
+from word_explorer.objects import is_equivalent, Word as Word_eq
+from word_explorer.operations.insertions import generate_insertions
+from word_explorer.objects.ascending_order import convert_to_ascending_order
 #from word_graph_gpu import find_adjacent_vertices as find_adjacent_vertices_gpu
 #from word_graph_gpu2 import find_adjacent_vertices as find_adjacent_vertices_gpu
 from word_graph_gpu_cputest import find_adjacent_vertices as find_adjacent_vertices_gpu

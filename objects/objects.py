@@ -1,10 +1,25 @@
+"""
+Basic classes and functions for working with words and patterns. 
+
+Classes:
+
+	Word, GeneralizedPattern, PatternExample, Pattern, PatternIndex
+
+Functions:
+
+	is_equivalent, is_equivalent_ascending, subwords, find_instances
+"""
+
 import re
 from itertools import combinations, chain
 from collections import Counter, OrderedDict
 
 
 def is_equivalent(seq1, seq2):
-	# Checks for existence of a bijection between input sequences.
+	"""
+	Checks for existence of a bijection between input sequences 
+	seq1 and seq2.
+	"""
 	letters1 = set(seq1)
 	letters2 = set(seq2)
 	distinct_mappings = set(zip(seq1, seq2))
@@ -16,8 +31,163 @@ def is_equivalent_ascending(seq1, seq2):
 	return str(seq1) == str(seq2)
 
 
-class GeneralizedPattern(tuple):
+class Word(str):
+	"""
+	A word is a subclass of str. 
 
+	If instantiated with double_occurrence = True, None is returned 
+	if the string is not a double occurrence word. Also, is_equivalent 
+	is used to check equality; if double_occurrence = False, 
+	simple string equality is used instead.
+
+	Custom Methods:
+		double_occurrence_word, irreducible, strongly_irreducible, 
+		delete_letter, find_instances, perform_reduction
+	"""
+	def __new__(cls, content, double_occurrence=True):
+		if (double_occurrence and content != "" 
+				and not Word.double_occurrence_word(content)):
+			return None
+		else:
+			return str.__new__(cls, content)
+
+	def __eq__(self, other):
+		if not self.double_occurrence:
+			return str(self) == str(other)
+		if self is None:
+			return other is None
+		elif other is None:
+			return self is None
+		else:
+			return is_equivalent(self, other)
+
+	def __ne__(self, other):
+		return not self.__eq__(other)
+
+	def __hash__(self):
+		letter_indices = OrderedDict()
+		for i, letter in enumerate(self):
+			letter_indices.setdefault(letter, [])
+			letter_indices[letter].append(i)
+		letter_indices_list = []
+		for index_list in letter_indices.values():
+			index_list = tuple(index_list)
+			letter_indices_list.append(index_list)
+		return hash((tuple(letter_indices_list), ))
+
+	def __init__(self, content, double_occurrence=True):
+		self.double_occurrence = double_occurrence
+		if double_occurrence:
+			self.size = len(self) // 2
+		# self.irreducible = Word.irreducible(content)
+		# self.strongly_irreducible = self.strongly_irreducible(content)
+
+	@staticmethod
+	def double_occurrence_word(word_string):
+		letter_counts = set(Counter(word_string).values())
+		if len(letter_counts) == 1 and letter_counts.pop() == 2:
+			return True
+		else:
+			return False
+
+	@staticmethod
+	def irreducible(word_string):
+		for i in range(1, len(word_string)-1):
+			if (Word.double_occurrence_word(word_string[:i]) 
+			and Word.double_occurrence_word(word_string[i:])):
+				return False
+		return True
+
+	def strongly_irreducible(self, word_string):
+		if self.irreducible == False:
+			return False
+		for i in range(len(word_string)):
+			for j in range(i+2, len(word_string)):
+				if Word.double_occurrence_word(word_string[i:j]):
+					return False
+		return True
+
+	def delete_letter(self, letter):
+		reduced_word = "".join(self.split(str(letter)))
+		return Word(reduced_word)
+
+	def find_instances(self, pattern):
+		"""
+		Input: An instance of Pattern or GeneralizedPattern.
+		Returns: List of lists of indices of the instances of the 
+				 input pattern in this word.
+		"""
+		if type(pattern) == GeneralizedPattern:
+			return find_instances(self, pattern)
+		else:
+			pattern_parts = [pattern[i].split("...") 
+							 for i in range(len(pattern))]
+			pattern_parts_sizes = ([len(part) for part in pattern_parts[i]] 
+								   for i in range(len(pattern_parts)))
+			instances = []
+			sizes_found = set()
+			for i, sizes in enumerate(pattern_parts_sizes):
+				# First test if there is a size dependency and that an 
+				# instance of that size was not found already.
+				if i >= 2:
+					skip = False
+					for j in range(2,i+1):
+						if j in pattern.size_dependencies.get(i+1, set()) \
+						and j not in sizes_found:
+							skip = True
+							break
+					if skip:
+						continue
+
+				start_index_lists = combinations(range(len(self)), len(sizes))
+				for indices in start_index_lists:
+					# First check if these indices are spread wide 
+					# enough for this pattern example.
+					valid_starts = True
+					for j, size in enumerate(sizes):
+						try:
+							if not indices[j+1]-indices[j] >= size:
+								valid_starts = False
+								break
+						except IndexError:
+							break
+					if not len(self)-indices[-1] >= sizes[-1]:
+						valid_starts = False
+					if not valid_starts:
+						continue
+					# Indices have passed, so compare the sequence defined 
+					# by these indices against the pattern. 
+					else:
+						sequence = []
+						sequence_indices = []
+						for size, index in zip(sizes, indices):
+							sequence.append(self[index:index+size])
+							sequence_indices.extend(range(index, index+size))
+						if pattern.is_instance(sequence, i+1):
+							instances.append(sequence_indices)
+							sizes_found.add(i+1)
+
+			return instances
+
+	def perform_reduction(self, pattern_instance_indices):
+		return Word("".join(self[i] for i in range(len(self)) 
+							if i not in pattern_instance_indices), 
+					double_occurrence=self.double_occurrence)
+
+
+class GeneralizedPattern(tuple):
+	"""
+	A (generalized) pattern is a subclass of tuple. 
+
+	Each element corresponds to a variable in the pattern 
+	and is of the form (letter, "") or (letter, "R"), where 
+	letter is a single latin letter and the second component 
+	of each element indicates whether the variable is reversed or not.
+
+	Custom Methods:
+		test_pattern, reversed, get_reversed, instance, 
+		instance_from_morphism
+	"""
 	def __new__(cls, pattern, strict=False, literal=False, name=None):
 		GeneralizedPattern.test_pattern(pattern)
 		return super().__new__(cls, pattern)
@@ -58,16 +228,16 @@ class GeneralizedPattern(tuple):
 					or not bool(re.fullmatch(r"[a-z]", element[0]))):
 				raise ValueError("Invalid pattern!")
 
-	def is_reverse(self, index):
+	def reversed(self, index):
 		return self[index][1] == "R"
 
 	def get_reverse(self, index):
-		if self.is_reverse(index):
+		if self.reversed(index):
 			return (self[index][0], "")
 		else:
 			return (self[index][0], "R")
 
-	def is_instance(self, sequence):
+	def instance(self, sequence):
 		string = "".join(sequence)
 		if not self.strict and len(sequence) != len(self):
 			return False
@@ -101,8 +271,21 @@ class GeneralizedPattern(tuple):
 		return pattern_instance
 
 
-
 def subwords(word, max_length=None, index_offset=0, calculated_subwords=None):
+	"""
+	Args:
+		word: String or instance of Word.
+		max_length: Integer, defaults to None. Maximum length of 
+			the located subwords.
+		index_offset: Integer, defaults to 0. Only searches for subwords 
+			occurring at this index or later.
+		calculated_subwords: Dict, defaults to None. Holds all subwords 
+			found in a suffix of word by starting index. This enables 
+			dynamic programming to drastically speedup the algorithm.
+	Returns:
+		A list of list of lists of the indices of the factors of 
+		each subword in word.
+	"""
 	subword_indices_list = []
 	if calculated_subwords is None:
 		calculated_subwords = {}
@@ -150,6 +333,13 @@ def subwords_slow(word, length):
 
 
 def find_instances(word, pattern):
+	"""
+	Args:
+		word: An instance of Word.
+		pattern: An instance of GeneralizedPattern.
+	Returns:
+		A list...
+	"""
 	if type(pattern) != GeneralizedPattern:
 		raise TypeError("Expects pattern of type 'GeneralizedPattern'")
 	else:
@@ -158,7 +348,7 @@ def find_instances(word, pattern):
 		for subword_indices in all_subword_indices:
 			subword = ["".join(word[i] for i in factor_indices) 
 					   for factor_indices in subword_indices]
-			if pattern.is_instance(subword):
+			if pattern.instance(subword):
 				instances.append(list(chain.from_iterable(subword_indices)))
 		return instances
 
@@ -354,139 +544,6 @@ class Pattern(list):
 			return True
 		else:
 			return False
-
-
-class Word(str):
-
-	def __new__(cls, content, double_occurrence=True):
-		if (double_occurrence and content != "" 
-				and not Word.is_double_occurrence_word(content)):
-			return None
-		else:
-			return str.__new__(cls, content)
-
-	def __eq__(self, other):
-		if not self.double_occurrence or not other.double_occurrence:
-			return str(self) == str(other)
-		if self is None:
-			return other is None
-		elif other is None:
-			return self is None
-		else:
-			return is_equivalent(self, other)
-
-	def __ne__(self, other):
-		return not self.__eq__(other)
-
-	def __hash__(self):
-		letter_indices = OrderedDict()
-		for i, letter in enumerate(self):
-			letter_indices.setdefault(letter, [])
-			letter_indices[letter].append(i)
-		letter_indices_list = []
-		for index_list in letter_indices.values():
-			index_list = tuple(index_list)
-			letter_indices_list.append(index_list)
-		return hash((tuple(letter_indices_list), ))
-
-	def __init__(self, content, double_occurrence=True):
-		self.double_occurrence = double_occurrence
-		if double_occurrence:
-			self.size = len(self) // 2
-		# self.irreducible = Word.is_irreducible(content)
-		# self.strongly_irreducible = self.is_strongly_irreducible(content)
-
-	@staticmethod
-	def is_double_occurrence_word(word_string):
-		letter_counts = set(Counter(word_string).values())
-		if len(letter_counts) == 1 and letter_counts.pop() == 2:
-			return True
-		else:
-			return False
-
-	@staticmethod
-	def is_irreducible(word_string):
-		for i in range(1, len(word_string)-1):
-			if (Word.is_double_occurrence_word(word_string[:i]) 
-			and Word.is_double_occurrence_word(word_string[i:])):
-				return False
-		return True
-
-	def is_strongly_irreducible(self, word_string):
-		if self.irreducible == False:
-			return False
-		for i in range(len(word_string)):
-			for j in range(i+2, len(word_string)):
-				if Word.is_double_occurrence_word(word_string[i:j]):
-					return False
-		return True
-
-	def delete_letter(self, letter):
-		reduced_word = "".join(self.split(str(letter)))
-		return Word(reduced_word)
-
-	def find_instances(self, pattern):
-		"""
-		Input: An instance of Pattern.
-		Returns: List of lists of indices of the instances of the 
-				 input pattern in this word.
-		"""
-		if type(pattern) == GeneralizedPattern:
-			return find_instances(self, pattern)
-		else:
-			pattern_parts = [pattern[i].split("...") 
-							 for i in range(len(pattern))]
-			pattern_parts_sizes = ([len(part) for part in pattern_parts[i]] 
-								   for i in range(len(pattern_parts)))
-			instances = []
-			sizes_found = set()
-			for i, sizes in enumerate(pattern_parts_sizes):
-				# First test if there is a size dependency and that an 
-				# instance of that size was not found already.
-				if i >= 2:
-					skip = False
-					for j in range(2,i+1):
-						if j in pattern.size_dependencies.get(i+1, set()) \
-						and j not in sizes_found:
-							skip = True
-							break
-					if skip:
-						continue
-
-				start_index_lists = combinations(range(len(self)), len(sizes))
-				for indices in start_index_lists:
-					# First check if these indices are spread wide 
-					# enough for this pattern example.
-					valid_starts = True
-					for j, size in enumerate(sizes):
-						try:
-							if not indices[j+1]-indices[j] >= size:
-								valid_starts = False
-								break
-						except IndexError:
-							break
-					if not len(self)-indices[-1] >= sizes[-1]:
-						valid_starts = False
-					if not valid_starts:
-						continue
-					# Indices have passed, so compare the sequence defined 
-					# by these indices against the pattern. 
-					else:
-						sequence = []
-						sequence_indices = []
-						for size, index in zip(sizes, indices):
-							sequence.append(self[index:index+size])
-							sequence_indices.extend(range(index, index+size))
-						if pattern.is_instance(sequence, i+1):
-							instances.append(sequence_indices)
-							sizes_found.add(i+1)
-
-			return instances
-
-	def perform_reduction(self, pattern_instance_indices):
-		return Word("".join(self[i] for i in range(len(self)) 
-							if i not in pattern_instance_indices), 
-					double_occurrence=self.double_occurrence)
 
 
 class PatternIndex():

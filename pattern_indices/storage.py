@@ -1,6 +1,20 @@
+"""
+Contains classes for storing and retrieving patterns, reductions operations, 
+pattern indices, and the pattern index values of specific words. 
+There are two interfaces that have been implemented: StorageHandler
+and SQLStorageHandler---the former uses a text-file-based system, while
+the latter uses a local SQLite database and SQLAlchemy ORM. 
+
+Classes:
+
+	StorageHandler, SQLStorageHandler, StoredPattern, StoredPatternIndex, 
+	StoredWord, Value
+"""
+
 import re
 
-from objects import Pattern, PatternExample, PatternIndex, is_equivalent
+from word_explorer.objects import (Pattern, PatternExample, 
+								   PatternIndex, is_equivalent)
 
 PATTERN_STORE = "patterns.txt"
 REDUCTION_STORE = "reduction_operations.txt"
@@ -12,26 +26,15 @@ class StorageHandler():
 	"""
 	Handles the storage and retrieval of all patterns, reduction 
 	operations, pattern indices, and any words for which indices have 
-	been found. By default, expects the existence of strings PATTERN_STORE, 
-	REDUCTION_STORE, INDEX_STORE, and WORD_STORE specifying the names of 
-	the pattern, reduction operation, pattern index, and word storage text 
-	files.
-
-	Usage:
-		storage_handler = StorageHandler()
+	been found. By default, expects the existence of global strings 
+	PATTERN_STORE, REDUCTION_STORE, INDEX_STORE, and WORD_STORE specifying 
+	the names of the pattern, reduction operation, pattern index, and 
+	word storage text files.
 
 	Methods:
-		store_pattern
-		store_pattern_example
-		store_reduction
-		store_index
-		store_word_index
-		get_pattern
-		get_reduction
-		get_index
-		get_word_index
-		get_pattern_names
-		get_reduction_names
+		store_pattern, store_pattern_example, store_reduction
+		store_index, store_word_index, get_pattern, get_reduction
+		get_index, get_word_index, get_pattern_names, get_reduction_names
 		get_index_names
 	"""
 

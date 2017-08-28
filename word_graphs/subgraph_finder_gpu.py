@@ -200,7 +200,7 @@ def find_subgraphs(subgraph_type, word_graph,
         length3_paths_array = create_subgraphs_array(length3_paths, 3)
         device_all_3paths = cuda.to_device(length3_paths_array)
         all_squares = []
-        batches = 100000
+        batches = 10000
         for k in range(batches):
             print("Batch", k)
             length3_paths_batch = length3_paths[k*len(length3_paths) // batches: 
@@ -209,6 +209,7 @@ def find_subgraphs(subgraph_type, word_graph,
             device_3paths_batch = cuda.to_device(batch_array)
             squares = zeros_py(
                 (len(length3_paths)*len(length3_paths_batch), 4), dtype=int64_py)
+            print(type(squares))
             device_squares = cuda.to_device(squares)
             blocks_perdim = ((len(length3_paths)*len(length3_paths_batch)
                              + (threads_perblock - 1)) // threads_perblock)

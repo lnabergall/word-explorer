@@ -2,17 +2,31 @@
 Functions for constructing reductions and reverse reductions 
 on arbitrary words, primarily for testing the conditions 
 under which paths can be 'flipped'.
+
+Functions:
+
+    generate_pattern_instances, get_deletions, get_insertions, 
+    generate_paths, filter_paths, test_flipping
 """
 
 from itertools import product
 
-from objects import GeneralizedPattern, Word
-from ascending_order import convert_to_ascending_order
+from word_explorer.objects import GeneralizedPattern, Word
+from word_explorer.objects.ascending_order import convert_to_ascending_order
 from insertions import generate_insertions
-from list_words import get_all_words
+from word_explorer.objects.list_words import get_all_words
 
 
 def generate_pattern_instances(pattern, alphabet_size, max_length):
+    """
+    Args:
+        pattern: An instance of GeneralizedPattern. 
+        alphabet_size: Integer. 
+        max_length: Integer.
+    Returns:
+        A list of all possible instances of pattern of max length 
+        max_length constructed from alphabet {1, 2, ..., alphabet_size}.
+    """
     if (len(pattern.variables)*(alphabet_size**max_length)
             // pattern.max_variable_repetitions > 50000000):
         raise ValueError("Too many pattern instances to compute " 
@@ -34,11 +48,30 @@ def generate_pattern_instances(pattern, alphabet_size, max_length):
 
 
 def get_deletions(word, pattern):
+    """
+    Args:
+        word: An instance of Word.
+        pattern: An instance of GeneralizedPattern. 
+    Returns:
+        A list of all words constructed by deleting each instance 
+        of pattern in word.
+    """
     instance_indices = word.find_instances(pattern)
     return [word.perform_reduction(instance) for instance in instance_indices]
 
 
 def get_insertions(word, pattern, alphabet_size, max_word_length):
+    """
+    Args:
+        word: An instance of Word.
+        pattern: An instance of GeneralizedPattern.
+        alphabet_size: Integer.
+        max_word_length: Integer.
+    Returns:
+        A list of all words of length at most max_word_length
+        constructed from alphabet {1, 2, ..., alphabet_size} 
+        by inserting an instance of pattern into word.
+    """
     insertions = set()
     if type(pattern) == GeneralizedPattern:
         pattern_instances = generate_pattern_instances(
@@ -47,7 +80,7 @@ def get_insertions(word, pattern, alphabet_size, max_word_length):
         raise NotImplementedError(
             "Pattern should be of type 'GeneralizedPattern'!")
     for pattern_instance in pattern_instances:
-        instance_insertions = generate_insertions(
+        instance_insertions, _ = generate_insertions(
             word, pattern_instance, alphabet_size, 
             Word, double_occurrence=False)
         insertions |= instance_insertions
@@ -57,6 +90,16 @@ def get_insertions(word, pattern, alphabet_size, max_word_length):
 
 def generate_paths(start_word, pattern, alphabet_size, 
                    max_path_length, max_word_length):
+    """
+    Args:
+        start_word: An instance of Word.
+        pattern: An instance of GeneralizedPattern.
+        alphabet_size: Integer.
+        max_path_length: Integer.
+        max_word_length: Integer. 
+    Returns:
+        A list of paths, where each path is implemented as a list of words.
+    """
     paths = [[start_word],]
     for i in range(max_path_length):
         extended_paths = []
@@ -73,6 +116,10 @@ def generate_paths(start_word, pattern, alphabet_size,
 
 
 def filter_paths(paths):
+    """
+    Removes paths with repetitions, useful for e.g. 
+    handling ascending order conversion.
+    """
     paths_without_repetitions = []
     for path in paths:
         if len(set(path)) == len(path):
@@ -83,6 +130,26 @@ def filter_paths(paths):
 
 def test_flipping(start_word, pattern, alphabet_size, max_path_length, 
                   max_word_length, ascending_order=False):
+    """
+    Args:
+        start_word: An instance of Word.
+        pattern: An instance of GeneralizedPattern.
+        alphabet_size: Integer.
+        max_path_length: Integer.
+        max_word_length: Integer.
+        ascending_order: Boolean, defaults to False.
+    Prints:
+        If all the paths starting at start_word, constructed from 
+        insertions and deletions of instances of pattern, and 
+        containing only words from alphabet {1, ..., alphabet_size} 
+        of length at most max_word_length (ascending order words 
+        if ascending_order = True) can be 'flipped' to a path 
+        of the form (r1, r2^R), where r1 and r2 are reductions, then
+        the program prints start_word, the number of paths, 
+        the number of final words in these paths, and the number of paths
+        that cannot be flipped. Otherwise, it also prints the last word
+        of every path that cannot be flipped. 
+    """
     paths = generate_paths(start_word, pattern, alphabet_size, 
                            max_path_length, max_word_length)
     if ascending_order:
@@ -111,12 +178,6 @@ def test_flipping(start_word, pattern, alphabet_size, max_path_length,
                        if type_tuple[0] == "no_peak"], default=100000)):
             print("Counterexample found!")
             print(end_word)
-            if end_word == "123342":
-                for type_tuple in path_types[end_word]:
-                    print(paths[type_tuple[1]])
-            if end_word == "1234555":
-                for type_tuple in path_types[end_word]:
-                    print(paths[type_tuple[1]])
             counterexamples += 1
 
     print("\nStart word:", "'" + start_word + "'")
