@@ -5,7 +5,7 @@ functions for calculating various statistics.
 
 Functions:
 
-	main, output_statistics_batchwise, get_statistics, get_metrics_legacy, 
+	main, output_statistics_batchwise, get_statistics, 
 	process_multibatch_output_file, process_data_output, 
 	compute_statistics_batchwise, compute_statistics_sizewise, 
 	plot_statistics_batchwise, plot_statistics_sizewise
@@ -27,6 +27,25 @@ TPRI = "Tangled Pattern Recurrence Index"
 
 
 def main(batchwise=False, sizewise=False):
+	"""
+	Queries the user via the command-line for the names of two files 
+	that contain the output from a batch calculation of the pattern
+	indices of a sequence of randomly sampled words and a sequence
+	of words from data. 
+
+	It then computes various statistics of these 
+	batches depending on the argument values. If batchwise = True, 
+	it first computes the mean pattern index values for each index
+	and each random sample, and then calculates statistics of this
+	population: mean, median, variance, standard deviation, 
+	upper quartile, lower quartile, minimum, and maximum. If sizewise = True,
+	for each word size in the data it computes these statistics 
+	for all the pattern indices of every word of that size. 
+
+	Args:
+		batchwise: Boolean, defaults to False.
+		sizewise: Boolean, defaults to False.
+	"""
 	random_file_name = input("Input file name for pattern indices of random"
 							 " samples (including the extension): ")
 	data_file_name = input("Input file name for pattern indices of data"
@@ -47,12 +66,29 @@ def main(batchwise=False, sizewise=False):
 	
 
 def output_statistics_batchwise(statistics):
+	"""
+	Args:
+		statistics: A dictionary of the form
+			{"per_batch": {...}, 
+			 <statistic_name1>: <float1>, 
+			 <statistic_name2>: <float2>, 
+			 ...}
+	Prints: 
+		The name and value for each statistic in statistics.
+	"""
 	del statistics["per_batch"]
 	for statistic, values in statistics.items():
 		print("\n" + statistic + ":", values)
 
 
 def get_statistics(*sequences):
+	"""
+	Args:
+		sequences: List or Tuple of lists of floats or integers.
+	Returns:
+		A dictionary with statistic names as keys and statistic values
+		as values. 
+	"""
 	means = [np.mean(sequence) for sequence in sequences]
 	standard_deviations = [np.std(sequence) for sequence in sequences]
 	medians = [np.percentile(sequence, 50) for sequence in sequences]
@@ -70,31 +106,6 @@ def get_statistics(*sequences):
 		"minimum": minimums, 
 		"maximum": maximums
 	}
-
-
-def get_metrics_legacy(output_file):
-	"""NOTE: currently appears to be faulty."""
-	lines = output_file.readlines()
-	lines_between_blanks = 0
-	first_blank = 0
-	for i, line in enumerate(lines):
-		if first_blank != 0 and (line == "\n" or line == ""):
-			second_blank = i
-			lines_between_blanks = second_blank - first_blank - 1
-			break
-		if line == "\n" or line == "":
-			first_blank = i
-
-	metric_list = []
-	for i in range(lines_between_blanks-1):
-		value_sum = 0
-		line_count = 0
-		for line in lines[i+1::lines_between_blanks+1]:
-			value_sum += int(line.strip()[-1])
-			line_count += 1
-		metric_list.append(value_sum/line_count)
-
-	return metric_list
 
 
 def process_multibatch_output_file(output_file):

@@ -1,5 +1,5 @@
 """
-Computing the homology of simplicial complexes 
+Functions for omputing the homology of simplicial complexes 
 corresponding to word graphs.
 """
 
