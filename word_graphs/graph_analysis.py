@@ -1,6 +1,11 @@
 """
 Functions for analyzing word graphs and locating subgraphs 
 using NetworkX.
+
+Functions:
+
+    get_word_graph_filename, load_word_graph, load_word_graphs, 
+    find_greatest_unconnected_distance, get_minimal_external_paths
 """
 
 import re

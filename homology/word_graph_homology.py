@@ -1,6 +1,10 @@
 """
-Functions for omputing the homology of simplicial complexes 
+Functions for computing the homology of simplicial complexes 
 corresponding to word graphs.
+
+Functions:
+
+    get_word_labels, get_maximal_simplices, main
 """
 
 import os
