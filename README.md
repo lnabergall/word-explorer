@@ -1,4 +1,4 @@
-word-explorer 
+# word-explorer 
 
 A collection of modules for working with words, in particular double occurrence words in ascending order, calculating pattern indices and word distances, and constructing and analyzing word graphs and their homology.
 
