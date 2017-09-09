@@ -138,7 +138,7 @@ def test_flipping(start_word, pattern, alphabet_size, max_path_length,
         max_path_length: Integer.
         max_word_length: Integer.
         ascending_order: Boolean, defaults to False.
-    Prints:
+    Returns:
         If all the paths starting at start_word, constructed from 
         insertions and deletions of instances of pattern, and 
         containing only words from alphabet {1, ..., alphabet_size} 
@@ -169,21 +169,16 @@ def test_flipping(start_word, pattern, alphabet_size, max_path_length,
             types_seen.add(("no_peak", i))
             path_types[path[-1]] = types_seen
 
-    counterexamples = 0
+    counterexamples = []
     for end_word in path_types:
         if (all(type_tuple[0] == "peak" for type_tuple in path_types[end_word]) 
                 or min([len(paths[type_tuple[1]]) for type_tuple in path_types[end_word]
                         if type_tuple[0] == "peak"], default=100000)
                 < min([len(paths[type_tuple[1]]) for type_tuple in path_types[end_word]
                        if type_tuple[0] == "no_peak"], default=100000)):
-            print("Counterexample found!")
-            print(end_word)
-            counterexamples += 1
+            counterexamples.append(end_word)
 
-    print("\nStart word:", "'" + start_word + "'")
-    print("Paths:", len(paths))
-    print("End words:", len(path_types))
-    print("Counterexamples:", counterexamples)
+    return paths, path_types, counterexamples
 
 
 if __name__ == '__main__':
