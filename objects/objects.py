@@ -175,6 +175,14 @@ class Word(str):
 					double_occurrence=self.double_occurrence)
 
 
+def max_word_size(word_list):
+	return max(word.size for word in word_list)
+
+
+def max_word_length(word_list):
+	return max(len(word) for word in word_list)
+
+
 class GeneralizedPattern(tuple):
 	"""
 	A (generalized) pattern is a subclass of tuple. 
