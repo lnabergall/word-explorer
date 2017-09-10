@@ -19,8 +19,8 @@ import tkinter.ttk as ttk
 from tkinter import font
 from tkinter.filedialog import asksaveasfile, askopenfile
 
-from indices import Calculator
-from storage import StorageHandler, SQLStorageHandler
+from .indices import Calculator
+from .storage import StorageHandler, SQLStorageHandler
 from word_explorer.objects import Pattern, Word, PatternIndex, PatternExample
 
 
