@@ -1,4 +1,4 @@
-The **operations** API provides functions for working with operations on words involving the insertion or deletion of a pattern instance.
+The **operations API** provides functions for working with operations on words involving the insertion or deletion of a pattern instance.
 
 **insertions** - Contains functions for generating insertions and testing for an insertion relation between two words. Run 'python insertions.py' from the terminal to use the latter functionality.
 

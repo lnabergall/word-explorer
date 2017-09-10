@@ -3,7 +3,7 @@ Functions for generating lists of words with various properties.
 
 Functions:
 
-    get_all_words, get_all_dows, get_all_dows_noeq, get_random_sample
+    get_all_words, get_all_dows, get_dows, get_random_sample
 """
 
 from random import shuffle
@@ -46,31 +46,6 @@ def get_all_dows(max_size):
         max_size: Integer.
     Returns:
         A sorted list containing all double occurrence words 
-        without bijective equivalance, where each word of size n 
-        is constructed from the alphabet {1, 2, ..., n}.
-    """
-    word_list = set()
-    for size in range(1, max_size+1):
-        print("generating words of size " + str(size) + "...")
-        letters = [str(i) for i in range(1, min(size,9)+1)]
-        if size > 9:
-            letters.extend(chr(i+96) for i in range(10, size+1))
-        words = set(Word("".join(tupl), double_occurrence=False) 
-                    for tupl in permutations(letters*2))
-        word_list |= words
-        
-    word_list = list(word_list)
-    word_list.sort()
-    word_list.sort(key=lambda word: len(word))
-    return word_list
-
-
-def get_all_dows_noeq(max_size):
-    """
-    Args:
-        max_size: Integer.
-    Returns:
-        A sorted list containing all double occurrence words 
         without bijective equivalence. 
     """
     word_list = set()
@@ -84,6 +59,36 @@ def get_all_dows_noeq(max_size):
                         for tupl in permutations(letters*2))
             word_list |= words
 
+    word_list = list(word_list)
+    word_list.sort()
+    word_list.sort(key=lambda word: len(word))
+    return word_list
+
+
+def get_dows(max_size, ascending_order=True):
+    """
+    Args:
+        max_size: Integer.
+        ascending_order: Boolean, defaults to True.
+    Returns:
+        A sorted list containing all double occurrence words, 
+        where each word of size n is constructed from 
+        the alphabet {1, 2, ..., n}. Bijective equivalence is assumed
+        if and only if ascending_order = True.
+    """
+    word_list = set()
+    for size in range(1, max_size+1):
+        print("generating words of size " + str(size) + "...")
+        letters = [str(i) for i in range(1, min(size,9)+1)]
+        if size > 9:
+            letters.extend(chr(i+96) for i in range(10, size+1))
+        words = set(convert_to_ascending_order(
+                    Word("".join(tupl), double_occurrence=False)) 
+                    if ascending_order 
+                    else Word("".join(tupl), double_occurrence=False)
+                    for tupl in permutations(letters*2))
+        word_list |= words
+        
     word_list = list(word_list)
     word_list.sort()
     word_list.sort(key=lambda word: len(word))

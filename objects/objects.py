@@ -44,7 +44,7 @@ class Word(str):
 		double_occurrence_word, irreducible, strongly_irreducible, 
 		delete_letter, find_instances, perform_reduction
 	"""
-	def __new__(cls, content, double_occurrence=True):
+	def __new__(cls, content, double_occurrence=True, **kwargs):
 		if (double_occurrence and content != "" 
 				and not Word.double_occurrence_word(content)):
 			return None
@@ -52,7 +52,7 @@ class Word(str):
 			return str.__new__(cls, content)
 
 	def __eq__(self, other):
-		if not self.double_occurrence:
+		if not self.ascending_order or self.optimize:
 			return str(self) == str(other)
 		if self is None:
 			return other is None
@@ -65,22 +65,29 @@ class Word(str):
 		return not self.__eq__(other)
 
 	def __hash__(self):
-		letter_indices = OrderedDict()
-		for i, letter in enumerate(self):
-			letter_indices.setdefault(letter, [])
-			letter_indices[letter].append(i)
-		letter_indices_list = []
-		for index_list in letter_indices.values():
-			index_list = tuple(index_list)
-			letter_indices_list.append(index_list)
-		return hash((tuple(letter_indices_list), ))
+		if self.ascending_order and not self.optimize:
+			letter_indices = OrderedDict()
+			for i, letter in enumerate(self):
+				letter_indices.setdefault(letter, [])
+				letter_indices[letter].append(i)
+			letter_indices_list = []
+			for index_list in letter_indices.values():
+				index_list = tuple(index_list)
+				letter_indices_list.append(index_list)
+			return hash((tuple(letter_indices_list), ))
+		else:
+			return hash(str(self))
 
-	def __init__(self, content, double_occurrence=True):
+	def __init__(self, content, double_occurrence=True, 
+				 ascending_order=False, optimize=False):
 		self.double_occurrence = double_occurrence
+		self.ascending_order = ascending_order
+		self.optimize = optimize
 		if double_occurrence:
 			self.size = len(self) // 2
-		# self.irreducible = Word.irreducible(content)
-		# self.strongly_irreducible = self.strongly_irreducible(content)
+		if not self.optimize:
+			self.irreducible = Word.irreducible(content)
+			self.strongly_irreducible = self.strongly_irreducible(content)
 
 	@staticmethod
 	def double_occurrence_word(word_string):

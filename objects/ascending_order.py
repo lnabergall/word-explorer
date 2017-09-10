@@ -52,7 +52,7 @@ def convert_to_ascending_order(word_collection):
             finally:
                 new_word += new_letter
         if collection_type == Word:
-            return Word(new_word, double_occurrence=False)
+            return Word(new_word, double_occurrence=False, ascending_order=True)
         elif collection_type == str:
             return new_word
     else:

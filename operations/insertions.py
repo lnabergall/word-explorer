@@ -11,15 +11,13 @@ from itertools import product, permutations
 from word_explorer.objects import Word
 
 
-def generate_insertions(word, pattern_instance, alphabet_size,
-                        word_class, double_occurrence=True, 
-                        ascending_order=False):
+def generate_insertions(word, pattern_instance, alphabet_size, 
+                        double_occurrence=True, ascending_order=False):
     """
     Args:
-        word: Instance of word_class.
+        word: Instance of Word.
         pattern_instance: Instance of Pattern with two factors. 
         alphabet_size: Integer or None. 
-        word_class: A class used to instantiate words, typically Word or str.
         double_occurrence: Bool, defaults to True.
         ascending_order: Bool, defaults to False.
     Returns:
@@ -62,14 +60,14 @@ def generate_insertions(word, pattern_instance, alphabet_size,
     for instance in instances:
         for i, j in product(range(len(word)+1), range(len(word)+1)):
             if i < j:
-                new_word = word_class(word[:i] + instance[0] + word[i:j] 
-                                      + instance[1] + word[j:], 
-                                      double_occurrence=double_occurrence)
+                new_word = Word(word[:i] + instance[0] + word[i:j] 
+                                + instance[1] + word[j:], 
+                                double_occurrence=double_occurrence)
                 insertion_indices[new_word] = (i, j)
             else:
-                new_word = word_class(word[:j] + instance[1] + word[j:i]
-                                      + instance[0] + word[i:], 
-                                      double_occurrence=double_occurrence)
+                new_word = Word(word[:j] + instance[1] + word[j:i]
+                                + instance[0] + word[i:], 
+                                double_occurrence=double_occurrence)
                 insertion_indices[new_word] = (j, i)
             insertions.add(new_word)
 

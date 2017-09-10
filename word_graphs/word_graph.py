@@ -1,31 +1,20 @@
 """
 Produces a graph with vertices representing words and directed edges 
 representing the deletion of a repeat or return word.
+
+Classes:
+
+    WordGraph
 """
 
 from time import time
 
-from numpy import array
-
-from word_explorer.objects import is_equivalent, Word as Word_eq
+from word_explorer.objects.io import retrieve_words
 from word_explorer.operations.insertions import generate_insertions
 from word_explorer.objects.ascending_order import convert_to_ascending_order
-#from word_graph_gpu import find_adjacent_vertices as find_adjacent_vertices_gpu
-#from word_graph_gpu2 import find_adjacent_vertices as find_adjacent_vertices_gpu
-from word_graph_gpu_cputest import find_adjacent_vertices as find_adjacent_vertices_gpu
+from .word_graph_gpu2 import find_adjacent_vertices as find_adjacent_vertices_gpu
+from .io import get_word_graph_filename, store_word_graph
 
-
-WORDS_LEQ2_FILE = "words_up_to_size_2_all.txt"
-WORDS_LEQ3_FILE = "words_up_to_size_3_all.txt"
-WORDS_LEQ4_FILE = "words_up_to_size_4_all.txt"
-WORDS_LEQ5_FILE = "words_up_to_size_5_all.txt"
-
-AOWORDS_LEQ2_FILE = "words_up_to_size_2.txt"
-AOWORDS_LEQ3_FILE = "words_up_to_size_3.txt"
-AOWORDS_LEQ4_FILE = "words_up_to_size_4.txt"
-AOWORDS_LEQ5_FILE = "words_up_to_size_5.txt"
-AOWORDS_LEQ6_FILE = "words_up_to_size_6.txt"
-AOWORDS_LEQ7_FILE = "words_up_to_size_7.txt"
 
 REPEAT_WORD = (
     "1...1", "12...12", "21...21", "123...123", "213...213", 
@@ -49,30 +38,14 @@ RETURN_WORD = (
 )
 REPEAT_WORD_AO = (
     "1...1", "12...12", "123...123", "1234...1234", "12345...12345",
-    "123456...123456", "1234567...1234567", "12345678...12345678"
+    "123456...123456", "1234567...1234567", "12345678...12345678", 
+    "123456789...123456789",
 )
 RETURN_WORD_AO = (
     "1...1", "12...21", "123...321", "1234...4321", "12345...54321",
-    "123456...654321", "1234567...7654321", "12345678...87654321"
+    "123456...654321", "1234567...7654321", "12345678...87654321", 
+    "123456789...987654321",
 )
-
-
-class Word(Word_eq):
-
-    def __eq__(self, other):
-        return str(self) == str(other)
-
-    def __hash__(self):
-        return hash(str(self))
-
-
-def load_words(file_name):
-    with open(file_name, "r") as word_file:
-        word_list = word_file.readlines()
-        word_list.sort()
-        if "" not in word_list:
-            word_list = [""] + word_list
-        return [Word_eq(word.strip()) for word in word_list]
 
 
 class WordGraph:
@@ -81,19 +54,20 @@ class WordGraph:
                  ascending_order=False, use_gpu=False):
         self.vertices = word_list
         self.size_limit = size_limit
-        self.word_class = Word if not ascending_order else Word_eq
         self.use_gpu = use_gpu
         self.ascending_order = ascending_order
         self.directed_neighborhoods = self.compute_neighborhoods()
         if self.ascending_order:
-            print("Converting to ascending order...")
             self.directed_neighborhoods = convert_to_ascending_order(
                 self.directed_neighborhoods)
-            print("Finished!")
+
         self.vertex_count = len(self.vertices)
         self.edge_count = 0
         for vertex in self.directed_neighborhoods:
             self.edge_count += len(self.directed_neighborhoods[vertex])
+
+        self.file_name = get_word_graph_filename(
+            self.ascending_order, self.size_limit)
 
     def compute_neighborhoods(self):
         neighborhoods = {}
@@ -111,7 +85,7 @@ class WordGraph:
 
     def find_adjacent_vertices(self, word):
         neighbors = set()
-        patterns = (REPEAT_WORD + RETURN_WORD if self.word_class == Word 
+        patterns = (REPEAT_WORD + RETURN_WORD if not self.ascending_order 
                     else REPEAT_WORD_AO + RETURN_WORD_AO)
         for pattern_instance in patterns:
             if len(word)//2 + (len(pattern_instance) - 3)//2 <= self.size_limit:
@@ -121,29 +95,14 @@ class WordGraph:
         return neighbors
 
     def generate_insertions(self, word, pattern_instance):
-        return generate_insertions(
-            word, pattern_instance, self.size_limit, self.word_class, 
-            ascending_order=self.ascending_order)
+        return generate_insertions(word, pattern_instance, self.size_limit, 
+                                   ascending_order=self.ascending_order)
 
 
 if __name__ == '__main__':
-    words = load_words(AOWORDS_LEQ6_FILE)
+    words = retrieve_words("ao", size=6, optimize=True)
     start_time = time()
     word_graph = WordGraph(words, size_limit=6, ascending_order=True, use_gpu=False)
     end_time = time()
     print("Total time:", end_time - start_time)
-    with open("aoword_graph_size6_fast.txt", "w") as output_file:
-        print("Vertex count: " + str(word_graph.vertex_count), file=output_file)
-        print("Edge count: " + str(word_graph.edge_count) + "\n\n", file=output_file)
-        words = list(word_graph.directed_neighborhoods.keys())
-        words.sort()
-        for word in words:
-            if word_graph.directed_neighborhoods[word]:
-                neighborhood = word + ": " + str(
-                    word_graph.directed_neighborhoods[word])
-                print(neighborhood, file=output_file)
-    with open("aoword_graph_size6_fast.txt", "r") as output_file:
-        text = output_file.read()
-        text = text.replace("\'", "")
-    with open("aoword_graph_size6_fast.txt", "w") as output_file:
-        output_file.write(text)
+    store_word_graph(word_graph)

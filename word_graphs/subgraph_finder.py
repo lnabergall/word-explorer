@@ -1,15 +1,14 @@
+"""
+"""
 
 from itertools import combinations, permutations
 
-from word_graph import Word, Word_eq
-#from subgraph_finder_gpu import find_subgraphs as find_subgraphs_gpu
-from subgraph_finder_gpu_cputest import find_subgraphs as find_subgraphs_gpu
+from word_explorer.objects import Word
+from .subgraph_finder_gpu import find_subgraphs as find_subgraphs_gpu
 
 
 def expand_word_graph(word_graph):
-    """
-    Expands word graph dictionary to include all words as keys.
-    """
+    """Expands word graph dictionary to include all words as keys."""
     expanded_word_graph = word_graph.copy()
     for word1 in word_graph:
         for word2 in list(word_graph[word1]):

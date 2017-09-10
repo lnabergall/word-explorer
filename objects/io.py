@@ -30,12 +30,18 @@ def store_words(word_list, list_type="dow"):
     store_data(word_list, file_name)
 
 
-def retrieve_words(list_type, size=None, length=None):
+def retrieve_words(list_type, size=None, length=None, optimize=False):
     file_name = get_word_filename(list_type, size, length)
+    double_occurrence = False if list_type == "all" else True
+    ascending_order = True if list_type == "ao" else False
     word_list = []
-    for line in retrieve_data(file_name):
-        double_occurrence = False if list_type == "all" else True
-        word = Word(line, double_occurrence=double_occurrence)
+    for line in retrieve_data(file_name, add_output_dir=False):
+        word = Word(line.strip(), double_occurrence=double_occurrence, 
+                    ascending_order=ascending_order, optimize=optimize)
         word_list.append(word)
+    if "" not in word_list:
+        empty_word = Word("", double_occurrence=double_occurrence, 
+                          ascending_order=ascending_order, optimize=optimize)
+        word_list = [empty_word] + word_list
 
     return word_list
