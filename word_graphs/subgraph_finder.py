@@ -1,9 +1,21 @@
 """
+Functions for finding and storing certain subgraphs of word graphs, 
+including 3-paths, 4-paths, triangles, squares, and cubes. 
+Use 'find_subgraph' for an easy interface.
+
+Functions:
+
+    expand_word_graph, find_3paths, find_4paths, find_triangles, 
+    filter_subgraphs, find_squares, extract_directed_structure, 
+    sort_directed_squares, extract_squares, find_cubes, filter_cubes, 
+    find_subgraphs
 """
 
 from itertools import combinations, permutations
 
 from word_explorer.objects import Word
+from .io import (retrieve_word_graph, store_word_subgraphs, 
+                 retrieve_word_subgraphs)
 from .subgraph_finder_gpu import find_subgraphs as find_subgraphs_gpu
 
 
@@ -221,209 +233,50 @@ def filter_cubes(cubes):
     return sorted_cubes
 
 
-def extract_word_graph(graph_file, word_class=Word):
-    word_graph = {}
-    for i, line in enumerate(graph_file):
-        if i >= 4:
-            colon_index = line.find(":")
-            word_graph[word_class(line[:colon_index])] = {word_class(word) for word in 
-                line.strip()[colon_index+3:len(line)-2].split(", ")}
-    return word_graph
+SUBGRAPH_FINDERS = {
+    "triangle": find_triangles,
+    "3-path": find_3paths,
+    "4-path": find_4paths,
+    "square": find_squares,
+    "cube": find_cubes,
+}
 
 
-def get_3paths(word_graph_file_name, directed=True):
-    if directed:
-        file_name_end = "_3paths.txt"
-    else:
-        file_name_end = "_3paths_undirected.txt"
-    with open(word_graph_file_name + file_name_end, "r") as paths_file:
-        paths = []
-        for line in paths_file:
-            if line.startswith("("):
-                path = tuple(word_class(word) 
-                    for word in line[2:len(line)-3].split("', '"))
-                paths.append(path)
-
-    return paths
-
-
-def get_squares(file_name):
-    with open(file_name, "r") as squares_file:
-            squares = []
-            for line in squares_file:
-                if line.startswith("('"):
-                    square = tuple(word_class(word) 
-                        for word in line[2:len(line)-3].split("', '"))
-                    squares.append(square)
-    return squares
-
-
-if __name__ == "__main__":
-    ascending_order = input("Ascending order words? ('Y' or 'N') ")
-    request = input("\nFind squares in a graph, sort directed squares, " 
-                    "find cubes from directed squares, find " 
-                    "triangles, find 3-paths, or find 4-paths? " 
-                    "('1', '2', '3', '4', '5', or '6'): ")
-    if request == "5":
-        directed = input("\nDirected or undirected 3-paths? ")
-        directed = False if directed.strip().lower().startswith("u") else True
-    graph_type = input("Word graph or subgraph? ")
-    if graph_type.strip().lower().startswith("s"):
-        graph_type = "word_subgraph"
-        word_graph_file_name = input("Enter name of file containing a word subgraph" 
-                                     + "(excluding extension): ").strip()
-        gpu = False
-    else:
-        graph_type = "word_graph"
-        graph_size = input("\nWord graph size? ")
-        gpu = input("\nUse GPU? ")
-        gpu = False if gpu.strip().lower().startswith("n") else True
-    if ascending_order.strip().lower().startswith("n"):
-        ascending_order = False
-        if graph_type == "word_graph":
-            file_prefix = "word_graph_size"
-        word_class = Word
-    else:
-        ascending_order = True
-        if graph_type == "word_graph":
-            file_prefix = "aoword_graph_size"
-        word_class = Word_eq
-
-    if graph_type == "word_graph":
-        word_graph_file_name = file_prefix + graph_size
-
-    if request in ["1", "3", "4", "5", "6"]:
-        with open(word_graph_file_name + ".txt", "r") as graph_file:
-            word_graph = extract_word_graph(graph_file, word_class)
-
-    if request == "1":
-        word_graph = expand_word_graph(word_graph)
-        if gpu:
-            paths = get_3paths(word_graph_file_name, directed=False)
-            squares = filter_subgraphs(find_subgraphs_gpu(
-                "square", word_graph, ascending_order, word_class, data=paths))
-        else:
-            squares = filter_subgraphs(find_squares(word_graph))
-        squares.sort(key=lambda square: len(square[0]))
-        with open(word_graph_file_name + "_squares.txt", "w") as squares_file:
-            print("Square subgraph count: " + str(len(squares)) + "\n\n", 
-                  file=squares_file)
-            for square in squares:
-                print(square, file=squares_file)
-
-    if request == "2":
-        file_name = input("\nEnter name of file containing directed "  
-                          "squares (including extension): ")
-        squares = get_squares(file_name)
-        sorted_squares = sort_directed_squares(squares)
-        with open(word_graph_file_name + "_squares_sorted.txt", "w") \
-                as sorted_squares_file:
-            square_count = 0
-            for directed_labeling in sorted_squares:
-                square_count += len(sorted_squares[directed_labeling])
-            print("Square subgraph count: " + str(square_count) + "\n", 
-                  file=sorted_squares_file)
-            for directed_labeling in sorted_squares:
-                print(str(directed_labeling) + " square subgraph count: " + 
-                      str(len(sorted_squares[directed_labeling])), 
-                      file=sorted_squares_file)
-            print("\n\n", file=sorted_squares_file)
-            for directed_labeling in sorted_squares:
-                print(str(directed_labeling) + ":\n", file=sorted_squares_file)
-                for square in sorted_squares[directed_labeling]:
-                    print(square, file=sorted_squares_file)
-                print("\n\n", file=sorted_squares_file)
-
-    if request == "3":
-        if not gpu or int(graph_size) < 5:
-            file_name = input("\nEnter name of file containing sorted directed "  
-                              "squares (including extension): ")
-            with open(file_name, "r") as sorted_squares_file:
-                sorted_squares = {}
-                for line in sorted_squares_file:
-                    line = line.strip()
-                    if line.endswith(":"):
-                        directed_structure = tuple((int(edge[0]), int(edge[3])) 
-                            for edge in line[2:len(line)-3].split("), ("))
-                        sorted_squares[directed_structure] = []
-                    if line.startswith("('"):
-                        square = tuple(word_class(word) 
-                            for word in line[2:len(line)-2].split("', '"))
-                        sorted_squares[directed_structure].append(square)
-            squares = extract_squares(sorted_squares)
-            
-        if gpu:
-            if int(graph_size) >= 5:
-                file_name = input("\nEnter name of file containing directed "  
-                                  "squares (including extension): ")
-                squares = get_squares(file_name)
-            sorted_cubes = filter_cubes(find_subgraphs_gpu(
-                "cube", expand_word_graph(word_graph), 
-                ascending_order, word_class, data=squares))
-        else:
-            sorted_cubes = filter_cubes(find_cubes(
-                expand_word_graph(word_graph), squares))
-        with open(word_graph_file_name + "_cubes.txt", "w") as cubes_file:
-            cube_count = 0
-            for directed_labeling in sorted_cubes:
-                cube_count += len(sorted_cubes[directed_labeling])
-            print("Cube subgraph count: " + str(cube_count) + "\n", 
-                  file=cubes_file)
-            for directed_labeling in sorted_cubes:
-                print(str(directed_labeling) + " cube subgraph count: " + 
-                      str(len(sorted_cubes[directed_labeling])), file=cubes_file)
-            print("\n\n", file=cubes_file)
-            for directed_labeling in sorted_cubes:
-                print(str(directed_labeling) + ":\n", file=cubes_file)
-                for cube in sorted_cubes[directed_labeling]:
-                    print(cube, file=cubes_file)
-                print("\n\n", file=cubes_file)
-
-    if request == "4":
-        if gpu:
-            triangles = filter_subgraphs(find_subgraphs_gpu(
-                "triangle", expand_word_graph(word_graph), 
-                ascending_order, word_class))
-        else:
-            triangles = filter_subgraphs(
-                find_triangles(expand_word_graph(word_graph)))
-        with open(word_graph_file_name + "_triangles.txt", "w") \
-                as triangles_file:
-            print("Triangle subgraph count: " + str(len(triangles)) + "\n\n",
-                  file=triangles_file)
-            for triangle in triangles:
-                print(triangle, file=triangles_file)
-
-    if request == "5":
-        if gpu:
-            paths = find_subgraphs_gpu(
-                "3-path", expand_word_graph(word_graph), 
-                ascending_order, word_class, data=directed)
-        else:
-            paths = find_3paths(expand_word_graph(word_graph), directed)
-        if not directed:
-            paths = filter_subgraphs(paths)
-        paths.sort(key=lambda path: len(path[0]))
-        if directed:
-            file_name_end = "_3paths.txt"
-        else:
-            file_name_end = "_3paths_undirected.txt"
-        with open(word_graph_file_name + file_name_end, "w") as paths_file:
-            print("3-path subgraph count: " + str(len(paths)) + "\n\n",
-                  file=paths_file)
-            for path in paths:
-                print(path, file=paths_file)
-
-    if request == "6":
-        paths = get_3paths(word_graph_file_name)
-        if gpu:
-            paths = find_subgraphs_gpu("4-path", expand_word_graph(word_graph),
-                                       ascending_order, word_class, data=paths)
-        else:
-            paths = find_4paths(expand_word_graph(word_graph), paths)
-        paths.sort(key=lambda path: len(path[0]))
-        with open(word_graph_file_name + "_4paths.txt", "w") as paths_file:
-            print("4-path subgraph count: " + str(len(paths)) + "\n\n",
-                  file=paths_file)
-            for path in paths:
-                print(path, file=paths_file)
+def find_subgraphs(ascending_order, sizes, subgraph_types, 
+                   name_base="word_graph_size", 
+                   include_sorting=False, use_gpu=True):
+    for size in sizes:
+        word_graph = expand_word_graph(
+            retrieve_word_graph(ascending_order, size, name_base))
+        for subgraph_type in subgraph_types:
+            finder = SUBGRAPH_FINDERS[subgraph_type]
+            if subgraph_type == "4-path":
+                length_3paths = retrieve_word_subgraphs(
+                    ascending_order, size, "3-path", name_base)
+                if use_gpu:
+                    subgraphs = find_subgraphs_gpu(
+                        subgraph_type, word_graph, ascending_order, 
+                        Word, data=length_3paths)
+                else:
+                    subgraphs = finder(word_graph, length_3paths)
+            elif subgraph_type == "cube":
+                squares = retrieve_word_subgraphs(
+                    ascending_order, size, "square", name_base)
+                if use_gpu:
+                    subgraphs = filter_cubes(find_subgraphs_gpu(
+                        subgraph_type, word_graph, ascending_order, 
+                        Word, data=squares))
+                else:
+                    subgraphs = filter_cubes(finder(word_graph, squares))
+            else:
+                if use_gpu:
+                    subgraphs = find_subgraphs_gpu(
+                        subgraph_type, word_graph, ascending_order, Word)
+                else:
+                    subgraphs = finder(word_graph)
+            if include_sorting and subgraph_type == "square":
+                squares = retrieve_word_subgraphs(
+                    ascending_order, size, "square", name_base)
+                subgraphs = sort_directed_squares(squares)
+            store_word_subgraphs(subgraphs, subgraph_type, ascending_order, 
+                                 size, name_base)

@@ -80,7 +80,8 @@ class Word(str):
 
 	def __init__(self, content, double_occurrence=True, 
 				 ascending_order=False, optimize=False):
-		self.double_occurrence = double_occurrence
+		self.double_occurrence = (False if not double_occurrence 
+								  else Word.double_occurrence_word(content)) 
 		self.ascending_order = ascending_order
 		self.optimize = optimize
 		if double_occurrence:
