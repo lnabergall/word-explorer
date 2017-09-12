@@ -1,34 +1,16 @@
 """
-Tools for extracting induced subgraphs from a graph 
-given a set of vertices.
+Tools for extracting subgraphs induced by a given set of vertices 
+from a word graph. Use 'find_vertex_induced_subgraphs' as an interface.
+
+Functions:
+    
+    extract_vertex_induced_subgraphs, find_vertex_induced_subgraphs
 """
 
-import re
-
-from subgraph_finder import (Word, Word_eq, extract_word_graph, 
-                             expand_word_graph)
-
-
-def get_vertices(vertex_file, word_class):
-    vertices = []
-    for line in vertex_file:
-        if line:
-            if "," in line:
-                letters = re.findall(r"\d+", line)
-                digit_strings = [str(i) for i in range(1, 10)]
-                for i, letter in enumerate(letters):
-                    if letter not in digit_strings:
-                        letters[i] = chr(int(letter) + 87)
-                word = word_class("".join(letters))
-            else:
-                word = word_class(line.strip())
-            if word is None:
-                print("Encountered a non-DOW!")
-                print(letters)
-            else:
-                vertices.append(word)
-
-    return vertices
+from word_explorer.objects import Word
+from word_explorer.objects.io import retrieve_words
+from .word_graphs import expand_word_graph
+from .io import store_word_graph, get_word_subgraph_filename, retrieve_word_graph
 
 
 def extract_vertex_induced_subgraphs(word_graph, vertices):
@@ -46,49 +28,20 @@ def extract_vertex_induced_subgraphs(word_graph, vertices):
     return vertex_induced_subgraph, weakly_vertex_induced_subgraph
 
 
-def store_subgraph(subgraph, file_name, graph_size, unique_name):
-    subgraph_file_name = (file_name[:-4] + "_subgraph_size" 
-                          + graph_size + "_" + unique_name + ".txt")
-    with open(subgraph_file_name, "w") as output_file:
-        print("Vertex count: " + str(len(subgraph)), file=output_file)
-        edge_count = sum(len(subgraph[vertex]) for vertex in subgraph)
-        print("Edge count: " + str(edge_count) + "\n\n", file=output_file)
-        words = list(subgraph.keys())
-        words.sort()
-        for word in words:
-            if subgraph[word]:
-                neighborhood = word + ": " + str(subgraph[word])
-                print(neighborhood, file=output_file)
-    with open(subgraph_file_name, "r") as output_file:
-        text = output_file.read()
-        text = text.replace("\'", "")
-    with open(subgraph_file_name, "w") as output_file:
-        output_file.write(text)
+def find_vertex_induced_subgraphs(ascending_order, sizes, name_base):
+    for size in sizes:
+        # Find the subgraphs
+        vertices = retrieve_words(vertex_file_name, include_empty_word=False, 
+                                  ascending_order=ascending_order)
+        vertices = [word for word in vertices if word.size <= size]
+        word_graph = retrieve_word_graph(ascending_order, size)
+        induced_subgraph, weakly_induced_subgraph = extract_vertex_induced_subgraphs(
+            word_graph, vertices)
 
-
-if __name__ == "__main__":
-    ascending_order = input("Ascending order words? ('Y' or 'N') ")
-    graph_size = input("\nWord graph size? ")
-    if ascending_order.strip().lower().startswith("n"):
-        ascending_order = False
-        file_prefix = "word_graph_size"
-        word_class = Word
-    else:
-        ascending_order = True
-        file_prefix = "aoword_graph_size"
-        word_class = Word_eq
-
-    vertex_file_name = input("Enter name of file containing" 
-                             " vertices (including extension): ")
-    with open(vertex_file_name, "r") as vertex_file:
-        vertices = get_vertices(vertex_file, word_class)
-        vertices = [word for word in vertices if word.size <= int(graph_size)]
-
-    with open(file_prefix + graph_size + ".txt", "r") as graph_file:
-        word_graph = extract_word_graph(graph_file, word_class)
-
-    induced_subgraph, weakly_induced_subgraph = extract_vertex_induced_subgraphs(
-        word_graph, vertices)
-
-    store_subgraph(induced_subgraph, vertex_file_name, graph_size, "strong")
-    store_subgraph(weakly_induced_subgraph, vertex_file_name, graph_size, "weak")
+        # Store them
+        strong_file_name = get_word_subgraph_filename(
+            ascending_order, graph_size, vertex_file_name, "strong")
+        weak_file_name = get_word_subgraph_filename(
+            ascending_order, graph_size, vertex_file_name, "weak")
+        store_word_graph(induced_subgraph, strong_file_name)
+        store_word_graph(weakly_induced_subgraph, weak_file_name)

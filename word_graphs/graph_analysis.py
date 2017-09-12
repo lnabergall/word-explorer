@@ -4,55 +4,16 @@ using NetworkX.
 
 Functions:
 
-    get_word_graph_filename, load_word_graph, load_word_graphs, 
-    find_greatest_unconnected_distance, get_minimal_external_paths
+    calculate_greatest_unconnected_distance, get_minimal_external_paths,
+    find_minimal_external_paths
 """
-
-import re
-from time import  time
 
 import networkx as nx
 
-from word_explorer.objects import Word
-from subgraph_finder import extract_word_graph
+from .io import retrieve_word_graph, store_external_paths
 
 
-def get_word_graph_filename(ascending_order, size, subgraph=None):
-    file_name = "word_graph_size"
-    if ascending_order:
-        file_name = "ao" + file_name
-    if size:
-        file_name = file_name + str(size)
-    if subgraph:
-        file_name += "_" + subgraph
-
-    return file_name + ".txt"
-
-
-def load_word_graph(graph_file_name, word_class=Word):
-    with open(graph_file_name, "r") as graph_file:
-        word_graph_dict = extract_word_graph(graph_file)
-    edges = []
-    for word, neighbors in word_graph_dict.items():
-        for neighbor in list(neighbors):
-            edges.append((word, neighbor))
-
-    word_graph = nx.DiGraph()
-    word_graph.add_edges_from(edges)
-
-    return word_graph
-
-
-def load_word_graphs(graph_file_names, word_class=Word):
-    word_graphs = {}
-    for file_name in graph_file_names:
-        word_graphs[file_name] = load_word_graph(
-            file_name, word_class=word_class)
-
-    return word_graphs
-
-
-def find_greatest_unconnected_distance(weak_graph, strong_graph):
+def calculate_greatest_unconnected_distance(weak_graph, strong_graph):
     if type(weak_graph) == nx.DiGraph:
         weak_graph = nx.Graph(weak_graph)
     if type(strong_graph) == nx.DiGraph:
@@ -89,56 +50,18 @@ def get_minimal_external_paths(weak_graph, strong_graph):
     return minimal_external_paths
 
 
-if __name__ == '__main__':
-    start_time =  time()
-    data_weak_file_names = []
-    data_strong_file_names = []
-    for size in range(3, 6):
-        dataD_file_name_weak = (
-            "loops_removed_dataD_rearrangements_subgraph_size" 
-            + str(size) + "_weak.txt")
-        random_file_name_weak = (
-            "loops_removed_dataD_rearrangements_random1_subgraph_size"
-            + str(size) + "_weak.txt")
-        dataD_file_name_strong = (
-            "loops_removed_dataD_rearrangements_subgraph_size" 
-            + str(size) + "_strong.txt")
-        random_file_name_strong = (
-            "loops_removed_dataD_rearrangements_random1_subgraph_size"
-            + str(size) + "_strong.txt")
-        data_weak_file_names.extend([dataD_file_name_weak, random_file_name_weak])
-        data_strong_file_names.extend([dataD_file_name_strong, random_file_name_strong])
-
-    word_graphs = load_word_graphs(data_weak_file_names + data_strong_file_names)
-
-    external_paths_dict = {}
-    for graph_file_name, word_graph in word_graphs.items():
-        size = int(re.search(r"size(\d)", graph_file_name).group(1))
-        print("\nComputing the minimal external paths of")
-        print(graph_file_name)
-        if "strong" in graph_file_name:
-            strong_graph = word_graph
-            weak_graph = word_graphs[graph_file_name.replace("weak", "strong")]
-        elif "weak" in graph_file_name:
-            continue
+def find_minimal_external_paths(ascending_order, sizes, name_base):
+    external_paths_container = {}
+    for size in sizes:
+        strong_graph = retrieve_word_graph(
+            ascending_order, size, name_base, "strong")
+        weak_graph = retrieve_word_graph(
+            ascending_order, size, name_base, "weak")
         try:
             minimal_external_paths = get_minimal_external_paths(
                 weak_graph, strong_graph)
         except nx.exception.NetworkXNoPath:
-            pass
-        external_paths_dict[graph_file_name] = minimal_external_paths
+            minimal_external_paths = {}
+        external_paths_container[size] = minimal_external_paths
 
-    external_paths_file_name = ("loops_removed_dataD_rearrangements_subgraph"
-                                "_minimal_external_paths.txt")
-    with open(external_paths_file_name, "w") as paths_file:
-        for graph_file_name in external_paths_dict:
-            print("\n\n" + graph_file_name + "\n", file=paths_file)
-            minimal_external_paths = external_paths_dict[graph_file_name]
-            for vertex1, paths_by_vertex in minimal_external_paths.items():
-                for vertex2, minimal_external_paths in paths_by_vertex.items():
-                    print(file=paths_file)
-                    print(vertex1, "-->", vertex2, ":", file=paths_file)
-                    for path in minimal_external_paths:
-                        print(path, file=paths_file)
-
-    print("duration:", time() - start_time)
+    store_external_paths(external_paths_container, ascending_order, name_base)

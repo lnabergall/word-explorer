@@ -5,10 +5,9 @@ Use 'find_subgraph' for an easy interface.
 
 Functions:
 
-    expand_word_graph, find_3paths, find_4paths, find_triangles, 
-    filter_subgraphs, find_squares, extract_directed_structure, 
-    sort_directed_squares, extract_squares, find_cubes, filter_cubes, 
-    find_subgraphs
+    find_3paths, find_4paths, find_triangles, filter_subgraphs, 
+    find_squares, extract_directed_structure, sort_directed_squares, 
+    extract_squares, find_cubes, filter_cubes, find_subgraphs
 """
 
 from itertools import combinations, permutations
@@ -16,18 +15,8 @@ from itertools import combinations, permutations
 from word_explorer.objects import Word
 from .io import (retrieve_word_graph, store_word_subgraphs, 
                  retrieve_word_subgraphs)
-from .subgraph_finder_gpu import find_subgraphs as find_subgraphs_gpu
-
-
-def expand_word_graph(word_graph):
-    """Expands word graph dictionary to include all words as keys."""
-    expanded_word_graph = word_graph.copy()
-    for word1 in word_graph:
-        for word2 in list(word_graph[word1]):
-             expanded_word_graph[word2] = (expanded_word_graph.get(word2, set())
-                | set([word1]))
-
-    return expanded_word_graph
+from .word_graphs import expand_word_graph
+from .subgraphs_gpu import find_subgraphs as find_subgraphs_gpu
 
 
 def find_3paths(word_graph, directed=True):

@@ -1,40 +1,19 @@
-"""Functions for analyzing subgraphs and properties of their edges."""
+"""
+Functions for analyzing subgraphs and properties of their edges;
+currently only supports square subgraphs. Use 'analyze_square_subgraphs'
+for an easy interface.
+
+Functions:
+    
+    extract_directed_edges, classify_square, classify_squares, 
+    get_all_classes, analyze_square_subgraphs
+"""
 
 from itertools import product
 
 from word_explorer.objects import Word, GeneralizedPattern
 from word_explorer.operations.reduction_flipping import get_deletions
-
-
-BASE_PREFIX = "word_graph_size"
-
-
-def make_subgraph_filename(subgraph_type, size, ascending_order):
-    file_name = BASE_PREFIX + str(size) + "_" + subgraph_type + "s_sorted"
-    if ascending_order:
-        file_name = "ao" + file_name
-
-    return file_name + ".txt"
-
-
-def load_subgraphs(subgraph_type, size, ascending_order=True):
-    if subgraph_type == "square":
-        file_name = make_subgraph_filename(subgraph_type, size, ascending_order)
-        with open(file_name, "r") as sorted_squares_file:
-            sorted_squares = {}
-            for line in sorted_squares_file:
-                line = line.strip()
-                if line.endswith(":"):
-                    directed_structure = tuple((int(edge[0]), int(edge[3])) 
-                        for edge in line[2:len(line)-3].split("), ("))
-                    sorted_squares[directed_structure] = []
-                if line.startswith("('"):
-                    square = tuple(Word(word) 
-                        for word in line[2:len(line)-2].split("', '"))
-                    sorted_squares[directed_structure].append(square)
-        subgraphs = sorted_squares
-
-    return subgraphs
+from .io import retrieve_word_subgraphs
 
 
 def extract_directed_edges(square, directed_structure):
@@ -93,28 +72,23 @@ def get_all_classes(length):
                     for pattern_class in product([True, False], repeat=8):
                         classification = (
                             (i, pattern_class[0], pattern_class[1]), 
-                            (length - (start_length + i), pattern_class[2], pattern_class[3]), 
+                            (length - (start_length + i), 
+                             pattern_class[2], pattern_class[3]), 
                             (j, pattern_class[4], pattern_class[5]), 
-                            (length - (start_length + j), pattern_class[6], pattern_class[7]),
+                            (length - (start_length + j), 
+                             pattern_class[6], pattern_class[7]),
                         )
                         classes.add(classification)
 
     return classes
 
 
-def find_missing_classes(classified_squares):
-    missing_classes = {}
-    for directed_structure in classified_squares:
-        pass
+def analyze_square_subgraphs(ascending_order, size, name_base):
+    sorted_squares = retrieve_word_subgraphs(
+        ascending_order, size, "square", name_base, sorted_=True)
+    classified_squares = classify_squares(sorted_squares)
+    class_count = sum(len(classified_squares[directed_structure]) 
+                      for directed_structure in classified_squares)
+    possible_class_count = len(get_all_classes(size*2))
 
-
-if __name__ == '__main__':
-    squares = load_subgraphs("square", 5)
-    classified_squares = classify_squares(squares)
-    for directed_structure in classified_squares:
-        print("Square classes for directed structure:", directed_structure)
-        print(classified_squares[directed_structure])
-    print("Number of classes:", sum(len(classified_squares[directed_structure]) 
-                                    for directed_structure in classified_squares))
-    print("Total possible classes:", len(get_all_classes(10)))
-
+    return classified_squares, class_count, possible_class_count

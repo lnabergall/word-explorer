@@ -5,7 +5,8 @@ functions for storing and retrieving word graphs and subgraphs.
 Functions:
 
     get_word_graph_filename, get_word_subgraph_filename, store_word_graph, 
-    retrieve_word_graph, store_word_subgraphs, retrieve_word_subgraphs
+    retrieve_word_graph, store_word_subgraphs, retrieve_word_subgraphs,
+    store_external_paths
 """
 
 from itertools import chain
@@ -14,8 +15,8 @@ from word_explorer.objects import Word
 from word_explorer.io import store_data, retrieve_data
 
 
-def get_word_graph_filename(ascending_order, size, name_base):
-    file_name = name_base + str(size) + ".txt"
+def get_word_graph_filename(ascending_order, size, name_base, name_suffix=""):
+    file_name = name_base + str(size) + name_suffix + ".txt"
     if ascending_order:
         file_name = "ao" + file_name
     return file_name
@@ -29,22 +30,36 @@ def get_word_subgraph_filename(ascending_order, size, name_base,
     return file_name + ".txt"
 
 
-def store_word_graph(word_graph):
-    file_name = os.path.join("word_graphs", word_graph.file_name)
-    word_graph_data = ["Vertex count: " + str(word_graph.vertex_count), 
-                       "Edge count: " + str(word_graph.edge_count) + "\n\n"]
-    words = list(word_graph.directed_neighborhoods.keys())
+def store_word_graph(word_graph, file_name=None):
+    from .word_graphs import WordGraph, expand_word_graph  # For circular import
+    if file_name is None:
+        file_name = os.path.join("word_graphs", word_graph.file_name)
+    if isinstance(word_graph, WordGraph):
+        vertex_count = word_graph.vertex_count
+        edge_count = word_graph.edge_count
+        words = list(word_graph.directed_neighborhoods.keys())
+    else:
+        vertex_count = len(expand_word_graph(word_graph))
+        edge_count = sum(len(neighors) for neighors in word_graph.values())
+        words = list(word_graph)
+    word_graph_data = ["Vertex count: " + str(vertex_count), 
+                       "Edge count: " + str(edge_count) + "\n\n"]
     words.sort()
     for word in words:
-        if word_graph.directed_neighborhoods[word]:
+        if (isinstance(word_graph, WordGraph) 
+                and word_graph.directed_neighborhoods[word]):
             neighborhood = word + ": " + str(
                 word_graph.directed_neighborhoods[word]).replace("\'", "")
-            word_graph_data.append(neighborhood)
+        elif type(word_graph) == dict and word_graph[word]:
+            neighborhood = word + ": " + str(word_graph[word]).replace("\'", "")
+        word_graph_data.append(neighborhood)
     store_data(word_graph_data, file_name)
 
 
-def retrieve_word_graph(ascending_order, size, name_base="word_graph_size"):
-    file_name = get_word_graph_filename(ascending_order, size, name_base)
+def retrieve_word_graph(ascending_order, size, 
+                        name_base="word_graph_size", name_suffix=""):
+    file_name = get_word_graph_filename(
+        ascending_order, size, name_base, name_suffix)
     file_name = os.path.join("word_graphs", file_name)
     word_graph = {}
     for i, line in enumerate(retrieve_data(file_name)):
@@ -116,3 +131,21 @@ def retrieve_word_subgraphs(ascending_order, size, subgraph_type,
 
     return subgraphs
     
+
+def store_external_paths(external_paths_container, ascending_order, name_base):
+    file_name = name_base + "_minimal_external_paths.txt"
+    if ascending_order:
+        file_name = "ao" + file_name
+    file_name = os.path.join("word_graphs", file_name)
+
+    external_path_data = []
+    for size, minimal_external_paths in external_paths_container.items():
+        identifier = get_word_graph_filename(ascending_order, size, name_base)
+        external_path_data.append("\n\n" + identifier + "\n")
+        for vertex1 in paths_by_vertex in minimal_external_paths.items():
+            for vertex2, paths in paths_by_vertex.items():
+                external_path_data.append("\n" + vertex1 + " --> " + vertex2 + ":")
+                for path in paths:
+                    external_path_data.append(path)
+
+    store_data(external_path_data, file_name)

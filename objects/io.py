@@ -30,16 +30,28 @@ def store_words(word_list, list_type="dow"):
     store_data(word_list, file_name)
 
 
-def retrieve_words(list_type, size=None, length=None, optimize=False):
-    file_name = get_word_filename(list_type, size, length)
+def retrieve_words(list_type, file_name=None, size=None, length=None, 
+                   optimize=False, include_empty_word=True, ascending_order=None):
+    if file_name is None:
+        file_name = get_word_filename(list_type, size, length)
     double_occurrence = False if list_type == "all" else True
-    ascending_order = True if list_type == "ao" else False
+    if ascending_order is None:
+        ascending_order = True if list_type == "ao" else False
     word_list = []
     for line in retrieve_data(file_name, add_output_dir=False):
-        word = Word(line.strip(), double_occurrence=double_occurrence, 
-                    ascending_order=ascending_order, optimize=optimize)
+        if "," in line:
+            letters = re.findall(r"\d+", line)
+            digit_strings = [str(i) for i in range(1, 10)]
+            for i, letter in enumerate(letters):
+                if letter not in digit_strings:
+                    letters[i] = chr(int(letter) + 87)
+            word = Word("".join(letters), ascending_order=ascending_order, 
+                        optimize=optimize)
+        else:
+            word = Word(line.strip(), double_occurrence=double_occurrence, 
+                        ascending_order=ascending_order, optimize=optimize)
         word_list.append(word)
-    if "" not in word_list:
+    if "" not in word_list and include_empty_word:
         empty_word = Word("", double_occurrence=double_occurrence, 
                           ascending_order=ascending_order, optimize=optimize)
         word_list = [empty_word] + word_list

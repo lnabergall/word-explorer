@@ -99,6 +99,17 @@ class WordGraph:
                                    ascending_order=self.ascending_order)
 
 
+def expand_word_graph(word_graph):
+    """Expands word graph dictionary to include all words as keys."""
+    expanded_word_graph = word_graph.copy()
+    for word1 in word_graph:
+        for word2 in list(word_graph[word1]):
+             expanded_word_graph[word2] = (expanded_word_graph.get(word2, set())
+                | set([word1]))
+
+    return expanded_word_graph
+
+
 if __name__ == '__main__':
     words = retrieve_words("ao", size=6, optimize=True)
     start_time = time()

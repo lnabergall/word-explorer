@@ -1,5 +1,10 @@
 """
-CUDA Python version of subgraph_finder.py to support parallel computations via GPU.
+CUDA Python version of subgraphs.py to support parallel computations via 
+an Nvidia GPU.
+
+Functions (Pure Python):
+
+    create_subgraphs_array, find_subgraphs
 """
 
 from time import time

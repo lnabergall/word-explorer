@@ -1,6 +1,11 @@
 """
 Defines a CUDA Python version of WordGraph.find_adjacent_vertices
-to support parallel computations via an Nvidia GPU.
+to support fast parallel computation via an Nvidia GPU.
+
+Functions (Pure Python):
+
+    find_adjacent_vertices, word_from_letters_list, digit_count_int, 
+    ith_digit, letters_from_int
 """
 
 from time import time
@@ -487,10 +492,6 @@ def compute_neighbors(word_array, neighbors_array, size_limit,
                             continue
                         for l in range(permutations_array.shape[3]):
                             indices[l] = permutations_array[i, j, k, l]
-                        # if i == 0 and instance_length == 10 and k == 50:
-                        #     for l in range(indices.size):
-                        #         if indices[l] != 0:
-                        #             test_emptyword[l] = indices[l]
                         for l in range(pattern_instance.size):
                             relabeled_part = word_from_letters8(indices)
                             if return_word and l == 1:
