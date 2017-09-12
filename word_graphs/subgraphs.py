@@ -19,6 +19,10 @@ from .word_graphs import expand_word_graph
 from .subgraphs_gpu import find_subgraphs as find_subgraphs_gpu
 
 
+# Currently supported subgraphs
+SUBGRAPH_TYPES = ["3-path", "4-path", "triangle", "square", "cube"]
+
+
 def find_3paths(word_graph, directed=True):
     paths = set()
     for word in word_graph:
@@ -149,7 +153,7 @@ def sort_directed_squares(squares):
     return sorted_squares_final
 
 
-SPECIAL_STRUCTURES = [
+SQUARE_STRUCTURES = [
     set(((1, 0), (2, 1), (2, 3), (3, 0))), 
     set(((1, 0), (1, 2), (2, 3), (0, 3))),
     set(((0, 1), (1, 2), (3, 2), (0, 3))),
@@ -206,8 +210,8 @@ def filter_cubes(cubes):
             (cube[0], cube[1], cube[2], cube[3]))
         directed_structure2 = extract_directed_structure(
             (cube[4], cube[5], cube[6], cube[7]))
-        linearly_ordered = (set(directed_structure1) in SPECIAL_STRUCTURES 
-            and set(directed_structure2) in SPECIAL_STRUCTURES)
+        linearly_ordered = (set(directed_structure1) in SQUARE_STRUCTURES 
+            and set(directed_structure2) in SQUARE_STRUCTURES)
         vertical_structure1 = list(filter(
             lambda i: len(cube[i]) >= len(cube[i+4]), range(4)))
         vertical_structure2 = list(filter(
