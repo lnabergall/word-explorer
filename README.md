@@ -12,6 +12,6 @@ The library is organized into five packages:
 
 **word_graph** - Contains classes and functions for generating word graphs, where each insertion of a pattern instance into a word defines an edge between two vertices (words), and locating special subgraphs within word graphs. Both pure Python and CUDA implementations are provided for trading off readability vs. speed, with the latter implemented using numba and a restricted version of Python.
 
-**homology** - ...
+**homology** - Contains tools for constructing the simplicial complex of a word graph from a specified set of maximal simplices and analyzing its homology groups.
 
-**io** - ...
+**io** - Contains some utility functions for handling input and output.
