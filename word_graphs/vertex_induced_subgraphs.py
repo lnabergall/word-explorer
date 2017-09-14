@@ -1,6 +1,12 @@
 """
-Tools for extracting subgraphs induced by a given set of vertices 
-from a word graph. Use 'find_vertex_induced_subgraphs' as an interface.
+Tools for extracting subgraphs induced by a given set of vertices from 
+a word graph. There are two types: weakly and strongly induced subgraphs.
+The latter is the usual notion of induced subgraph. The former is 
+the subgraph constructed by taking the union of the neighborhood of 
+each vertex in the given set of vertices and including in 
+the subgraph any edge with both its endpoints in this union. 
+
+Use 'find_vertex_induced_subgraphs' as an interface.
 
 Functions:
     
