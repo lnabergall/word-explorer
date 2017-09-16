@@ -20,7 +20,7 @@ def get_word_filename(list_type, size=None, length=None):
 
 
 def store_words(word_list, list_type="dow"):
-    if list_type = "all":
+    if list_type == "all":
         length = max_word_length(word_list)
         size = None
     else:
