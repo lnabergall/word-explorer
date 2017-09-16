@@ -8,7 +8,7 @@ Functions:
 """
 
 from word_explorer.io import retrieve_data, store_data
-from word_explorer.word_graphs.word_graph import expand_word_graph
+from word_explorer.word_graphs.word_graphs import expand_word_graph
 from word_explorer.word_graphs.io import (retrieve_word_graph,
                                           retrieve_word_subgraphs,
                                           get_word_graph_filename)

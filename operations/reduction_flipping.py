@@ -13,7 +13,7 @@ from itertools import product
 
 from word_explorer.objects import GeneralizedPattern, Word
 from word_explorer.objects.ascending_order import convert_to_ascending_order
-from insertions import generate_insertions
+from .insertions import generate_insertions
 from word_explorer.objects.list_words import get_all_words
 
 

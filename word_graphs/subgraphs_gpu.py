@@ -17,7 +17,7 @@ zeros_py = zeros
 from numba import cuda
 from numba.types import int64
 
-from word_graph_gpu2 import *
+from word_graphs_gpu import *
 
 
 NEIGHBOR_MAX = 210

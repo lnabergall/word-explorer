@@ -12,7 +12,7 @@ import sys
 import threading
 
 import numpy as np
-from simplex import SimplicialComplex
+from .simplex import SimplicialComplex
 
 from .io import retrieve_maximal_simplices, store_homology_data
 

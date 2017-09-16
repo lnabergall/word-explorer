@@ -21,7 +21,7 @@ Functions:
 
 from word_explorer.objects import (Pattern, Word, PatternIndex, 
 								   PatternExample, is_equivalent)
-from storage import StorageHandler
+from .storage import StorageHandler
 
 
 def output_instructions():

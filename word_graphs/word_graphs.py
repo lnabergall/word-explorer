@@ -12,7 +12,7 @@ from time import time
 from word_explorer.objects.io import retrieve_words
 from word_explorer.operations.insertions import generate_insertions
 from word_explorer.objects.ascending_order import convert_to_ascending_order
-from .word_graph_gpu2 import find_adjacent_vertices as find_adjacent_vertices_gpu
+from .word_graphs_gpu import find_adjacent_vertices as find_adjacent_vertices_gpu
 from .io import get_word_graph_filename, store_word_graph
 
 
