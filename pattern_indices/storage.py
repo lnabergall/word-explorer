@@ -16,10 +16,10 @@ import re
 from word_explorer.objects import (Pattern, PatternExample, 
 								   PatternIndex, is_equivalent)
 
-PATTERN_STORE = "patterns.txt"
-REDUCTION_STORE = "reduction_operations.txt"
-INDEX_STORE = "pattern_indices.txt"
-WORD_STORE = "word_indices.txt"
+PATTERN_STORE = "data/patterns.txt"
+REDUCTION_STORE = "data/reduction_operations.txt"
+INDEX_STORE = "data/pattern_indices.txt"
+WORD_STORE = "data/word_indices.txt"
 
 
 class StorageHandler():

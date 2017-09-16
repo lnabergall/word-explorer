@@ -1,0 +1,10 @@
+
+
+Name: Pattern Recurrence Index
+Patterns: Letter removal, Repeat word, Return word
+
+Name: Tangled Index
+Patterns: Letter removal, Tangled cord
+
+Name: Tangled Pattern Recurrence Index
+Patterns: Letter removal, Repeat word, Return word, Tangled cord

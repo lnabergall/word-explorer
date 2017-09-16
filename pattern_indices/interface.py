@@ -6,6 +6,11 @@ Usage:
 
 	$ python interface.py
 
+	         or
+
+	>>> from word_explorer.pattern_indices import interface as app
+	>>> app.run_app()
+
 Classes:
 
 	PatternIndexApp, CalculatingThread, CalculatingDialog, Controller,
@@ -993,12 +998,16 @@ class IndexDialog(tk.Toplevel):
 		self.destroy()
 
 
-if __name__ == '__main__':
+def run_app():
 	root = tk.Tk()
 	root.title("Pattern Index Calculator")
-	root.iconbitmap(default="blank.ico")
+	root.iconbitmap(default="data/blank.ico")
 	pattern_index_app = PatternIndexApp(master=root)
 	pattern_index_app.mainloop()
+
+
+if __name__ == '__main__':
+	run_app()
 
 
 # POSSIBLE EXTENSIONS:
