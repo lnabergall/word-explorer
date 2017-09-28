@@ -20,7 +20,7 @@ from .subgraphs_gpu import find_subgraphs as find_subgraphs_gpu
 
 
 # Currently supported subgraphs
-SUBGRAPH_TYPES = ["3-path", "4-path", "triangle", "square", "cube"]
+SUBGRAPH_TYPES = ["3path", "4path", "triangle", "square", "cube"]
 
 
 def find_3paths(word_graph, directed=True):

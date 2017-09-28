@@ -11,10 +11,15 @@ Functions:
     store_external_paths
 """
 
+import os
+import re
 from itertools import chain
 
 from word_explorer.objects import Word
 from word_explorer.io import store_data, retrieve_data
+
+
+OUTPUT_FOLDER = "word_graphs"
 
 
 def get_integer(string):
@@ -23,6 +28,12 @@ def get_integer(string):
         raise NotImplementedError
     else:
         return int(integers[-1])
+
+
+def add_output_folder(file_name):
+    if not file_name.startswith(OUTPUT_FOLDER + "\\"):
+        file_name = os.path.join(OUTPUT_FOLDER, file_name)
+    return file_name
 
 
 def get_word_graph_filename(ascending_order, size, name_base, name_suffix=""):
@@ -37,7 +48,9 @@ def get_word_subgraph_filename(ascending_order, size, subgraph_type,
                                sorted_=False):
     file_name = get_word_graph_filename(
         ascending_order, size, name_base, name_suffix)[:-4]
-    file_name += "_" + subgraph_type 
+    file_name += "_" + subgraph_type
+    if not subgraph_type.endswith("s"):
+        file_name += "s"
     file_name = file_name + "_sorted" if sorted_ else file_name
     return file_name + ".txt"
 
@@ -45,7 +58,8 @@ def get_word_subgraph_filename(ascending_order, size, subgraph_type,
 def store_word_graph(word_graph, file_name=None):
     from .word_graphs import WordGraph, expand_word_graph  # For circular import
     if file_name is None:
-        file_name = os.path.join("word_graphs", word_graph.file_name)
+        file_name = word_graph.file_name
+    file_name = add_output_folder(file_name)
     if isinstance(word_graph, WordGraph):
         vertex_count = word_graph.vertex_count
         edge_count = word_graph.edge_count
@@ -70,15 +84,14 @@ def store_word_graph(word_graph, file_name=None):
 
 def retrieve_word_graph(ascending_order, size, 
                         name_base="word_graph_size", name_suffix=""):
-    file_name = get_word_graph_filename(
-        ascending_order, size, name_base, name_suffix)
-    file_name = os.path.join("word_graphs", file_name)
+    file_name = add_output_folder(get_word_graph_filename(
+        ascending_order, size, name_base, name_suffix))
     word_graph = {}
     for i, line in enumerate(retrieve_data(file_name)):
         if i >= 4:
             colon_index = line.find(":")
-            word_graph[word_class(line[:colon_index])] = {
-                word_class(word) for word 
+            word_graph[Word(line[:colon_index])] = {
+                Word(word) for word 
                 in line.strip()[colon_index+3:-2].split(", ")}
 
     return word_graph
@@ -86,9 +99,8 @@ def retrieve_word_graph(ascending_order, size,
 
 def retrieve_word_graph_statistics(ascending_order, size, 
                                    name_base="word_graph_size", name_suffix=""):
-    file_name = get_word_graph_filename(
-        ascending_order, size, name_base, name_suffix)
-    file_name = os.path.join("word_graphs", file_name)
+    file_name = add_output_folder(get_word_graph_filename(
+        ascending_order, size, name_base, name_suffix))
     for line in retrieve_data(file_name):
         if line.startswith("Vertex count"):
             vertex_count = get_integer(line)
@@ -118,20 +130,18 @@ def store_word_subgraphs(subgraphs, subgraph_type, ascending_order,
             subgraph_data += subgraph_list
             subgraph_data.append("\n\n")
 
-    subgraph_file_name = get_word_subgraph_filename(
+    subgraph_file_name = add_output_folder(get_word_subgraph_filename(
         ascending_order, size, subgraph_type, 
-        name_base, name_suffix, sorted_)
-    subgraph_file_name = os.path.join("word_graphs", subgraph_file_name)
+        name_base, name_suffix, sorted_))
     store_data(subgraph_data, subgraph_file_name)
 
 
 def retrieve_word_subgraphs(ascending_order, size, subgraph_type, 
                             name_base="word_graph_size", name_suffix="", 
                             sorted_=False):
-    subgraph_file_name = get_word_subgraph_filename(
+    subgraph_file_name = add_output_folder(get_word_subgraph_filename(
         ascending_order, size, subgraph_type, 
-        name_base, name_suffix, sorted_)
-    subgraph_file_name = os.path.join("word_graphs", subgraph_file_name)
+        name_base, name_suffix, sorted_))
     if sorted_:
         subgraphs = {}
     else:
@@ -162,21 +172,23 @@ def retrieve_word_subgraphs(ascending_order, size, subgraph_type,
 
 
 def retrieve_subgraph_statistics(ascending_order, sizes, 
-                                 name_base="word_graph_size", name_suffix=""):
+                                 name_base="word_graph_size", name_suffix="",
+                                 sorted_squares=True):
     from .subgraphs import SUBGRAPH_TYPES  # For circular import
     statistics = {}
     for size in sizes:
         statistics[size] = retrieve_word_graph_statistics(
             ascending_order, size, name_base, name_suffix)
         for subgraph_type in SUBGRAPH_TYPES:
-            sorted_ = True if subgraph_type == "square" else False
-            file_name = get_word_subgraph_filename(
+            sorted_ = True if subgraph_type == "square" and sorted_squares else False
+            file_name = add_output_folder(get_word_subgraph_filename(
                 ascending_order, size, subgraph_type, 
-                name_base, name_suffix, sorted_)
+                name_base, name_suffix, sorted_))
+            
             statistics[size][subgraph_type] = {}
             try:
                 for line in retrieve_data(file_name):
-                    if line.contains("count"):
+                    if "count" in line:
                         if line.startswith("((") or line.startswith("[("):
                             subgraph_class = line[:line.find("))")+2]
                             statistics[size][subgraph_type][subgraph_class] = (
@@ -193,24 +205,28 @@ def retrieve_subgraph_statistics(ascending_order, sizes,
 def store_subgraph_statistics(subgraph_statistics, ascending_order, 
                               name_base="word_graph", name_suffix=""):
     file_name = name_base + "_" + name_suffix + "_subgraph_statistics.txt"
-    file_name = os.path.join("word_graphs", file_name)
-    title = (name_base + name_suffix).replace("_", " ").title()
+    file_name = add_output_folder(file_name)
+    title = ((name_base + "_" + name_suffix).replace("_", " ").title() 
+             + " Subgraph Statistics")
     if ascending_order:
         "Ascending Order " + title
     subgraph_data = ["\n" + title]
     for size in subgraph_statistics:
         subgraph_data.append("\n\n---------------- Words of size <= " 
-                             + size + "----------------")
-        subgraph_data.append("\nVertices: " + subgraph_statistics[size]["vertices"])
-        subgraph_data.append("Edges: " + subgraph_statistics[size]["edges"])
+                             + str(size) + " ----------------")
+        subgraph_data.append(
+            "\nVertices: " + str(subgraph_statistics[size]["vertices"]))
+        subgraph_data.append(
+            "Edges: " + str(subgraph_statistics[size]["edges"]))
         for subgraph_type, statistics_dict in subgraph_statistics[size].items():
-            for subgraph_class, value in statistics_dict.items():
-                if subgraph_class == "total":
-                    subgraph_data.append("\n" + subgraph_type.title() 
-                                         + "s: " + str(value))
-                else:
-                    subgraph_data.append(subgraph_class.title() + " " 
-                                         + subgraph_type + "s: " + str(value))
+            if isinstance(statistics_dict, dict):
+                for subgraph_class, value in statistics_dict.items():
+                    if subgraph_class == "total":
+                        subgraph_data.append("\n" + subgraph_type.title() 
+                                             + "s: " + str(value))
+                    else:
+                        subgraph_data.append(subgraph_class.title() + " " 
+                                             + subgraph_type + "s: " + str(value))
 
     store_data(subgraph_data, file_name)
     
@@ -219,7 +235,7 @@ def store_external_paths(external_paths_container, ascending_order, name_base):
     file_name = name_base + "_minimal_external_paths.txt"
     if ascending_order:
         file_name = "ao" + file_name
-    file_name = os.path.join("word_graphs", file_name)
+    file_name = add_output_folder(file_name)
 
     external_path_data = []
     for size, minimal_external_paths in external_paths_container.items():
