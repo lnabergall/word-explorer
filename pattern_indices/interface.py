@@ -1001,7 +1001,7 @@ class IndexDialog(tk.Toplevel):
 def run_app():
 	root = tk.Tk()
 	root.title("Pattern Index Calculator")
-	root.iconbitmap(default="data/blank.ico")
+	root.iconbitmap(default="pattern_indices/data/blank.ico")
 	pattern_index_app = PatternIndexApp(master=root)
 	pattern_index_app.mainloop()
 
@@ -1011,9 +1011,6 @@ if __name__ == '__main__':
 
 
 # POSSIBLE EXTENSIONS:
-
-# Implement use of inductive definition to extend pattern examples into 
-# more sizes when necessary. (1)
 
 # Ability to delete patterns and indices, and check for repetition
 # of names (at least) when saving. Convert data storage to SQLite 
