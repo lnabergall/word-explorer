@@ -9,7 +9,7 @@ Functions:
 from .objects import Word
 
 
-def convert_to_ascending_order(word_collection):
+def convert_to_ascending_order(word_collection, optimize=True):
     """
     Args:
         word_collection: Container for instance(s) of Word, 
@@ -52,7 +52,8 @@ def convert_to_ascending_order(word_collection):
             finally:
                 new_word += new_letter
         if collection_type == Word:
-            return Word(new_word, double_occurrence=False, ascending_order=True)
+            return Word(new_word, double_occurrence=False, 
+                        ascending_order=True, optimize=optimize)
         elif collection_type == str:
             return new_word
     else:

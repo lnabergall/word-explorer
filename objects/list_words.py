@@ -31,7 +31,8 @@ def get_all_words(max_length, alphabet_size):
     word_list = []
     for length in range(1, max_length+1):
         letter_lists = product(range(1,alphabet_size+1), repeat=length)
-        words = [Word("".join(str(i) for i in letters), double_occurrence=False) 
+        words = [Word("".join(str(i) for i in letters), 
+                      double_occurrence=False, optimize=True) 
                  for letters in letter_lists]
         word_list.extend(words)
 
@@ -55,7 +56,7 @@ def get_all_dows(max_size):
     for size in range(1, max_size+1):
         print("generating words of size " + str(size) + "...")
         for letters in combinations(letter_list, size):
-            words = set(Word("".join(tupl), double_occurrence=False) 
+            words = set(Word("".join(tupl), double_occurrence=False, optimize=True) 
                         for tupl in permutations(letters*2))
             word_list |= words
 
@@ -65,7 +66,8 @@ def get_all_dows(max_size):
     return word_list
 
 
-def get_dows(max_size, ascending_order=True):
+def get_dows(max_size, ascending_order=True, irreducible=False, 
+             strongly_irreducible=False):
     """
     Args:
         max_size: Integer.
@@ -82,16 +84,20 @@ def get_dows(max_size, ascending_order=True):
         letters = [str(i) for i in range(1, min(size,9)+1)]
         if size > 9:
             letters.extend(chr(i+96) for i in range(10, size+1))
-        words = set(convert_to_ascending_order(
-                    Word("".join(tupl), double_occurrence=False)) 
-                    if ascending_order 
-                    else Word("".join(tupl), double_occurrence=False)
+        words = set(Word("".join(tupl), double_occurrence=False, optimize=True)
                     for tupl in permutations(letters*2))
+        if ascending_order:
+            words = convert_to_ascending_order(words)
         word_list |= words
         
     word_list = list(word_list)
     word_list.sort()
     word_list.sort(key=lambda word: len(word))
+    if irreducible:
+        word_list = [word for word in word_list if Word.irreducible(word)]
+    if strongly_irreducible:
+        word_list = [word for word in word_list if Word.strongly_irreducible(word)]
+        
     return word_list
 
 
@@ -107,7 +113,7 @@ def get_random_sample(word_list):
     for word in word_list:
         letters = [letter for letter in word]
         shuffle(letters)
-        random_word = Word(convert_to_ascending_order("".join(letters)))
+        random_word = Word(convert_to_ascending_order("".join(letters)), optimize=True)
         random_sample.append(random_word)
 
     return random_sample

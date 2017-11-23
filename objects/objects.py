@@ -65,7 +65,7 @@ class Word(str):
 		return not self.__eq__(other)
 
 	def __hash__(self):
-		if self.ascending_order and not self.optimize:
+		if self.ascending_order or not self.optimize:
 			letter_indices = OrderedDict()
 			for i, letter in enumerate(self):
 				letter_indices.setdefault(letter, [])
@@ -88,7 +88,7 @@ class Word(str):
 			self.size = len(self) // 2
 		if not self.optimize:
 			self.irreducible = Word.irreducible(content)
-			self.strongly_irreducible = self.strongly_irreducible(content)
+			self.strongly_irreducible = Word.strongly_irreducible(content)
 
 	@staticmethod
 	def double_occurrence_word(word_string):
@@ -106,8 +106,9 @@ class Word(str):
 				return False
 		return True
 
-	def strongly_irreducible(self, word_string):
-		if self.irreducible == False:
+	@staticmethod
+	def strongly_irreducible(word_string):
+		if Word.irreducible(word_string) == False:
 			return False
 		for i in range(len(word_string)):
 			for j in range(i+2, len(word_string)):
