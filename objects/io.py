@@ -11,22 +11,23 @@ from .objects import max_word_size, max_word_length
 from word_explorer.io import store_data, retrieve_data
 
 
-def get_word_filename(list_type, size=None, length=None):
+def get_word_filename(list_type, size=None, length=None, extra_suffix=""):
     if length is not None:
         file_name = "words_up_to_length" + str(length)
     else:
         file_name = "words_up_to_size" + str(size)
-    return file_name + "_" + list_type + ".txt"
+    return file_name + "_" + list_type + "_" + extra_suffix + ".txt"
 
 
-def store_words(word_list, list_type="dow"):
+def store_words(word_list, list_type="dow", extra_suffix=""):
     if list_type == "all":
         length = max_word_length(word_list)
         size = None
     else:
         size = max_word_size(word_list)
         length = None
-    file_name = get_word_filename(list_type, size, length)
+    file_name = get_word_filename(
+        list_type, size, length, extra_suffix=extra_suffix)
     store_data(word_list, file_name)
 
 
