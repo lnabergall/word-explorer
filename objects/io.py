@@ -7,7 +7,7 @@ Functions:
     get_word_filename, store_words, retrieve_words
 """
 
-from .objects import max_word_size, max_word_length
+from .objects import max_word_size, max_word_length, Word
 from word_explorer.io import store_data, retrieve_data
 
 
